@@ -2,7 +2,35 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReviewPanel } from "@/components/review/ReviewPanel";
+import { initializeLocalDb } from "@/lib/local-db/init";
+import { getReviewRecordByTaskId } from "@/lib/local-db/operations/reviews";
+import { getTaskById } from "@/lib/local-db/operations/tasks";
 import { agentSeats, buildChecks, projects, reviewRecords, tasks } from "@/lib/mock-data";
+import type { ReviewRecord } from "@/lib/types";
+import { persistReviewDecisionAction } from "./actions";
+
+function parseJsonArray(value: string): string[] {
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function mapPersistedReviewRecord(row: Awaited<ReturnType<typeof getReviewRecordByTaskId>>): ReviewRecord | undefined {
+  if (!row) {
+    return undefined;
+  }
+
+  return {
+    taskId: row.taskId,
+    diffSummary: parseJsonArray(row.diffSummaryJson),
+    riskNotes: parseJsonArray(row.riskNotesJson),
+    qualityGateIds: parseJsonArray(row.qualityGateIdsJson),
+    decision: row.decision,
+  };
+}
 
 export default async function ReviewRoom({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
@@ -19,7 +47,24 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
   }
 
   const agent = agentSeats.find((item) => item.id === task.agentSeatId);
-  const review = reviewRecords.find((item) => item.taskId === task.id);
+  let persistedTaskStatus = task.status;
+  let persistedReview: ReviewRecord | undefined;
+
+  try {
+    initializeLocalDb();
+    const [persistedTask, persistedReviewRow] = await Promise.all([
+      getTaskById(task.id),
+      getReviewRecordByTaskId(task.id),
+    ]);
+
+    persistedTaskStatus = persistedTask?.status ?? task.status;
+    persistedReview = mapPersistedReviewRecord(persistedReviewRow);
+  } catch (error) {
+    console.error("Review Room local persistence read failed", error);
+  }
+
+  const displayTask = { ...task, status: persistedTaskStatus };
+  const review = persistedReview ?? reviewRecords.find((item) => item.taskId === task.id);
   const reviewChecks = buildChecks.filter((check) => review?.qualityGateIds.includes(check.id) || check.taskId === task.id);
 
   return (
@@ -35,7 +80,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
             </Link>
           </div>
         </div>
-        <ReviewPanel task={task} project={project} agent={agent} review={review} checks={reviewChecks} />
+        <ReviewPanel task={displayTask} project={project} agent={agent} review={review} checks={reviewChecks} persistDecisionAction={persistReviewDecisionAction} />
       </div>
     </AppShell>
   );

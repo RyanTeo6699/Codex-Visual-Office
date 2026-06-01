@@ -9,7 +9,8 @@
     "db:init": "tsx scripts/db-init.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:verify": "tsx scripts/verify-local-db.ts",
-    "db:verify:operations": "tsx scripts/verify-local-operations.ts"
+    "db:verify:operations": "tsx scripts/verify-local-operations.ts",
+    "db:verify:review": "tsx scripts/verify-review-persistence.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

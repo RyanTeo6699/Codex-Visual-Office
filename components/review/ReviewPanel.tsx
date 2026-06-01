@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import clsx from "clsx";
 import { Check, RotateCcw, X } from "lucide-react";
+import { TaskStatusBadge } from "@/components/tasks/TaskStatusBadge";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
-import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task } from "@/lib/types";
+import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskStatus } from "@/lib/types";
+
+interface PersistDecisionResult {
+  ok: boolean;
+  decision: ReviewDecision;
+  taskStatus?: TaskStatus;
+  error?: string;
+}
+
+type PersistDecisionAction = (taskId: string, decision: ReviewDecision) => Promise<PersistDecisionResult>;
 
 export function ReviewPanel({
   task,
@@ -14,14 +24,35 @@ export function ReviewPanel({
   agent,
   review,
   checks,
+  persistDecisionAction,
 }: {
   task: Task;
   project: Project;
   agent?: AgentSeat;
   review?: ReviewRecord;
   checks: BuildCheck[];
+  persistDecisionAction: PersistDecisionAction;
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
+  const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  function handleDecision(nextDecision: ReviewDecision) {
+    setError(null);
+    startTransition(async () => {
+      const result = await persistDecisionAction(task.id, nextDecision);
+      if (!result.ok) {
+        setError(result.error ?? "Review decision could not be persisted.");
+        return;
+      }
+
+      setDecision(result.decision);
+      if (result.taskStatus) {
+        setTaskStatus(result.taskStatus);
+      }
+    });
+  }
 
   return (
     <div className="space-y-5">
@@ -31,28 +62,32 @@ export function ReviewPanel({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Review Desk / {project.name} / {agent?.name ?? "Unassigned"}</p>
             <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-white">{task.title}</h1>
           </div>
-          <span className={clsx("rounded-md border px-3 py-1.5 text-xs font-semibold", statusColor[decision])}>
-            {reviewDecisionLabel[decision]}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <TaskStatusBadge status={taskStatus} />
+            <span className={clsx("rounded-md border px-3 py-1.5 text-xs font-semibold", statusColor[decision])}>
+              {reviewDecisionLabel[decision]}
+            </span>
+          </div>
         </div>
         <div className="mt-7 grid gap-4 lg:grid-cols-2">
           <ReviewList title="Acceptance Criteria" items={task.acceptanceCriteria} tone="cyan" />
           <ReviewList title="Forbidden Scope" items={task.forbiddenScope} tone="red" />
         </div>
         <div className="mt-7 flex flex-wrap gap-3 border-t border-white/8 pt-5">
-          <button onClick={() => setDecision("approved")} className="inline-flex items-center gap-2 rounded-[14px] border border-emerald-200/24 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/16">
+          <button disabled={isPending} onClick={() => handleDecision("approved")} className="inline-flex items-center gap-2 rounded-[14px] border border-emerald-200/24 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/16 disabled:cursor-not-allowed disabled:opacity-50">
             <Check className="h-4 w-4" />
             Approve
           </button>
-          <button onClick={() => setDecision("rejected")} className="inline-flex items-center gap-2 rounded-[14px] border border-rose-200/20 bg-rose-200/8 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-200/14">
+          <button disabled={isPending} onClick={() => handleDecision("rejected")} className="inline-flex items-center gap-2 rounded-[14px] border border-rose-200/20 bg-rose-200/8 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-200/14 disabled:cursor-not-allowed disabled:opacity-50">
             <X className="h-4 w-4" />
             Reject
           </button>
-          <button onClick={() => setDecision("revision_requested")} className="inline-flex items-center gap-2 rounded-[14px] border border-amber-200/24 bg-amber-200/10 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-200/16">
+          <button disabled={isPending} onClick={() => handleDecision("revision_requested")} className="inline-flex items-center gap-2 rounded-[14px] border border-amber-200/24 bg-amber-200/10 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-200/16 disabled:cursor-not-allowed disabled:opacity-50">
             <RotateCcw className="h-4 w-4" />
             Ask Revision
           </button>
         </div>
+        {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
       </section>
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
