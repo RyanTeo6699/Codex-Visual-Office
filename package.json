@@ -11,7 +11,8 @@
     "db:verify": "tsx scripts/verify-local-db.ts",
     "db:verify:operations": "tsx scripts/verify-local-operations.ts",
     "db:verify:review": "tsx scripts/verify-review-persistence.ts",
-    "db:verify:selected-reads": "tsx scripts/verify-selected-local-reads.ts"
+    "db:verify:selected-reads": "tsx scripts/verify-selected-local-reads.ts",
+    "codex:verify:cli": "tsx scripts/verify-codex-cli-detection.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

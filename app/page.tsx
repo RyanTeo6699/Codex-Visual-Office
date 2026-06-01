@@ -1,11 +1,16 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { BuildWall } from "@/components/office/BuildWall";
+import { CodexRuntimeStatus } from "@/components/office/CodexRuntimeStatus";
 import { EventTicker } from "@/components/office/EventTicker";
 import { OfficeMap } from "@/components/office/OfficeMap";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
+import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
 
-export default function OfficeHome() {
+export const dynamic = "force-dynamic";
+
+export default async function OfficeHome() {
+  const codexCliStatus = await detectCodexCliStatus();
   const waiting = tasks.filter((task) => task.status === "waiting_review");
   const blocked = tasks.filter((task) => task.status === "blocked");
   const active = tasks.filter((task) => task.status === "running");
@@ -31,6 +36,7 @@ export default function OfficeHome() {
             <TaskBoard tasks={tasks} projects={projects} agentSeats={agentSeats} />
           </div>
           <div className="space-y-5">
+            <CodexRuntimeStatus status={codexCliStatus} />
             <div id="build">
               <BuildWall checks={buildChecks} projects={projects} />
             </div>
