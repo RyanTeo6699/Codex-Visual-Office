@@ -21,3 +21,29 @@ export async function getTaskById(id: string): Promise<TaskRow | undefined> {
 export async function insertTask(task: NewTaskRow): Promise<void> {
   db.insert(tasks).values(task).run();
 }
+
+export async function upsertTask(task: NewTaskRow): Promise<void> {
+  db.insert(tasks).values(task).onConflictDoUpdate({
+    target: tasks.id,
+    set: {
+      projectId: task.projectId,
+      title: task.title,
+      summary: task.summary,
+      status: task.status,
+      priority: task.priority,
+      assignedSeatId: task.assignedSeatId,
+      acceptanceCriteriaJson: task.acceptanceCriteriaJson,
+      forbiddenScopeJson: task.forbiddenScopeJson,
+      changedFilesJson: task.changedFilesJson,
+      updatedAt: task.updatedAt,
+    },
+  }).run();
+}
+
+export async function updateTask(id: string, changes: Partial<Omit<NewTaskRow, "id" | "createdAt">>): Promise<void> {
+  db.update(tasks).set(changes).where(eq(tasks.id, id)).run();
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  db.delete(tasks).where(eq(tasks.id, id)).run();
+}

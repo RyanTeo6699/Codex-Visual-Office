@@ -17,3 +17,25 @@ export async function listBuildChecksByProject(projectId: string): Promise<Build
 export async function insertBuildCheck(buildCheck: NewBuildCheckRow): Promise<void> {
   db.insert(buildChecks).values(buildCheck).run();
 }
+
+export async function upsertBuildCheck(buildCheck: NewBuildCheckRow): Promise<void> {
+  db.insert(buildChecks).values(buildCheck).onConflictDoUpdate({
+    target: buildChecks.id,
+    set: {
+      projectId: buildCheck.projectId,
+      taskId: buildCheck.taskId,
+      name: buildCheck.name,
+      status: buildCheck.status,
+      message: buildCheck.message,
+      updatedAt: buildCheck.updatedAt,
+    },
+  }).run();
+}
+
+export async function updateBuildCheck(id: string, changes: Partial<Omit<NewBuildCheckRow, "id" | "createdAt">>): Promise<void> {
+  db.update(buildChecks).set(changes).where(eq(buildChecks.id, id)).run();
+}
+
+export async function deleteBuildCheck(id: string): Promise<void> {
+  db.delete(buildChecks).where(eq(buildChecks.id, id)).run();
+}

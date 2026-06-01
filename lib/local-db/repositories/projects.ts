@@ -17,3 +17,26 @@ export async function getProjectById(id: string): Promise<ProjectRow | undefined
 export async function insertProject(project: NewProjectRow): Promise<void> {
   db.insert(projects).values(project).run();
 }
+
+export async function upsertProject(project: NewProjectRow): Promise<void> {
+  db.insert(projects).values(project).onConflictDoUpdate({
+    target: projects.id,
+    set: {
+      name: project.name,
+      description: project.description,
+      phase: project.phase,
+      status: project.status,
+      localPath: project.localPath,
+      accent: project.accent,
+      updatedAt: project.updatedAt,
+    },
+  }).run();
+}
+
+export async function updateProject(id: string, changes: Partial<Omit<NewProjectRow, "id" | "createdAt">>): Promise<void> {
+  db.update(projects).set(changes).where(eq(projects.id, id)).run();
+}
+
+export async function deleteProject(id: string): Promise<void> {
+  db.delete(projects).where(eq(projects.id, id)).run();
+}

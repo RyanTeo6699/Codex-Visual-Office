@@ -17,3 +17,22 @@ export async function listTaskEventsByProject(projectId: string): Promise<TaskEv
 export async function insertTaskEvent(taskEvent: NewTaskEventRow): Promise<void> {
   db.insert(taskEvents).values(taskEvent).run();
 }
+
+export async function upsertTaskEvent(taskEvent: NewTaskEventRow): Promise<void> {
+  db.insert(taskEvents).values(taskEvent).onConflictDoUpdate({
+    target: taskEvents.id,
+    set: {
+      taskId: taskEvent.taskId,
+      projectId: taskEvent.projectId,
+      seatId: taskEvent.seatId,
+      type: taskEvent.type,
+      message: taskEvent.message,
+      payloadJson: taskEvent.payloadJson,
+      createdAt: taskEvent.createdAt,
+    },
+  }).run();
+}
+
+export async function deleteTaskEvent(id: string): Promise<void> {
+  db.delete(taskEvents).where(eq(taskEvents.id, id)).run();
+}

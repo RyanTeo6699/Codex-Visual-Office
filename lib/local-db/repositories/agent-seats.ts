@@ -17,3 +17,26 @@ export async function getAgentSeatById(id: string): Promise<AgentSeatRow | undef
 export async function insertAgentSeat(agentSeat: NewAgentSeatRow): Promise<void> {
   db.insert(agentSeats).values(agentSeat).run();
 }
+
+export async function upsertAgentSeat(agentSeat: NewAgentSeatRow): Promise<void> {
+  db.insert(agentSeats).values(agentSeat).onConflictDoUpdate({
+    target: agentSeats.id,
+    set: {
+      name: agentSeat.name,
+      agentType: agentSeat.agentType,
+      status: agentSeat.status,
+      currentTaskId: agentSeat.currentTaskId,
+      currentProjectId: agentSeat.currentProjectId,
+      focus: agentSeat.focus,
+      updatedAt: agentSeat.updatedAt,
+    },
+  }).run();
+}
+
+export async function updateAgentSeat(id: string, changes: Partial<Omit<NewAgentSeatRow, "id" | "createdAt">>): Promise<void> {
+  db.update(agentSeats).set(changes).where(eq(agentSeats.id, id)).run();
+}
+
+export async function deleteAgentSeat(id: string): Promise<void> {
+  db.delete(agentSeats).where(eq(agentSeats.id, id)).run();
+}

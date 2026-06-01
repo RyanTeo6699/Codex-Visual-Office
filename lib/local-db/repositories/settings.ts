@@ -23,3 +23,7 @@ export async function setSetting(setting: NewSettingRow): Promise<void> {
     },
   }).run();
 }
+
+export async function deleteSetting(key: string): Promise<void> {
+  db.delete(settings).where(eq(settings.key, key)).run();
+}
