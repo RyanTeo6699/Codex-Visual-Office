@@ -1,0 +1,175 @@
+import { relations } from "drizzle-orm";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import type {
+  AgentStatus,
+  BuildStatus,
+  EventTone,
+  ProjectStatus,
+  ReviewDecision,
+  TaskStatus,
+} from "@/lib/types";
+
+export const projectStatuses = ["active", "quiet", "attention", "reviewing", "blocked"] as const satisfies readonly ProjectStatus[];
+export const agentStatuses = [
+  "idle",
+  "reading_repo",
+  "planning",
+  "editing",
+  "running_checks",
+  "build_failed",
+  "fixing",
+  "waiting_review",
+  "done",
+  "blocked",
+] as const satisfies readonly AgentStatus[];
+export const taskStatuses = ["backlog", "ready", "running", "waiting_review", "blocked", "done"] as const satisfies readonly TaskStatus[];
+export const taskPriorities = ["low", "medium", "high", "critical"] as const;
+export const eventTones = ["info", "success", "warning", "danger"] as const satisfies readonly EventTone[];
+export const buildStatuses = ["pending", "running", "passed", "failed", "skipped"] as const satisfies readonly BuildStatus[];
+export const reviewDecisions = ["pending", "approved", "rejected", "revision_requested"] as const satisfies readonly ReviewDecision[];
+export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
+
+export const projects = sqliteTable("projects", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull().default(""),
+  phase: text("phase").notNull(),
+  status: text("status", { enum: projectStatuses }).notNull(),
+  localPath: text("local_path"),
+  accent: text("accent", { enum: projectAccents }).notNull().default("cyan"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const agentSeats = sqliteTable("agent_seats", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  agentType: text("agent_type").notNull().default("codex"),
+  status: text("status", { enum: agentStatuses }).notNull(),
+  currentTaskId: text("current_task_id"),
+  currentProjectId: text("current_project_id").references(() => projects.id),
+  focus: text("focus").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const tasks = sqliteTable("tasks", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  title: text("title").notNull(),
+  summary: text("summary").notNull().default(""),
+  status: text("status", { enum: taskStatuses }).notNull(),
+  priority: text("priority", { enum: taskPriorities }).notNull(),
+  assignedSeatId: text("assigned_seat_id").references(() => agentSeats.id),
+  acceptanceCriteriaJson: text("acceptance_criteria_json").notNull().default("[]"),
+  forbiddenScopeJson: text("forbidden_scope_json").notNull().default("[]"),
+  changedFilesJson: text("changed_files_json").notNull().default("[]"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const taskEvents = sqliteTable("task_events", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  seatId: text("seat_id").references(() => agentSeats.id),
+  type: text("type", { enum: eventTones }).notNull(),
+  message: text("message").notNull(),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const buildChecks = sqliteTable("build_checks", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  taskId: text("task_id").references(() => tasks.id),
+  name: text("name").notNull(),
+  status: text("status", { enum: buildStatuses }).notNull(),
+  message: text("message").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const reviewRecords = sqliteTable("review_records", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  decision: text("decision", { enum: reviewDecisions }).notNull(),
+  notes: text("notes").notNull().default(""),
+  diffSummaryJson: text("diff_summary_json").notNull().default("[]"),
+  riskNotesJson: text("risk_notes_json").notNull().default("[]"),
+  qualityGateIdsJson: text("quality_gate_ids_json").notNull().default("[]"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const settings = sqliteTable("settings", {
+  key: text("key").primaryKey(),
+  valueJson: text("value_json").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const projectsRelations = relations(projects, ({ many }) => ({
+  agentSeats: many(agentSeats),
+  tasks: many(tasks),
+  taskEvents: many(taskEvents),
+  buildChecks: many(buildChecks),
+}));
+
+export const agentSeatsRelations = relations(agentSeats, ({ one, many }) => ({
+  currentProject: one(projects, {
+    fields: [agentSeats.currentProjectId],
+    references: [projects.id],
+  }),
+  currentTask: one(tasks, {
+    fields: [agentSeats.currentTaskId],
+    references: [tasks.id],
+  }),
+  assignedTasks: many(tasks),
+  taskEvents: many(taskEvents),
+}));
+
+export const tasksRelations = relations(tasks, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [tasks.projectId],
+    references: [projects.id],
+  }),
+  assignedSeat: one(agentSeats, {
+    fields: [tasks.assignedSeatId],
+    references: [agentSeats.id],
+  }),
+  events: many(taskEvents),
+  buildChecks: many(buildChecks),
+  reviewRecord: one(reviewRecords),
+}));
+
+export const taskEventsRelations = relations(taskEvents, ({ one }) => ({
+  project: one(projects, {
+    fields: [taskEvents.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [taskEvents.taskId],
+    references: [tasks.id],
+  }),
+  seat: one(agentSeats, {
+    fields: [taskEvents.seatId],
+    references: [agentSeats.id],
+  }),
+}));
+
+export const buildChecksRelations = relations(buildChecks, ({ one }) => ({
+  project: one(projects, {
+    fields: [buildChecks.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [buildChecks.taskId],
+    references: [tasks.id],
+  }),
+}));
+
+export const reviewRecordsRelations = relations(reviewRecords, ({ one }) => ({
+  task: one(tasks, {
+    fields: [reviewRecords.taskId],
+    references: [tasks.id],
+  }),
+}));
