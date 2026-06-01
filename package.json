@@ -13,7 +13,8 @@
     "db:verify:review": "tsx scripts/verify-review-persistence.ts",
     "db:verify:selected-reads": "tsx scripts/verify-selected-local-reads.ts",
     "codex:verify:cli": "tsx scripts/verify-codex-cli-detection.ts",
-    "codex:verify:prompt-handoff": "tsx scripts/verify-codex-prompt-handoff.ts"
+    "codex:verify:prompt-handoff": "tsx scripts/verify-codex-prompt-handoff.ts",
+    "codex:verify:runner-safety": "tsx scripts/verify-codex-runner-safety.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

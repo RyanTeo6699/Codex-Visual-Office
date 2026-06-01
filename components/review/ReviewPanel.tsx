@@ -5,10 +5,12 @@ import clsx from "clsx";
 import { Check, RotateCcw, X } from "lucide-react";
 import { TaskStatusBadge } from "@/components/tasks/TaskStatusBadge";
 import { CodexPromptHandoff } from "./CodexPromptHandoff";
+import { CodexRunnerSafetyPanel } from "./CodexRunnerSafetyPanel";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
+import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
 import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
@@ -29,6 +31,7 @@ export function ReviewPanel({
   checks,
   events = [],
   codexPrompt,
+  runnerSafetyStatus,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
 }: {
@@ -39,6 +42,7 @@ export function ReviewPanel({
   checks: BuildCheck[];
   events?: TaskEvent[];
   codexPrompt: string;
+  runnerSafetyStatus: RunnerSafetyStatus;
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
 }) {
@@ -99,6 +103,7 @@ export function ReviewPanel({
         {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
       </section>
       <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
+      <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (

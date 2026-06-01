@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReviewPanel } from "@/components/review/ReviewPanel";
 import { buildCodexTaskPrompt } from "@/lib/codex-cli/prompt-builder";
+import { getRunnerSafetyStatus } from "@/lib/codex-cli/runner-safety";
 import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, reviewRecords, tasks } from "@/lib/mock-data";
 import { persistReviewDecisionAction, recordCodexPromptHandoffAction } from "./actions";
@@ -34,6 +35,10 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
   const reviewChecks = buildChecks.filter((check) => review?.qualityGateIds.includes(check.id) || check.taskId === task.id);
   const reviewEvents = localRead?.taskEvents ?? [];
   const codexPrompt = buildCodexTaskPrompt({ project, task }).prompt;
+  const runnerSafetyStatus = getRunnerSafetyStatus({
+    projectId: project.id,
+    localPath: project.localPathPlaceholder,
+  });
 
   return (
     <AppShell>
@@ -56,6 +61,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           checks={reviewChecks}
           events={reviewEvents}
           codexPrompt={codexPrompt}
+          runnerSafetyStatus={runnerSafetyStatus}
           persistDecisionAction={persistReviewDecisionAction}
           recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
         />
