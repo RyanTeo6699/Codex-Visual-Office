@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReviewPanel } from "@/components/review/ReviewPanel";
+import { buildCodexTaskPrompt } from "@/lib/codex-cli/prompt-builder";
 import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, reviewRecords, tasks } from "@/lib/mock-data";
-import { persistReviewDecisionAction } from "./actions";
+import { persistReviewDecisionAction, recordCodexPromptHandoffAction } from "./actions";
 
 export default async function ReviewRoom({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
@@ -32,6 +33,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
   const review = localRead?.review ?? reviewRecords.find((item) => item.taskId === task.id);
   const reviewChecks = buildChecks.filter((check) => review?.qualityGateIds.includes(check.id) || check.taskId === task.id);
   const reviewEvents = localRead?.taskEvents ?? [];
+  const codexPrompt = buildCodexTaskPrompt({ project, task }).prompt;
 
   return (
     <AppShell>
@@ -46,7 +48,17 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
             </Link>
           </div>
         </div>
-        <ReviewPanel task={task} project={project} agent={agent} review={review} checks={reviewChecks} events={reviewEvents} persistDecisionAction={persistReviewDecisionAction} />
+        <ReviewPanel
+          task={task}
+          project={project}
+          agent={agent}
+          review={review}
+          checks={reviewChecks}
+          events={reviewEvents}
+          codexPrompt={codexPrompt}
+          persistDecisionAction={persistReviewDecisionAction}
+          recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
+        />
       </div>
     </AppShell>
   );

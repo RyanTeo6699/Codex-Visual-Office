@@ -4,9 +4,11 @@ import { useState, useTransition } from "react";
 import clsx from "clsx";
 import { Check, RotateCcw, X } from "lucide-react";
 import { TaskStatusBadge } from "@/components/tasks/TaskStatusBadge";
+import { CodexPromptHandoff } from "./CodexPromptHandoff";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
+import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
@@ -17,6 +19,7 @@ interface PersistDecisionResult {
 }
 
 type PersistDecisionAction = (taskId: string, decision: ReviewDecision) => Promise<PersistDecisionResult>;
+type RecordCodexPromptHandoffAction = (taskId: string, mode: CodexPromptHandoffMode) => Promise<CodexPromptHandoffResult>;
 
 export function ReviewPanel({
   task,
@@ -25,7 +28,9 @@ export function ReviewPanel({
   review,
   checks,
   events = [],
+  codexPrompt,
   persistDecisionAction,
+  recordCodexPromptHandoffAction,
 }: {
   task: Task;
   project: Project;
@@ -33,7 +38,9 @@ export function ReviewPanel({
   review?: ReviewRecord;
   checks: BuildCheck[];
   events?: TaskEvent[];
+  codexPrompt: string;
   persistDecisionAction: PersistDecisionAction;
+  recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
@@ -91,6 +98,7 @@ export function ReviewPanel({
         </div>
         {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
       </section>
+      <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (
