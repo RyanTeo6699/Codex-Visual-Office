@@ -3,8 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { initializeLocalDb } from "@/lib/local-db/init";
 import { recordCodexPromptHandoff } from "@/lib/codex-cli/handoff";
+import { buildCodexTaskPrompt } from "@/lib/codex-cli/prompt-builder";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
+import { runScopedCodexTask } from "@/lib/codex-cli/scoped-runner";
+import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 import { persistReviewDecisionForTask } from "@/lib/local-db/operations/reviews";
+import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
+import { projects, tasks } from "@/lib/mock-data";
 import type { ReviewDecision, TaskStatus } from "@/lib/types";
 
 export interface PersistReviewDecisionActionResult {
@@ -63,6 +68,59 @@ export async function recordCodexPromptHandoffAction(
       mode,
       error: error instanceof Error ? error.message : "Codex prompt handoff could not be recorded.",
       cliTaskExecutionAttempted: false,
+    };
+  }
+}
+
+export async function runScopedCodexTaskAction(
+  taskId: string,
+  confirmations: {
+    projectPathApproved: boolean;
+    promptReviewed: boolean;
+    forbiddenScopeAcknowledged: boolean;
+    noAutoCommitPushDeployAcknowledged: boolean;
+  },
+): Promise<ScopedCodexRunnerOutput> {
+  const startedAt = new Date().toISOString();
+
+  try {
+    initializeLocalDb();
+    const localRead = await readSelectedReviewRoom(taskId);
+    const task = localRead?.task ?? tasks.find((item) => item.id === taskId);
+    if (!task) {
+      throw new Error(`Task not found: ${taskId}`);
+    }
+
+    const project = projects.find((item) => item.id === task.projectId);
+    if (!project) {
+      throw new Error(`Project not found for task: ${taskId}`);
+    }
+
+    const prompt = buildCodexTaskPrompt({ project, task }).prompt;
+    const result = await runScopedCodexTask({
+      taskId,
+      projectId: project.id,
+      approvedProjectPath: confirmations.projectPathApproved ? process.cwd() : "",
+      prompt,
+      explicitConfirmation: true,
+      promptReviewed: confirmations.promptReviewed,
+      forbiddenScopeAcknowledged: confirmations.forbiddenScopeAcknowledged,
+      noAutoCommitPushDeployAcknowledged: confirmations.noAutoCommitPushDeployAcknowledged,
+    });
+
+    revalidatePath(`/review/${taskId}`);
+    return result;
+  } catch (error) {
+    return {
+      status: "blocked",
+      startedAt,
+      endedAt: new Date().toISOString(),
+      outputPreview: "",
+      errorPreview: error instanceof Error ? error.message : "Scoped Codex runner could not start.",
+      taskExecutionAttempted: false,
+      autoPushAttempted: false,
+      autoDeployAttempted: false,
+      eventIds: [],
     };
   }
 }

@@ -6,7 +6,7 @@ import { buildCodexTaskPrompt } from "@/lib/codex-cli/prompt-builder";
 import { getRunnerSafetyStatus } from "@/lib/codex-cli/runner-safety";
 import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, reviewRecords, tasks } from "@/lib/mock-data";
-import { persistReviewDecisionAction, recordCodexPromptHandoffAction } from "./actions";
+import { persistReviewDecisionAction, recordCodexPromptHandoffAction, runScopedCodexTaskAction } from "./actions";
 
 export default async function ReviewRoom({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
@@ -62,8 +62,10 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           events={reviewEvents}
           codexPrompt={codexPrompt}
           runnerSafetyStatus={runnerSafetyStatus}
+          approvedProjectPath={process.cwd()}
           persistDecisionAction={persistReviewDecisionAction}
           recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
+          runScopedCodexTaskAction={runScopedCodexTaskAction}
         />
       </div>
     </AppShell>

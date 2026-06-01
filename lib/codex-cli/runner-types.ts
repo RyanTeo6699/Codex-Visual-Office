@@ -1,14 +1,14 @@
 export interface RunnerPolicy {
   allowlistedExecutable: "codex";
   allowArbitraryShell: false;
-  allowPromptExecution: false;
+  allowPromptExecution: boolean;
   allowAutoPush: false;
   allowAutoDeploy: false;
   requireApprovedProjectPath: true;
   requireExplicitUserConfirmation: true;
   requirePromptPreview: true;
   requireForbiddenScopeAcknowledgement: true;
-  executionMode: "safety_harness_only";
+  executionMode: "safety_harness_only" | "scoped_codex_runner";
 }
 
 export interface ApprovedProjectPath {

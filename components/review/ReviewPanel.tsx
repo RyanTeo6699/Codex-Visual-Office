@@ -8,9 +8,11 @@ import { CodexPromptHandoff } from "./CodexPromptHandoff";
 import { CodexRunnerSafetyPanel } from "./CodexRunnerSafetyPanel";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
+import { ScopedCodexRunnerPanel } from "./ScopedCodexRunnerPanel";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
+import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
@@ -22,6 +24,15 @@ interface PersistDecisionResult {
 
 type PersistDecisionAction = (taskId: string, decision: ReviewDecision) => Promise<PersistDecisionResult>;
 type RecordCodexPromptHandoffAction = (taskId: string, mode: CodexPromptHandoffMode) => Promise<CodexPromptHandoffResult>;
+type RunScopedCodexTaskAction = (
+  taskId: string,
+  confirmations: {
+    projectPathApproved: boolean;
+    promptReviewed: boolean;
+    forbiddenScopeAcknowledged: boolean;
+    noAutoCommitPushDeployAcknowledged: boolean;
+  },
+) => Promise<ScopedCodexRunnerOutput>;
 
 export function ReviewPanel({
   task,
@@ -32,8 +43,10 @@ export function ReviewPanel({
   events = [],
   codexPrompt,
   runnerSafetyStatus,
+  approvedProjectPath,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
+  runScopedCodexTaskAction,
 }: {
   task: Task;
   project: Project;
@@ -43,8 +56,10 @@ export function ReviewPanel({
   events?: TaskEvent[];
   codexPrompt: string;
   runnerSafetyStatus: RunnerSafetyStatus;
+  approvedProjectPath: string;
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
+  runScopedCodexTaskAction: RunScopedCodexTaskAction;
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
@@ -104,6 +119,7 @@ export function ReviewPanel({
       </section>
       <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
       <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
+      <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} runScopedCodexTaskAction={runScopedCodexTaskAction} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (
