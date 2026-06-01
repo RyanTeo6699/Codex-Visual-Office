@@ -12,11 +12,63 @@ import type {
 } from "./scoped-runner-types";
 
 const execFileAsync = promisify(execFile);
-const maxPreviewChars = 8000;
+export const maxRunnerPreviewChars = 8000;
 const runnerTimeoutMs = 180000;
 
-function preview(value: string): string {
-  return value.length > maxPreviewChars ? `${value.slice(0, maxPreviewChars)}\n[truncated]` : value;
+export function redactRunnerOutput(value: string): string {
+  return value
+    .replace(/\b(?:OPENAI_API_KEY|API_KEY|TOKEN|SECRET|PASSWORD)\b\s*[:=]\s*\S+/gi, "[redacted-value]")
+    .replace(/\b(?:OPENAI_API_KEY|API_KEY|TOKEN|SECRET|PASSWORD)\b/gi, "[redacted-marker]")
+    .replace(/~\/\.codex\/auth\.json/gi, "[redacted-path]")
+    .replace(/~\/\.codex/gi, "[redacted-path]")
+    .replace(/\bauth\.json\b/gi, "[redacted-file]")
+    .replace(/sk-[a-z0-9_-]+/gi, "[redacted-value]");
+}
+
+export function createBoundedRunnerPreview(value: string, limit = maxRunnerPreviewChars): { preview: string; truncated: boolean } {
+  const redacted = redactRunnerOutput(value);
+  const truncated = redacted.length > limit;
+  return {
+    preview: truncated ? redacted.slice(0, limit) : redacted,
+    truncated,
+  };
+}
+
+function durationMs(startedAt: string, endedAt: string): number {
+  return Math.max(0, new Date(endedAt).getTime() - new Date(startedAt).getTime());
+}
+
+function runnerSafetyPayload(input: {
+  taskId: string;
+  projectId: string;
+  status?: ScopedCodexRunnerOutput["status"];
+  startedAt?: string;
+  endedAt?: string;
+  exitCode?: number;
+  stdoutPreview?: string;
+  stderrPreview?: string;
+  stdoutTruncated?: boolean;
+  stderrTruncated?: boolean;
+  cliTaskExecutionAttempted: boolean;
+}): Record<string, unknown> {
+  return {
+    executionMode: "scoped_codex_runner",
+    taskId: input.taskId,
+    projectId: input.projectId,
+    status: input.status,
+    startedAt: input.startedAt,
+    endedAt: input.endedAt,
+    durationMs: input.startedAt && input.endedAt ? durationMs(input.startedAt, input.endedAt) : undefined,
+    exitCode: input.exitCode,
+    stdoutPreview: input.stdoutPreview,
+    stderrPreview: input.stderrPreview,
+    stdoutTruncated: input.stdoutTruncated,
+    stderrTruncated: input.stderrTruncated,
+    cliTaskExecutionAttempted: input.cliTaskExecutionAttempted,
+    autoPushAttempted: false,
+    autoDeployAttempted: false,
+    arbitraryShellAllowed: false,
+  };
 }
 
 function containsForbiddenSecretMarker(prompt: string): boolean {
@@ -131,23 +183,33 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     type: validation.allowed ? "info" : "warning",
     message: "Scoped Codex runner requested",
     payload: {
-      executionMode: "scoped_codex_runner",
+      ...runnerSafetyPayload({
+        taskId: input.taskId,
+        projectId: input.projectId,
+        status: validation.allowed ? "running" : "blocked",
+        startedAt,
+        cliTaskExecutionAttempted: false,
+      }),
       lifecycleEvent: "runner_requested",
       canExecute: validation.allowed,
-      cliTaskExecutionAttempted: false,
-      autoPushAttempted: false,
-      autoDeployAttempted: false,
       reasons: validation.reasons,
     },
   }));
 
   if (!validation.allowed || !codexStatus.path) {
+    const endedAt = new Date().toISOString();
+    const stderr = createBoundedRunnerPreview(validation.reasons.join("\n"));
     return {
       status: "blocked",
       startedAt,
-      endedAt: new Date().toISOString(),
+      endedAt,
+      durationMs: durationMs(startedAt, endedAt),
+      stdoutPreview: "",
+      stderrPreview: stderr.preview,
+      stdoutTruncated: false,
+      stderrTruncated: stderr.truncated,
       outputPreview: "",
-      errorPreview: validation.reasons.join("\n"),
+      errorPreview: stderr.preview,
       taskExecutionAttempted: false,
       autoPushAttempted: false,
       autoDeployAttempted: false,
@@ -162,13 +224,15 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     type: "info",
     message: "Scoped Codex runner started",
     payload: {
-      executionMode: "scoped_codex_runner",
+      ...runnerSafetyPayload({
+        taskId: input.taskId,
+        projectId: input.projectId,
+        status: "running",
+        startedAt,
+        cliTaskExecutionAttempted: true,
+      }),
       lifecycleEvent: "runner_started",
-      startedAt,
-      cliTaskExecutionAttempted: true,
       commandShape: ["codex", "exec", "--cd", "[approved_project_path]", "--sandbox", "read-only", "--json", "[generated_prompt]"],
-      autoPushAttempted: false,
-      autoDeployAttempted: false,
     },
   }));
 
@@ -187,8 +251,10 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       maxBuffer: 1024 * 1024,
     });
 
-    const outputPreview = preview(stdout);
-    const errorPreview = preview(stderr);
+    const stdoutCapture = createBoundedRunnerPreview(stdout);
+    const stderrCapture = createBoundedRunnerPreview(stderr);
+    const endedAt = new Date().toISOString();
+    const runDurationMs = durationMs(startedAt, endedAt);
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-output-${input.taskId}`,
@@ -197,15 +263,26 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       type: "info",
       message: "Scoped Codex runner output preview received",
       payload: {
-        outputPreview,
-        errorPreview,
-        maxPreviewChars,
+        ...runnerSafetyPayload({
+          taskId: input.taskId,
+          projectId: input.projectId,
+          status: "completed",
+          startedAt,
+          endedAt,
+          exitCode: 0,
+          stdoutPreview: stdoutCapture.preview,
+          stderrPreview: stderrCapture.preview,
+          stdoutTruncated: stdoutCapture.truncated,
+          stderrTruncated: stderrCapture.truncated,
+          cliTaskExecutionAttempted: true,
+        }),
+        outputPreview: stdoutCapture.preview,
+        errorPreview: stderrCapture.preview,
+        maxPreviewChars: maxRunnerPreviewChars,
         lifecycleEvent: "runner_output_received",
-        cliTaskExecutionAttempted: true,
       },
     }));
 
-    const endedAt = new Date().toISOString();
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-completed-${input.taskId}`,
       taskId: input.taskId,
@@ -213,13 +290,20 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       type: "success",
       message: "Scoped Codex runner completed",
       payload: {
+        ...runnerSafetyPayload({
+          taskId: input.taskId,
+          projectId: input.projectId,
+          status: "completed",
+          startedAt,
+          endedAt,
+          exitCode: 0,
+          stdoutPreview: stdoutCapture.preview,
+          stderrPreview: stderrCapture.preview,
+          stdoutTruncated: stdoutCapture.truncated,
+          stderrTruncated: stderrCapture.truncated,
+          cliTaskExecutionAttempted: true,
+        }),
         lifecycleEvent: "runner_completed",
-        startedAt,
-        endedAt,
-        exitCode: 0,
-        cliTaskExecutionAttempted: true,
-        autoPushAttempted: false,
-        autoDeployAttempted: false,
       },
     }));
 
@@ -228,8 +312,13 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       exitCode: 0,
       startedAt,
       endedAt,
-      outputPreview,
-      errorPreview,
+      durationMs: runDurationMs,
+      stdoutPreview: stdoutCapture.preview,
+      stderrPreview: stderrCapture.preview,
+      stdoutTruncated: stdoutCapture.truncated,
+      stderrTruncated: stderrCapture.truncated,
+      outputPreview: stdoutCapture.preview,
+      errorPreview: stderrCapture.preview,
       taskExecutionAttempted: true,
       autoPushAttempted: false,
       autoDeployAttempted: false,
@@ -237,9 +326,10 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     };
   } catch (error) {
     const failure = error as { code?: number; stdout?: string; stderr?: string; message?: string };
-    const outputPreview = preview(failure.stdout ?? "");
-    const errorPreview = preview(failure.stderr ?? failure.message ?? "Scoped Codex runner failed.");
+    const stdoutCapture = createBoundedRunnerPreview(failure.stdout ?? "");
+    const stderrCapture = createBoundedRunnerPreview(failure.stderr ?? failure.message ?? "Scoped Codex runner failed.");
     const endedAt = new Date().toISOString();
+    const runDurationMs = durationMs(startedAt, endedAt);
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-failed-${input.taskId}`,
@@ -248,15 +338,22 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       type: "danger",
       message: "Scoped Codex runner failed",
       payload: {
+        ...runnerSafetyPayload({
+          taskId: input.taskId,
+          projectId: input.projectId,
+          status: "failed",
+          startedAt,
+          endedAt,
+          exitCode: failure.code,
+          stdoutPreview: stdoutCapture.preview,
+          stderrPreview: stderrCapture.preview,
+          stdoutTruncated: stdoutCapture.truncated,
+          stderrTruncated: stderrCapture.truncated,
+          cliTaskExecutionAttempted: true,
+        }),
         lifecycleEvent: "runner_failed",
-        startedAt,
-        endedAt,
-        exitCode: failure.code,
-        outputPreview,
-        errorPreview,
-        cliTaskExecutionAttempted: true,
-        autoPushAttempted: false,
-        autoDeployAttempted: false,
+        outputPreview: stdoutCapture.preview,
+        errorPreview: stderrCapture.preview,
       },
     }));
 
@@ -265,8 +362,13 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       exitCode: failure.code,
       startedAt,
       endedAt,
-      outputPreview,
-      errorPreview,
+      durationMs: runDurationMs,
+      stdoutPreview: stdoutCapture.preview,
+      stderrPreview: stderrCapture.preview,
+      stdoutTruncated: stdoutCapture.truncated,
+      stderrTruncated: stderrCapture.truncated,
+      outputPreview: stdoutCapture.preview,
+      errorPreview: stderrCapture.preview,
       taskExecutionAttempted: true,
       autoPushAttempted: false,
       autoDeployAttempted: false,

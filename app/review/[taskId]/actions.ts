@@ -111,12 +111,19 @@ export async function runScopedCodexTaskAction(
     revalidatePath(`/review/${taskId}`);
     return result;
   } catch (error) {
+    const endedAt = new Date().toISOString();
+    const errorPreview = error instanceof Error ? error.message : "Scoped Codex runner could not start.";
     return {
       status: "blocked",
       startedAt,
-      endedAt: new Date().toISOString(),
+      endedAt,
+      durationMs: Math.max(0, new Date(endedAt).getTime() - new Date(startedAt).getTime()),
+      stdoutPreview: "",
+      stderrPreview: errorPreview,
+      stdoutTruncated: false,
+      stderrTruncated: false,
       outputPreview: "",
-      errorPreview: error instanceof Error ? error.message : "Scoped Codex runner could not start.",
+      errorPreview,
       taskExecutionAttempted: false,
       autoPushAttempted: false,
       autoDeployAttempted: false,

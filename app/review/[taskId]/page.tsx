@@ -20,6 +20,24 @@ function readNumberPayload(event: TaskEvent | undefined, key: string): number | 
   return typeof value === "number" ? value : undefined;
 }
 
+function readBooleanPayload(event: TaskEvent | undefined, key: string): boolean | undefined {
+  const value = event?.payload?.[key];
+  return typeof value === "boolean" ? value : undefined;
+}
+
+function readReasonsPayload(event: TaskEvent | undefined): string | undefined {
+  const value = event?.payload?.reasons;
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string").join("\n") : undefined;
+}
+
+function calculateDurationMs(startedAt: string, endedAt: string): number | undefined {
+  if (!startedAt || !endedAt) {
+    return undefined;
+  }
+
+  return Math.max(0, new Date(endedAt).getTime() - new Date(startedAt).getTime());
+}
+
 function buildRunnerResultFromEvents(events: TaskEvent[]): ScopedCodexRunnerOutput | undefined {
   const completed = events.find((event) => event.payload?.lifecycleEvent === "runner_completed");
   const failed = events.find((event) => event.payload?.lifecycleEvent === "runner_failed");
@@ -35,14 +53,21 @@ function buildRunnerResultFromEvents(events: TaskEvent[]): ScopedCodexRunnerOutp
   const status = completed ? "completed" : failed ? "failed" : started ? "running" : "blocked";
   const startedAt = readStringPayload(started, "startedAt") ?? readStringPayload(terminalEvent, "startedAt") ?? "";
   const endedAt = readStringPayload(terminalEvent, "endedAt") ?? "";
+  const stdoutPreview = readStringPayload(output, "stdoutPreview") ?? readStringPayload(terminalEvent, "stdoutPreview") ?? readStringPayload(output, "outputPreview") ?? readStringPayload(failed, "outputPreview") ?? "";
+  const stderrPreview = readStringPayload(output, "stderrPreview") ?? readStringPayload(terminalEvent, "stderrPreview") ?? readStringPayload(output, "errorPreview") ?? readStringPayload(failed, "errorPreview") ?? readReasonsPayload(requested) ?? "";
 
   return {
     status,
     exitCode: readNumberPayload(terminalEvent, "exitCode"),
     startedAt,
     endedAt,
-    outputPreview: readStringPayload(output, "outputPreview") ?? readStringPayload(failed, "outputPreview") ?? "",
-    errorPreview: readStringPayload(output, "errorPreview") ?? readStringPayload(failed, "errorPreview") ?? readStringPayload(requested, "reasons") ?? "",
+    durationMs: readNumberPayload(terminalEvent, "durationMs") ?? readNumberPayload(output, "durationMs") ?? calculateDurationMs(startedAt, endedAt),
+    stdoutPreview,
+    stderrPreview,
+    stdoutTruncated: readBooleanPayload(output, "stdoutTruncated") ?? readBooleanPayload(terminalEvent, "stdoutTruncated") ?? false,
+    stderrTruncated: readBooleanPayload(output, "stderrTruncated") ?? readBooleanPayload(terminalEvent, "stderrTruncated") ?? false,
+    outputPreview: stdoutPreview,
+    errorPreview: stderrPreview,
     taskExecutionAttempted: status !== "blocked",
     autoPushAttempted: false,
     autoDeployAttempted: false,

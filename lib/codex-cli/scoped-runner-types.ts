@@ -14,6 +14,11 @@ export interface ScopedCodexRunnerOutput {
   exitCode?: number;
   startedAt: string;
   endedAt: string;
+  durationMs?: number;
+  stdoutPreview: string;
+  stderrPreview: string;
+  stdoutTruncated: boolean;
+  stderrTruncated: boolean;
   outputPreview: string;
   errorPreview: string;
   taskExecutionAttempted: boolean;

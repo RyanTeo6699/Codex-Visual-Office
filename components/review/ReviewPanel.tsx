@@ -67,6 +67,7 @@ export function ReviewPanel({
   const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const activityEvents = prioritizeReviewActivity(events);
 
   function handleDecision(nextDecision: ReviewDecision) {
     setError(null);
@@ -128,7 +129,7 @@ export function ReviewPanel({
         <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
           <h2 className="text-sm font-bold tracking-tight text-slate-100">Review Activity</h2>
           <div className="mt-3 space-y-2">
-            {events.slice(0, 10).map((event) => (
+            {activityEvents.map((event) => (
               <div key={event.id} className="grid grid-cols-[42px_1fr] gap-3 rounded-[14px] border border-white/[0.04] bg-white/[0.025] px-3 py-2.5">
                 <span className="text-[11px] text-slate-500">{event.time}</span>
                 <p className="text-xs leading-relaxed text-slate-300">{event.message}</p>
@@ -149,6 +150,18 @@ export function ReviewPanel({
       ) : null}
     </div>
   );
+}
+
+const lifecycleOrder = ["runner_requested", "runner_started", "runner_output_received", "runner_completed", "runner_failed"] as const;
+
+function prioritizeReviewActivity(events: TaskEvent[]): TaskEvent[] {
+  const lifecycleEvents = lifecycleOrder
+    .map((lifecycleEvent) => events.find((event) => event.payload?.lifecycleEvent === lifecycleEvent))
+    .filter((event): event is TaskEvent => Boolean(event));
+  const lifecycleIds = new Set(lifecycleEvents.map((event) => event.id));
+  const remainingEvents = events.filter((event) => !lifecycleIds.has(event.id));
+
+  return [...lifecycleEvents, ...remainingEvents].slice(0, 12);
 }
 
 function ReviewList({ title, items, tone }: { title: string; items: string[]; tone: "cyan" | "red" }) {

@@ -43,6 +43,11 @@ export function ScopedCodexRunnerPanel({
       status: "running",
       startedAt,
       endedAt: "",
+      durationMs: undefined,
+      stdoutPreview: "",
+      stderrPreview: "",
+      stdoutTruncated: false,
+      stderrTruncated: false,
       outputPreview: "",
       errorPreview: "",
       taskExecutionAttempted: true,
@@ -112,28 +117,34 @@ export function ScopedCodexRunnerPanel({
 }
 
 function RunnerStatusBlock({ result }: { result: ScopedCodexRunnerOutput }) {
+  const duration = typeof result.durationMs === "number" ? `${result.durationMs} ms` : "Not available";
+
   return (
     <div className="mt-4 rounded-[14px] border border-white/8 bg-black/16 p-3 text-xs">
       <p className="text-sm font-bold text-slate-100">Runner Status</p>
       <div className="mt-3 grid gap-2 md:grid-cols-2">
         <RunnerRow label="Status" value={result.status} />
-        <RunnerRow label="Started" value={result.startedAt || "Not available"} />
-        <RunnerRow label="Ended" value={result.endedAt || "Not available"} />
+        <RunnerRow label="Started At" value={result.startedAt || "Not available"} />
+        <RunnerRow label="Ended At" value={result.endedAt || "Not available"} />
+        <RunnerRow label="Duration" value={duration} />
         <RunnerRow label="Exit code" value={typeof result.exitCode === "number" ? String(result.exitCode) : "Not available"} />
+        <RunnerRow label="Stdout truncated" value={result.stdoutTruncated ? "Yes" : "No" } />
+        <RunnerRow label="Stderr truncated" value={result.stderrTruncated ? "Yes" : "No" } />
       </div>
-      <p className="mt-3 font-semibold text-slate-400">No auto commit / push / deploy.</p>
-      {result.outputPreview ? (
-        <div className="mt-3">
-          <p className="mb-2 font-semibold text-slate-300">Output preview</p>
-          <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-white/[0.025] p-3 text-slate-300">{result.outputPreview}</pre>
-        </div>
-      ) : null}
-      {result.errorPreview ? (
-        <div className="mt-3">
-          <p className="mb-2 font-semibold text-rose-100">Error preview</p>
-          <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-rose-950/20 p-3 text-rose-100">{result.errorPreview}</pre>
-        </div>
-      ) : null}
+      <div className="mt-3 grid gap-2 text-[11px] font-semibold text-slate-400 sm:grid-cols-2">
+        <p>No arbitrary shell.</p>
+        <p>No auto commit.</p>
+        <p>No auto push.</p>
+        <p>No auto deploy.</p>
+      </div>
+      <div className="mt-3">
+        <p className="mb-2 font-semibold text-slate-300">Stdout Preview</p>
+        <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-white/[0.025] p-3 text-slate-300">{result.stdoutPreview || "No stdout captured."}</pre>
+      </div>
+      <div className="mt-3">
+        <p className="mb-2 font-semibold text-rose-100">Stderr Preview</p>
+        <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-rose-950/20 p-3 text-rose-100">{result.stderrPreview || "No stderr captured."}</pre>
+      </div>
     </div>
   );
 }
