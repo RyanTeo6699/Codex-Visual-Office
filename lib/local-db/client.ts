@@ -11,5 +11,6 @@ mkdirSync(LOCAL_DB_DIR, { recursive: true });
 const sqlite = new Database(LOCAL_DB_PATH);
 
 export const db = drizzle(sqlite, { schema });
+export const sqliteClient = sqlite;
 
 export type LocalDb = typeof db;

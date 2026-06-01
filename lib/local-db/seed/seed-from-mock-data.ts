@@ -6,18 +6,29 @@ import {
   taskEvents,
   tasks,
 } from "@/lib/mock-data";
+import { db } from "../client";
 import type {
   NewAgentSeatRow,
 } from "../repositories/agent-seats";
 import type { NewBuildCheckRow } from "../repositories/build-checks";
 import type { NewProjectRow } from "../repositories/projects";
 import type { NewReviewRecordRow } from "../repositories/review-records";
+import type { NewSettingRow } from "../repositories/settings";
 import type { NewTaskEventRow } from "../repositories/task-events";
 import type { NewTaskRow } from "../repositories/tasks";
+import {
+  agentSeats as agentSeatsTable,
+  buildChecks as buildChecksTable,
+  projects as projectsTable,
+  reviewRecords as reviewRecordsTable,
+  settings as settingsTable,
+  taskEvents as taskEventsTable,
+  tasks as tasksTable,
+} from "../schema";
 
 const seedTimestamp = "2026-05-31T00:00:00.000Z";
 
-// Phase 2 Step 1 seed skeleton only.
+// Phase 2 Step 2 seed helpers.
 // Do not run this automatically on app startup. UI integration starts in a later step.
 export function mapMockProjectsToSeedRows(): NewProjectRow[] {
   return projects.map((project) => ({
@@ -101,4 +112,124 @@ export function mapMockReviewRecordsToSeedRows(): NewReviewRecordRow[] {
     qualityGateIdsJson: JSON.stringify(reviewRecord.qualityGateIds),
     createdAt: seedTimestamp,
   }));
+}
+
+export function mapSettingsToSeedRows(): NewSettingRow[] {
+  return [
+    {
+      key: "schema_version",
+      valueJson: JSON.stringify("phase-2-step-2"),
+      updatedAt: seedTimestamp,
+    },
+    {
+      key: "seed_version",
+      valueJson: JSON.stringify("phase-1-mock-data-v1"),
+      updatedAt: seedTimestamp,
+    },
+  ];
+}
+
+export function seedFromMockData(): void {
+  db.transaction((tx) => {
+    for (const project of mapMockProjectsToSeedRows()) {
+      tx.insert(projectsTable).values(project).onConflictDoUpdate({
+        target: projectsTable.id,
+        set: {
+          name: project.name,
+          description: project.description,
+          phase: project.phase,
+          status: project.status,
+          localPath: project.localPath,
+          accent: project.accent,
+          updatedAt: project.updatedAt,
+        },
+      }).run();
+    }
+
+    for (const agentSeat of mapMockAgentSeatsToSeedRows()) {
+      tx.insert(agentSeatsTable).values(agentSeat).onConflictDoUpdate({
+        target: agentSeatsTable.id,
+        set: {
+          name: agentSeat.name,
+          agentType: agentSeat.agentType,
+          status: agentSeat.status,
+          currentTaskId: agentSeat.currentTaskId,
+          currentProjectId: agentSeat.currentProjectId,
+          focus: agentSeat.focus,
+          updatedAt: agentSeat.updatedAt,
+        },
+      }).run();
+    }
+
+    for (const task of mapMockTasksToSeedRows()) {
+      tx.insert(tasksTable).values(task).onConflictDoUpdate({
+        target: tasksTable.id,
+        set: {
+          projectId: task.projectId,
+          title: task.title,
+          summary: task.summary,
+          status: task.status,
+          priority: task.priority,
+          assignedSeatId: task.assignedSeatId,
+          acceptanceCriteriaJson: task.acceptanceCriteriaJson,
+          forbiddenScopeJson: task.forbiddenScopeJson,
+          changedFilesJson: task.changedFilesJson,
+          updatedAt: task.updatedAt,
+        },
+      }).run();
+    }
+
+    for (const taskEvent of mapMockTaskEventsToSeedRows()) {
+      tx.insert(taskEventsTable).values(taskEvent).onConflictDoUpdate({
+        target: taskEventsTable.id,
+        set: {
+          taskId: taskEvent.taskId,
+          projectId: taskEvent.projectId,
+          seatId: taskEvent.seatId,
+          type: taskEvent.type,
+          message: taskEvent.message,
+          payloadJson: taskEvent.payloadJson,
+          createdAt: taskEvent.createdAt,
+        },
+      }).run();
+    }
+
+    for (const buildCheck of mapMockBuildChecksToSeedRows()) {
+      tx.insert(buildChecksTable).values(buildCheck).onConflictDoUpdate({
+        target: buildChecksTable.id,
+        set: {
+          projectId: buildCheck.projectId,
+          taskId: buildCheck.taskId,
+          name: buildCheck.name,
+          status: buildCheck.status,
+          message: buildCheck.message,
+          updatedAt: buildCheck.updatedAt,
+        },
+      }).run();
+    }
+
+    for (const reviewRecord of mapMockReviewRecordsToSeedRows()) {
+      tx.insert(reviewRecordsTable).values(reviewRecord).onConflictDoUpdate({
+        target: reviewRecordsTable.id,
+        set: {
+          taskId: reviewRecord.taskId,
+          decision: reviewRecord.decision,
+          notes: reviewRecord.notes,
+          diffSummaryJson: reviewRecord.diffSummaryJson,
+          riskNotesJson: reviewRecord.riskNotesJson,
+          qualityGateIdsJson: reviewRecord.qualityGateIdsJson,
+        },
+      }).run();
+    }
+
+    for (const setting of mapSettingsToSeedRows()) {
+      tx.insert(settingsTable).values(setting).onConflictDoUpdate({
+        target: settingsTable.key,
+        set: {
+          valueJson: setting.valueJson,
+          updatedAt: setting.updatedAt,
+        },
+      }).run();
+    }
+  });
 }

@@ -6,6 +6,10 @@ export type SettingRow = typeof settings.$inferSelect;
 export type NewSettingRow = typeof settings.$inferInsert;
 
 // Phase 2 Step 1 repository skeleton. UI integration starts in a later step.
+export async function listSettings(): Promise<SettingRow[]> {
+  return db.select().from(settings).all();
+}
+
 export async function getSetting(key: string): Promise<SettingRow | undefined> {
   return db.select().from(settings).where(eq(settings.key, key)).get();
 }

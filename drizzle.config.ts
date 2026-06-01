@@ -5,6 +5,6 @@ export default {
   out: "./lib/local-db/migrations",
   dialect: "sqlite",
   dbCredentials: {
-    url: "./.local/codex-visual-office.db",
+    url: "./.local/codex-visual-office.sqlite",
   },
 } satisfies Config;

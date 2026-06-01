@@ -12,6 +12,16 @@ The current UI still reads from `lib/mock-data.ts`. Do not import `lib/local-db/
 - `repositories/*` define initial local database access boundaries.
 - `seed/seed-from-mock-data.ts` maps Phase 1 mock data into seed rows.
 
+## Local Path
+
+The local SQLite database is created at:
+
+```txt
+.local/codex-visual-office.sqlite
+```
+
+The `.local` directory and SQLite files are intentionally ignored by git.
+
 ## Boundaries
 
 - Local SQLite only.

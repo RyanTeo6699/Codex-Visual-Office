@@ -6,6 +6,10 @@ export type ReviewRecordRow = typeof reviewRecords.$inferSelect;
 export type NewReviewRecordRow = typeof reviewRecords.$inferInsert;
 
 // Phase 2 Step 1 repository skeleton. UI integration starts in a later step.
+export async function listReviewRecords(): Promise<ReviewRecordRow[]> {
+  return db.select().from(reviewRecords).all();
+}
+
 export async function getReviewRecordByTaskId(taskId: string): Promise<ReviewRecordRow | undefined> {
   return db.select().from(reviewRecords).where(eq(reviewRecords.taskId, taskId)).get();
 }
