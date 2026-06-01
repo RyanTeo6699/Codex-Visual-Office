@@ -1,0 +1,84 @@
+"use client";
+
+import { useState } from "react";
+import clsx from "clsx";
+import { Check, RotateCcw, X } from "lucide-react";
+import { MockDiffSummary } from "./MockDiffSummary";
+import { QualityGatePanel } from "./QualityGatePanel";
+import { reviewDecisionLabel, statusColor } from "@/lib/status";
+import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task } from "@/lib/types";
+
+export function ReviewPanel({
+  task,
+  project,
+  agent,
+  review,
+  checks,
+}: {
+  task: Task;
+  project: Project;
+  agent?: AgentSeat;
+  review?: ReviewRecord;
+  checks: BuildCheck[];
+}) {
+  const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
+
+  return (
+    <div className="space-y-5">
+      <section className="rounded-[22px] border border-white/8 bg-[#111a25]/78 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Review Desk / {project.name} / {agent?.name ?? "Unassigned"}</p>
+            <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-white">{task.title}</h1>
+          </div>
+          <span className={clsx("rounded-md border px-3 py-1.5 text-xs font-semibold", statusColor[decision])}>
+            {reviewDecisionLabel[decision]}
+          </span>
+        </div>
+        <div className="mt-7 grid gap-4 lg:grid-cols-2">
+          <ReviewList title="Acceptance Criteria" items={task.acceptanceCriteria} tone="cyan" />
+          <ReviewList title="Forbidden Scope" items={task.forbiddenScope} tone="red" />
+        </div>
+        <div className="mt-7 flex flex-wrap gap-3 border-t border-white/8 pt-5">
+          <button onClick={() => setDecision("approved")} className="inline-flex items-center gap-2 rounded-[14px] border border-emerald-200/24 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/16">
+            <Check className="h-4 w-4" />
+            Approve
+          </button>
+          <button onClick={() => setDecision("rejected")} className="inline-flex items-center gap-2 rounded-[14px] border border-rose-200/20 bg-rose-200/8 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-200/14">
+            <X className="h-4 w-4" />
+            Reject
+          </button>
+          <button onClick={() => setDecision("revision_requested")} className="inline-flex items-center gap-2 rounded-[14px] border border-amber-200/24 bg-amber-200/10 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-200/16">
+            <RotateCcw className="h-4 w-4" />
+            Ask Revision
+          </button>
+        </div>
+      </section>
+      <MockDiffSummary task={task} review={review} />
+      <QualityGatePanel checks={checks} />
+      {review?.riskNotes?.length ? (
+        <section className="rounded-[18px] border border-amber-100/12 bg-amber-950/10 p-4">
+          <h2 className="text-sm font-bold tracking-tight text-amber-100">Review Notes</h2>
+          <div className="mt-3 grid gap-2 md:grid-cols-2">
+            {review.riskNotes.map((note) => (
+              <p key={note} className="rounded-[14px] bg-white/[0.035] p-3 text-sm text-slate-300">{note}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
+function ReviewList({ title, items, tone }: { title: string; items: string[]; tone: "cyan" | "red" }) {
+  return (
+    <div className={clsx("rounded-[18px] border p-4", tone === "cyan" ? "border-sky-200/12 bg-sky-200/[0.035]" : "border-rose-200/14 bg-rose-200/[0.035]")}>
+      <h2 className={clsx("text-xs font-bold", tone === "cyan" ? "text-sky-100" : "text-rose-100")}>{title}</h2>
+      <ul className="mt-3 space-y-2">
+        {items.map((item) => (
+          <li key={item} className="rounded-[12px] bg-black/12 px-3 py-2 text-sm leading-relaxed text-slate-300">{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
