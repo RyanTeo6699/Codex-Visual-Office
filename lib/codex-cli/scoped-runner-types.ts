@@ -10,7 +10,7 @@ export interface ScopedCodexRunnerInput {
 }
 
 export interface ScopedCodexRunnerOutput {
-  status: "completed" | "failed" | "blocked";
+  status: "completed" | "failed" | "blocked" | "running";
   exitCode?: number;
   startedAt: string;
   endedAt: string;

@@ -104,6 +104,7 @@ export function mapBuildCheckRow(row: BuildCheckRow): BuildCheck {
 }
 
 export function mapTaskEventRow(row: TaskEventRow): TaskEvent {
+  const payload = parsePayload(row.payloadJson);
   return {
     id: row.id,
     projectId: row.projectId,
@@ -112,6 +113,7 @@ export function mapTaskEventRow(row: TaskEventRow): TaskEvent {
     time: formatEventTime(row),
     tone: row.type,
     message: row.message,
+    payload,
   };
 }
 

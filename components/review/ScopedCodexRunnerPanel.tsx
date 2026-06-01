@@ -17,17 +17,19 @@ type RunScopedCodexTaskAction = (
 export function ScopedCodexRunnerPanel({
   taskId,
   approvedProjectPath,
+  initialResult,
   runScopedCodexTaskAction,
 }: {
   taskId: string;
   approvedProjectPath: string;
+  initialResult?: ScopedCodexRunnerOutput;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
 }) {
   const [projectPathApproved, setProjectPathApproved] = useState(false);
   const [promptReviewed, setPromptReviewed] = useState(false);
   const [forbiddenScopeAcknowledged, setForbiddenScopeAcknowledged] = useState(false);
   const [noAutoCommitPushDeployAcknowledged, setNoAutoCommitPushDeployAcknowledged] = useState(false);
-  const [result, setResult] = useState<ScopedCodexRunnerOutput | null>(null);
+  const [result, setResult] = useState<ScopedCodexRunnerOutput | null>(initialResult ?? null);
   const [isPending, startTransition] = useTransition();
 
   const canRun = useMemo(
@@ -36,6 +38,19 @@ export function ScopedCodexRunnerPanel({
   );
 
   function runScopedTask() {
+    const startedAt = new Date().toISOString();
+    setResult({
+      status: "running",
+      startedAt,
+      endedAt: "",
+      outputPreview: "",
+      errorPreview: "",
+      taskExecutionAttempted: true,
+      autoPushAttempted: false,
+      autoDeployAttempted: false,
+      eventIds: [],
+    });
+
     startTransition(async () => {
       const nextResult = await runScopedCodexTaskAction(taskId, {
         projectPathApproved,
@@ -91,15 +106,35 @@ export function ScopedCodexRunnerPanel({
         Run Scoped Codex Task
       </button>
 
-      {result ? (
-        <div className="mt-4 rounded-[14px] border border-white/8 bg-black/16 p-3 text-xs">
-          <p className="font-semibold text-slate-200">Runner status: {result.status}</p>
-          <p className="mt-1 text-slate-500">Task execution attempted: {String(result.taskExecutionAttempted)}</p>
-          {result.outputPreview ? <pre className="mt-3 max-h-44 overflow-auto whitespace-pre-wrap text-slate-300">{result.outputPreview}</pre> : null}
-          {result.errorPreview ? <pre className="mt-3 max-h-44 overflow-auto whitespace-pre-wrap text-rose-100">{result.errorPreview}</pre> : null}
+      {result ? <RunnerStatusBlock result={result} /> : null}
+    </section>
+  );
+}
+
+function RunnerStatusBlock({ result }: { result: ScopedCodexRunnerOutput }) {
+  return (
+    <div className="mt-4 rounded-[14px] border border-white/8 bg-black/16 p-3 text-xs">
+      <p className="text-sm font-bold text-slate-100">Runner Status</p>
+      <div className="mt-3 grid gap-2 md:grid-cols-2">
+        <RunnerRow label="Status" value={result.status} />
+        <RunnerRow label="Started" value={result.startedAt || "Not available"} />
+        <RunnerRow label="Ended" value={result.endedAt || "Not available"} />
+        <RunnerRow label="Exit code" value={typeof result.exitCode === "number" ? String(result.exitCode) : "Not available"} />
+      </div>
+      <p className="mt-3 font-semibold text-slate-400">No auto commit / push / deploy.</p>
+      {result.outputPreview ? (
+        <div className="mt-3">
+          <p className="mb-2 font-semibold text-slate-300">Output preview</p>
+          <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-white/[0.025] p-3 text-slate-300">{result.outputPreview}</pre>
         </div>
       ) : null}
-    </section>
+      {result.errorPreview ? (
+        <div className="mt-3">
+          <p className="mb-2 font-semibold text-rose-100">Error preview</p>
+          <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-rose-950/20 p-3 text-rose-100">{result.errorPreview}</pre>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

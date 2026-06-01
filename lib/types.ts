@@ -64,6 +64,7 @@ export interface TaskEvent {
   time: string;
   tone: EventTone;
   message: string;
+  payload?: Record<string, unknown>;
 }
 
 export interface ReviewRecord {

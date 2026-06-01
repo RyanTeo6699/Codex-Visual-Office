@@ -44,6 +44,7 @@ export function ReviewPanel({
   codexPrompt,
   runnerSafetyStatus,
   approvedProjectPath,
+  initialRunnerResult,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
   runScopedCodexTaskAction,
@@ -57,6 +58,7 @@ export function ReviewPanel({
   codexPrompt: string;
   runnerSafetyStatus: RunnerSafetyStatus;
   approvedProjectPath: string;
+  initialRunnerResult?: ScopedCodexRunnerOutput;
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
@@ -119,14 +121,14 @@ export function ReviewPanel({
       </section>
       <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
       <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
-      <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} runScopedCodexTaskAction={runScopedCodexTaskAction} />
+      <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} initialResult={initialRunnerResult} runScopedCodexTaskAction={runScopedCodexTaskAction} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (
         <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
           <h2 className="text-sm font-bold tracking-tight text-slate-100">Review Activity</h2>
           <div className="mt-3 space-y-2">
-            {events.slice(0, 4).map((event) => (
+            {events.slice(0, 10).map((event) => (
               <div key={event.id} className="grid grid-cols-[42px_1fr] gap-3 rounded-[14px] border border-white/[0.04] bg-white/[0.025] px-3 py-2.5">
                 <span className="text-[11px] text-slate-500">{event.time}</span>
                 <p className="text-xs leading-relaxed text-slate-300">{event.message}</p>

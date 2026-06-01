@@ -132,6 +132,7 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     message: "Scoped Codex runner requested",
     payload: {
       executionMode: "scoped_codex_runner",
+      lifecycleEvent: "runner_requested",
       canExecute: validation.allowed,
       cliTaskExecutionAttempted: false,
       autoPushAttempted: false,
@@ -162,6 +163,8 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     message: "Scoped Codex runner started",
     payload: {
       executionMode: "scoped_codex_runner",
+      lifecycleEvent: "runner_started",
+      startedAt,
       cliTaskExecutionAttempted: true,
       commandShape: ["codex", "exec", "--cd", "[approved_project_path]", "--sandbox", "read-only", "--json", "[generated_prompt]"],
       autoPushAttempted: false,
@@ -197,10 +200,12 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
         outputPreview,
         errorPreview,
         maxPreviewChars,
+        lifecycleEvent: "runner_output_received",
         cliTaskExecutionAttempted: true,
       },
     }));
 
+    const endedAt = new Date().toISOString();
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-completed-${input.taskId}`,
       taskId: input.taskId,
@@ -208,6 +213,10 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       type: "success",
       message: "Scoped Codex runner completed",
       payload: {
+        lifecycleEvent: "runner_completed",
+        startedAt,
+        endedAt,
+        exitCode: 0,
         cliTaskExecutionAttempted: true,
         autoPushAttempted: false,
         autoDeployAttempted: false,
@@ -218,7 +227,7 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       status: "completed",
       exitCode: 0,
       startedAt,
-      endedAt: new Date().toISOString(),
+      endedAt,
       outputPreview,
       errorPreview,
       taskExecutionAttempted: true,
@@ -230,6 +239,7 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     const failure = error as { code?: number; stdout?: string; stderr?: string; message?: string };
     const outputPreview = preview(failure.stdout ?? "");
     const errorPreview = preview(failure.stderr ?? failure.message ?? "Scoped Codex runner failed.");
+    const endedAt = new Date().toISOString();
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-failed-${input.taskId}`,
@@ -238,6 +248,9 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       type: "danger",
       message: "Scoped Codex runner failed",
       payload: {
+        lifecycleEvent: "runner_failed",
+        startedAt,
+        endedAt,
         exitCode: failure.code,
         outputPreview,
         errorPreview,
@@ -251,7 +264,7 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       status: "failed",
       exitCode: failure.code,
       startedAt,
-      endedAt: new Date().toISOString(),
+      endedAt,
       outputPreview,
       errorPreview,
       taskExecutionAttempted: true,
