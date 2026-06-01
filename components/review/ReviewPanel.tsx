@@ -7,7 +7,7 @@ import { TaskStatusBadge } from "@/components/tasks/TaskStatusBadge";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
-import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskStatus } from "@/lib/types";
+import type { AgentSeat, BuildCheck, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
   ok: boolean;
@@ -24,6 +24,7 @@ export function ReviewPanel({
   agent,
   review,
   checks,
+  events = [],
   persistDecisionAction,
 }: {
   task: Task;
@@ -31,6 +32,7 @@ export function ReviewPanel({
   agent?: AgentSeat;
   review?: ReviewRecord;
   checks: BuildCheck[];
+  events?: TaskEvent[];
   persistDecisionAction: PersistDecisionAction;
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
@@ -91,6 +93,19 @@ export function ReviewPanel({
       </section>
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
+      {events.length ? (
+        <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
+          <h2 className="text-sm font-bold tracking-tight text-slate-100">Review Activity</h2>
+          <div className="mt-3 space-y-2">
+            {events.slice(0, 4).map((event) => (
+              <div key={event.id} className="grid grid-cols-[42px_1fr] gap-3 rounded-[14px] border border-white/[0.04] bg-white/[0.025] px-3 py-2.5">
+                <span className="text-[11px] text-slate-500">{event.time}</span>
+                <p className="text-xs leading-relaxed text-slate-300">{event.message}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
       {review?.riskNotes?.length ? (
         <section className="rounded-[18px] border border-amber-100/12 bg-amber-950/10 p-4">
           <h2 className="text-sm font-bold tracking-tight text-amber-100">Review Notes</h2>

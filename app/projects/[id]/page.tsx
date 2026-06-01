@@ -5,21 +5,34 @@ import { AgentSeat } from "@/components/office/AgentSeat";
 import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
+import { readSelectedProjectRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
 import { projectStatusLabel } from "@/lib/status";
+import type { AgentSeat as AgentSeatType, BuildCheck, Project, Task, TaskEvent } from "@/lib/types";
 
 export default async function ProjectRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = projects.find((item) => item.id === id);
+  let localRead: Awaited<ReturnType<typeof readSelectedProjectRoom>> | undefined;
+
+  try {
+    localRead = await readSelectedProjectRoom(id);
+  } catch (error) {
+    console.error("Project Room selected local read failed", error);
+  }
+
+  const mockProject = projects.find((item) => item.id === id);
+  const project = localRead?.project ?? mockProject;
 
   if (!project) {
     notFound();
   }
 
-  const projectTasks = tasks.filter((task) => task.projectId === project.id);
-  const projectAgents = agentSeats.filter((agent) => project.agentSeatIds.includes(agent.id));
-  const projectChecks = buildChecks.filter((check) => check.projectId === project.id);
-  const projectEvents = taskEvents.filter((event) => event.projectId === project.id);
+  const projectTasks: Task[] = localRead?.tasks ?? tasks.filter((task) => task.projectId === project.id);
+  const projectAgents: AgentSeatType[] = localRead?.agentSeats ?? agentSeats.filter((agent) => project.agentSeatIds.includes(agent.id));
+  const projectChecks: BuildCheck[] = localRead?.buildChecks ?? buildChecks.filter((check) => check.projectId === project.id);
+  const projectEvents: TaskEvent[] = localRead?.taskEvents ?? taskEvents.filter((event) => event.projectId === project.id);
+  const allProjects: Project[] = localRead ? [project, ...projects.filter((item) => item.id !== project.id)] : projects;
+  const allAgentSeats: AgentSeatType[] = localRead ? [...projectAgents, ...agentSeats.filter((agent) => !projectAgents.some((localAgent) => localAgent.id === agent.id))] : agentSeats;
   const activeTasks = projectTasks.filter((task) => task.status === "running" || task.status === "waiting_review" || task.status === "blocked");
 
   return (
@@ -46,7 +59,7 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
         <section className="grid gap-4 lg:grid-cols-3">
           {projectAgents.length ? (
             projectAgents.map((agent) => (
-              <AgentSeat key={agent.id} agent={agent} project={project} task={tasks.find((task) => task.id === agent.taskId)} />
+              <AgentSeat key={agent.id} agent={agent} project={project} task={projectTasks.find((task) => task.id === agent.taskId)} />
             ))
           ) : (
             <div className="rounded-[22px] border border-white/8 bg-[#121a24]/72 p-4 text-sm text-slate-400">No Codex seat assigned in this mock room.</div>
@@ -58,11 +71,11 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
               <h2 className="text-sm font-bold tracking-tight text-slate-100">Room Task Trays</h2>
               <p className="mt-1 text-xs text-slate-500">{project.localPathPlaceholder}</p>
             </div>
-            <TaskBoard tasks={projectTasks} projects={projects} agentSeats={agentSeats} />
+            <TaskBoard tasks={projectTasks} projects={allProjects} agentSeats={allAgentSeats} />
           </div>
           <div className="space-y-5">
-            <BuildWall checks={projectChecks} projects={projects} />
-            <EventTicker events={projectEvents} projects={projects} />
+            <BuildWall checks={projectChecks} projects={allProjects} />
+            <EventTicker events={projectEvents} projects={allProjects} />
           </div>
         </div>
       </div>
