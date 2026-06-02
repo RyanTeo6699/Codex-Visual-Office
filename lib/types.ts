@@ -14,6 +14,7 @@ export type AgentStatus =
 export type BuildStatus = "pending" | "running" | "passed" | "failed" | "skipped";
 export type EventTone = "info" | "success" | "warning" | "danger";
 export type ReviewDecision = "pending" | "approved" | "rejected" | "revision_requested";
+export type GitSnapshotKind = "before_runner" | "after_runner" | "manual";
 
 export interface Project {
   id: string;
@@ -65,6 +66,25 @@ export interface TaskEvent {
   tone: EventTone;
   message: string;
   payload?: Record<string, unknown>;
+}
+
+export interface GitSnapshot {
+  id: string;
+  taskId: string;
+  projectId: string;
+  snapshotKind: GitSnapshotKind;
+  branch: string;
+  headSha: string;
+  repoRoot: string;
+  porcelainStatus: string;
+  isDirty: boolean;
+  statusSummary: {
+    changedFileCount: number;
+    stagedCount: number;
+    unstagedCount: number;
+    untrackedCount: number;
+  };
+  createdAt: string;
 }
 
 export interface ReviewRecord {

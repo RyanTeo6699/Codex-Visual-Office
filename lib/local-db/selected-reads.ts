@@ -1,4 +1,5 @@
-import type { AgentSeat, BuildCheck, Project, ReviewRecord, Task, TaskEvent } from "@/lib/types";
+import type { AgentSeat, BuildCheck, GitSnapshot, Project, ReviewRecord, Task, TaskEvent } from "@/lib/types";
+import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
 import type { AgentSeatRow } from "./repositories/agent-seats";
@@ -25,6 +26,10 @@ export interface SelectedReviewRoomRead {
   task: Task;
   review?: ReviewRecord;
   taskEvents: TaskEvent[];
+  gitSnapshots: {
+    before?: GitSnapshot;
+    after?: GitSnapshot;
+  };
 }
 
 function parseStringArray(value: string): string[] {
@@ -165,9 +170,10 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     return undefined;
   }
 
-  const [reviewRow, taskEventRows] = await Promise.all([
+  const [reviewRow, taskEventRows, gitSnapshots] = await Promise.all([
     getReviewRecordByTaskId(taskId),
     listTaskEventsByProject(taskRow.projectId),
+    getLatestBeforeAfterSnapshotsForTask(taskId),
   ]);
 
   return {
@@ -177,5 +183,6 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
       .filter((event) => event.taskId === taskId)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
       .map(mapTaskEventRow),
+    gitSnapshots,
   };
 }

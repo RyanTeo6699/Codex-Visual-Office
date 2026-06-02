@@ -3,7 +3,10 @@ import { basename } from "node:path";
 import { promisify } from "node:util";
 import { detectCodexCliStatus } from "./detect";
 import { createScopedCodexRunnerPolicy } from "./runner-policy";
+import { readGitSnapshot } from "@/lib/git-observation/git-snapshot";
 import { addTaskEvent } from "@/lib/local-db/operations/events";
+import { createGitSnapshot } from "@/lib/local-db/operations/git-snapshots";
+import type { GitSnapshotKind } from "@/lib/types";
 import type {
   ScopedCodexRunnerInput,
   ScopedCodexRunnerOutput,
@@ -159,6 +162,75 @@ async function recordRunnerEvent(input: {
   return event.id;
 }
 
+function snapshotId(taskId: string, snapshotKind: GitSnapshotKind): string {
+  return `git-snapshot-${snapshotKind}-${taskId}-${Date.now()}`;
+}
+
+async function captureRunnerGitSnapshot(input: {
+  taskId: string;
+  projectId: string;
+  approvedProjectPath: string;
+  snapshotKind: GitSnapshotKind;
+}): Promise<string | undefined> {
+  try {
+    const snapshot = await readGitSnapshot({
+      approvedProjectPath: input.approvedProjectPath,
+      snapshotKind: input.snapshotKind,
+    });
+    const created = await createGitSnapshot({
+      id: snapshotId(input.taskId, input.snapshotKind),
+      taskId: input.taskId,
+      projectId: input.projectId,
+      snapshotKind: input.snapshotKind,
+      branch: snapshot.branch,
+      headSha: snapshot.headSha,
+      repoRoot: snapshot.repoRoot,
+      porcelainStatus: snapshot.porcelainStatus,
+      isDirty: snapshot.isDirty,
+      statusSummary: snapshot.statusSummary,
+    });
+
+    await recordRunnerEvent({
+      id: `git-snapshot-${input.snapshotKind}-captured-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "info",
+      message: `Git ${input.snapshotKind} snapshot captured`,
+      payload: {
+        lifecycleEvent: `git_snapshot_${input.snapshotKind}`,
+        snapshotId: created.id,
+        snapshotKind: input.snapshotKind,
+        branch: created.branch,
+        headSha: created.headSha,
+        isDirty: created.isDirty,
+        changedFileCount: created.statusSummary.changedFileCount,
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+
+    return created.id;
+  } catch (error) {
+    await recordRunnerEvent({
+      id: `git-snapshot-${input.snapshotKind}-unavailable-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "warning",
+      message: `Git ${input.snapshotKind} snapshot unavailable`,
+      payload: {
+        lifecycleEvent: `git_snapshot_${input.snapshotKind}_unavailable`,
+        snapshotKind: input.snapshotKind,
+        error: error instanceof Error ? error.message : "Git snapshot unavailable.",
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+    return undefined;
+  }
+}
+
 export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise<ScopedCodexRunnerOutput> {
   const startedAt = new Date().toISOString();
   const eventIds: string[] = [];
@@ -217,6 +289,13 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     };
   }
 
+  await captureRunnerGitSnapshot({
+    taskId: input.taskId,
+    projectId: input.projectId,
+    approvedProjectPath: input.approvedProjectPath,
+    snapshotKind: "before_runner",
+  });
+
   eventIds.push(await recordRunnerEvent({
     id: `codex-runner-started-${input.taskId}`,
     taskId: input.taskId,
@@ -255,6 +334,13 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     const stderrCapture = createBoundedRunnerPreview(stderr);
     const endedAt = new Date().toISOString();
     const runDurationMs = durationMs(startedAt, endedAt);
+
+    await captureRunnerGitSnapshot({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      snapshotKind: "after_runner",
+    });
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-output-${input.taskId}`,
@@ -330,6 +416,13 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     const stderrCapture = createBoundedRunnerPreview(failure.stderr ?? failure.message ?? "Scoped Codex runner failed.");
     const endedAt = new Date().toISOString();
     const runDurationMs = durationMs(startedAt, endedAt);
+
+    await captureRunnerGitSnapshot({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      snapshotKind: "after_runner",
+    });
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-failed-${input.taskId}`,

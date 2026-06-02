@@ -83,5 +83,19 @@ export function initializeLocalDb(): void {
       value_json TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS git_snapshots (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      snapshot_kind TEXT NOT NULL,
+      branch TEXT NOT NULL,
+      head_sha TEXT NOT NULL,
+      repo_root TEXT NOT NULL,
+      porcelain_status TEXT NOT NULL DEFAULT '',
+      is_dirty INTEGER NOT NULL,
+      status_summary_json TEXT NOT NULL DEFAULT '{}',
+      created_at TEXT NOT NULL
+    );
   `);
 }

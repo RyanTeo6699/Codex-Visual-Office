@@ -2,6 +2,7 @@ import { initializeLocalDb } from "@/lib/local-db/init";
 import { LOCAL_DB_PATH } from "@/lib/local-db/paths";
 import { listAgentSeats } from "@/lib/local-db/repositories/agent-seats";
 import { listBuildChecks } from "@/lib/local-db/repositories/build-checks";
+import { listGitSnapshots } from "@/lib/local-db/repositories/git-snapshots";
 import { listProjects } from "@/lib/local-db/repositories/projects";
 import { listReviewRecords } from "@/lib/local-db/repositories/review-records";
 import { listSettings } from "@/lib/local-db/repositories/settings";
@@ -15,6 +16,7 @@ type CountKey =
   | "tasks"
   | "task_events"
   | "build_checks"
+  | "git_snapshots"
   | "review_records"
   | "settings";
 
@@ -24,6 +26,7 @@ const minimumExpectedCounts: Record<CountKey, number> = {
   tasks: 8,
   task_events: 12,
   build_checks: 8,
+  git_snapshots: 0,
   review_records: 3,
   settings: 2,
 };
@@ -39,6 +42,7 @@ async function main(): Promise<void> {
     tasks: (await listTasks()).length,
     task_events: (await listTaskEvents()).length,
     build_checks: (await listBuildChecks()).length,
+    git_snapshots: (await listGitSnapshots()).length,
     review_records: (await listReviewRecords()).length,
     settings: (await listSettings()).length,
   };

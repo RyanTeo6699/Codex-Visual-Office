@@ -16,7 +16,8 @@
     "codex:verify:prompt-handoff": "tsx scripts/verify-codex-prompt-handoff.ts",
     "codex:verify:runner-safety": "tsx scripts/verify-codex-runner-safety.ts",
     "codex:verify:scoped-runner": "tsx scripts/verify-scoped-codex-runner.ts",
-    "codex:verify:runner-output": "tsx scripts/verify-codex-runner-output-events.ts"
+    "codex:verify:runner-output": "tsx scripts/verify-codex-runner-output-events.ts",
+    "git:verify:snapshots": "tsx scripts/verify-git-snapshots.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

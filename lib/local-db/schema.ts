@@ -1,9 +1,10 @@
 import { relations } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import type {
   AgentStatus,
   BuildStatus,
   EventTone,
+  GitSnapshotKind,
   ProjectStatus,
   ReviewDecision,
   TaskStatus,
@@ -27,6 +28,7 @@ export const taskPriorities = ["low", "medium", "high", "critical"] as const;
 export const eventTones = ["info", "success", "warning", "danger"] as const satisfies readonly EventTone[];
 export const buildStatuses = ["pending", "running", "passed", "failed", "skipped"] as const satisfies readonly BuildStatus[];
 export const reviewDecisions = ["pending", "approved", "rejected", "revision_requested"] as const satisfies readonly ReviewDecision[];
+export const gitSnapshotKinds = ["before_runner", "after_runner", "manual"] as const satisfies readonly GitSnapshotKind[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -107,6 +109,20 @@ export const settings = sqliteTable("settings", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const gitSnapshots = sqliteTable("git_snapshots", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  snapshotKind: text("snapshot_kind", { enum: gitSnapshotKinds }).notNull(),
+  branch: text("branch").notNull(),
+  headSha: text("head_sha").notNull(),
+  repoRoot: text("repo_root").notNull(),
+  porcelainStatus: text("porcelain_status").notNull().default(""),
+  isDirty: integer("is_dirty", { mode: "boolean" }).notNull(),
+  statusSummaryJson: text("status_summary_json").notNull().default("{}"),
+  createdAt: text("created_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
@@ -139,6 +155,18 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   events: many(taskEvents),
   buildChecks: many(buildChecks),
   reviewRecord: one(reviewRecords),
+  gitSnapshots: many(gitSnapshots),
+}));
+
+export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
+  project: one(projects, {
+    fields: [gitSnapshots.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [gitSnapshots.taskId],
+    references: [tasks.id],
+  }),
 }));
 
 export const taskEventsRelations = relations(taskEvents, ({ one }) => ({

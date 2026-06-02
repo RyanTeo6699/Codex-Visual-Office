@@ -134,6 +134,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           runnerSafetyStatus={runnerSafetyStatus}
           approvedProjectPath={process.cwd()}
           initialRunnerResult={runnerResult}
+          gitSnapshots={localRead?.gitSnapshots ?? {}}
           persistDecisionAction={persistReviewDecisionAction}
           recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
           runScopedCodexTaskAction={runScopedCodexTaskAction}
