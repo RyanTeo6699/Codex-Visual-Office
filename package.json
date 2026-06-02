@@ -18,7 +18,8 @@
     "codex:verify:scoped-runner": "tsx scripts/verify-scoped-codex-runner.ts",
     "codex:verify:runner-output": "tsx scripts/verify-codex-runner-output-events.ts",
     "git:verify:snapshots": "tsx scripts/verify-git-snapshots.ts",
-    "git:verify:changed-files": "tsx scripts/verify-changed-files.ts"
+    "git:verify:changed-files": "tsx scripts/verify-changed-files.ts",
+    "git:verify:diff-summary": "tsx scripts/verify-diff-summary.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

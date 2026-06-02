@@ -101,6 +101,30 @@ export interface FileChange {
   createdAt: string;
 }
 
+export interface DiffSummaryFile {
+  filePath: string;
+  additions?: number;
+  deletions?: number;
+  binary: boolean;
+  rawLine: string;
+}
+
+export interface DiffSummary {
+  id: string;
+  taskId: string;
+  projectId: string;
+  gitSnapshotId?: string;
+  filesChanged: number;
+  insertions: number;
+  deletions: number;
+  numstat: DiffSummaryFile[];
+  statSummary: string;
+  stdoutTruncated: boolean;
+  numstatTruncated: boolean;
+  source: "git_diff_stat_numstat";
+  createdAt: string;
+}
+
 export interface ReviewRecord {
   taskId: string;
   diffSummary: string[];

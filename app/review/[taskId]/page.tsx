@@ -136,6 +136,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           initialRunnerResult={runnerResult}
           gitSnapshots={localRead?.gitSnapshots ?? {}}
           fileChanges={localRead?.fileChanges ?? []}
+          diffSummary={localRead?.diffSummary}
           persistDecisionAction={persistReviewDecisionAction}
           recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
           runScopedCodexTaskAction={runScopedCodexTaskAction}

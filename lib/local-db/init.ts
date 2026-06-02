@@ -110,5 +110,21 @@ export function initializeLocalDb(): void {
       source TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS diff_summaries (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      git_snapshot_id TEXT REFERENCES git_snapshots(id),
+      files_changed INTEGER NOT NULL,
+      insertions INTEGER NOT NULL,
+      deletions INTEGER NOT NULL,
+      numstat_json TEXT NOT NULL DEFAULT '[]',
+      stat_summary TEXT NOT NULL DEFAULT '',
+      stdout_truncated INTEGER NOT NULL,
+      numstat_truncated INTEGER NOT NULL,
+      source TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
   `);
 }

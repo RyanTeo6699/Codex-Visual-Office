@@ -138,6 +138,22 @@ export const fileChanges = sqliteTable("file_changes", {
   createdAt: text("created_at").notNull(),
 });
 
+export const diffSummaries = sqliteTable("diff_summaries", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  gitSnapshotId: text("git_snapshot_id").references(() => gitSnapshots.id),
+  filesChanged: integer("files_changed").notNull(),
+  insertions: integer("insertions").notNull(),
+  deletions: integer("deletions").notNull(),
+  numstatJson: text("numstat_json").notNull().default("[]"),
+  statSummary: text("stat_summary").notNull().default(""),
+  stdoutTruncated: integer("stdout_truncated", { mode: "boolean" }).notNull(),
+  numstatTruncated: integer("numstat_truncated", { mode: "boolean" }).notNull(),
+  source: text("source").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
@@ -172,6 +188,7 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   reviewRecord: one(reviewRecords),
   gitSnapshots: many(gitSnapshots),
   fileChanges: many(fileChanges),
+  diffSummaries: many(diffSummaries),
 }));
 
 export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
@@ -196,6 +213,21 @@ export const fileChangesRelations = relations(fileChanges, ({ one }) => ({
   }),
   gitSnapshot: one(gitSnapshots, {
     fields: [fileChanges.gitSnapshotId],
+    references: [gitSnapshots.id],
+  }),
+}));
+
+export const diffSummariesRelations = relations(diffSummaries, ({ one }) => ({
+  project: one(projects, {
+    fields: [diffSummaries.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [diffSummaries.taskId],
+    references: [tasks.id],
+  }),
+  gitSnapshot: one(gitSnapshots, {
+    fields: [diffSummaries.gitSnapshotId],
     references: [gitSnapshots.id],
   }),
 }));

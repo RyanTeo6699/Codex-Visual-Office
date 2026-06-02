@@ -4,7 +4,9 @@ import { promisify } from "node:util";
 import { detectCodexCliStatus } from "./detect";
 import { createScopedCodexRunnerPolicy } from "./runner-policy";
 import { readChangedFiles } from "@/lib/git-observation/changed-files";
+import { readDiffSummary } from "@/lib/git-observation/diff-summary";
 import { readGitSnapshot } from "@/lib/git-observation/git-snapshot";
+import { replaceDiffSummaryForTask } from "@/lib/local-db/operations/diff-summaries";
 import { addTaskEvent } from "@/lib/local-db/operations/events";
 import { replaceFileChangesForTask } from "@/lib/local-db/operations/file-changes";
 import { createGitSnapshot } from "@/lib/local-db/operations/git-snapshots";
@@ -287,6 +289,71 @@ async function captureRunnerChangedFiles(input: {
   }
 }
 
+async function captureRunnerDiffSummary(input: {
+  taskId: string;
+  projectId: string;
+  approvedProjectPath: string;
+  gitSnapshotId?: string;
+}): Promise<void> {
+  try {
+    const summary = await readDiffSummary({
+      approvedProjectPath: input.approvedProjectPath,
+    });
+    const created = await replaceDiffSummaryForTask({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      gitSnapshotId: input.gitSnapshotId,
+      filesChanged: summary.filesChanged,
+      insertions: summary.insertions,
+      deletions: summary.deletions,
+      numstat: summary.numstat,
+      statSummary: summary.statSummary,
+      stdoutTruncated: summary.stdoutTruncated,
+      numstatTruncated: summary.numstatTruncated,
+    });
+
+    await recordRunnerEvent({
+      id: `diff-summary-captured-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "info",
+      message: "Diff summary captured",
+      payload: {
+        lifecycleEvent: "diff_summary_captured",
+        source: "git_diff_stat_numstat",
+        diffSummaryId: created.id,
+        filesChanged: created.filesChanged,
+        insertions: created.insertions,
+        deletions: created.deletions,
+        stdoutTruncated: created.stdoutTruncated,
+        numstatTruncated: created.numstatTruncated,
+        fullDiffStored: false,
+        patchStored: false,
+        fileContentsStored: false,
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  } catch (error) {
+    await recordRunnerEvent({
+      id: `diff-summary-unavailable-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "warning",
+      message: "Diff summary unavailable",
+      payload: {
+        lifecycleEvent: "diff_summary_unavailable",
+        source: "git_diff_stat_numstat",
+        error: error instanceof Error ? error.message : "Diff summary unavailable.",
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  }
+}
+
 export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise<ScopedCodexRunnerOutput> {
   const startedAt = new Date().toISOString();
   const eventIds: string[] = [];
@@ -403,6 +470,12 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       approvedProjectPath: input.approvedProjectPath,
       gitSnapshotId: afterSnapshotId,
     });
+    await captureRunnerDiffSummary({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      gitSnapshotId: afterSnapshotId,
+    });
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-output-${input.taskId}`,
@@ -486,6 +559,12 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       snapshotKind: "after_runner",
     });
     await captureRunnerChangedFiles({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      gitSnapshotId: afterSnapshotId,
+    });
+    await captureRunnerDiffSummary({
       taskId: input.taskId,
       projectId: input.projectId,
       approvedProjectPath: input.approvedProjectPath,

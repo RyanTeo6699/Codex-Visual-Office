@@ -8,6 +8,7 @@ import { CodexPromptHandoff } from "./CodexPromptHandoff";
 import { CodexRunnerSafetyPanel } from "./CodexRunnerSafetyPanel";
 import { ChangedFilesPanel } from "./ChangedFilesPanel";
 import { GitSnapshotPanel } from "./GitSnapshotPanel";
+import { DiffSummaryCard } from "./DiffSummaryCard";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { ScopedCodexRunnerPanel } from "./ScopedCodexRunnerPanel";
@@ -15,7 +16,7 @@ import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
-import type { AgentSeat, BuildCheck, FileChange, GitSnapshot, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, ReviewDecision, ReviewRecord, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
   ok: boolean;
@@ -49,6 +50,7 @@ export function ReviewPanel({
   initialRunnerResult,
   gitSnapshots,
   fileChanges,
+  diffSummary,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
   runScopedCodexTaskAction,
@@ -68,6 +70,7 @@ export function ReviewPanel({
     after?: GitSnapshot;
   };
   fileChanges: FileChange[];
+  diffSummary?: DiffSummary;
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
@@ -134,6 +137,7 @@ export function ReviewPanel({
       <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} initialResult={initialRunnerResult} runScopedCodexTaskAction={runScopedCodexTaskAction} />
       <GitSnapshotPanel before={gitSnapshots.before} after={gitSnapshots.after} />
       <ChangedFilesPanel fileChanges={fileChanges} />
+      <DiffSummaryCard diffSummary={diffSummary} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (
