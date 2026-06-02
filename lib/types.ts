@@ -15,6 +15,7 @@ export type BuildStatus = "pending" | "running" | "passed" | "failed" | "skipped
 export type EventTone = "info" | "success" | "warning" | "danger";
 export type ReviewDecision = "pending" | "approved" | "rejected" | "revision_requested";
 export type GitSnapshotKind = "before_runner" | "after_runner" | "manual";
+export type FileChangeStatus = "modified" | "added" | "deleted" | "renamed" | "copied" | "unmerged" | "unknown";
 
 export interface Project {
   id: string;
@@ -84,6 +85,19 @@ export interface GitSnapshot {
     unstagedCount: number;
     untrackedCount: number;
   };
+  createdAt: string;
+}
+
+export interface FileChange {
+  id: string;
+  taskId: string;
+  projectId: string;
+  gitSnapshotId?: string;
+  changeStatus: FileChangeStatus;
+  rawStatus: string;
+  filePath: string;
+  previousFilePath?: string;
+  source: "git_diff_name_status";
   createdAt: string;
 }
 

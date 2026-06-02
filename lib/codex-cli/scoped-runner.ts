@@ -3,8 +3,10 @@ import { basename } from "node:path";
 import { promisify } from "node:util";
 import { detectCodexCliStatus } from "./detect";
 import { createScopedCodexRunnerPolicy } from "./runner-policy";
+import { readChangedFiles } from "@/lib/git-observation/changed-files";
 import { readGitSnapshot } from "@/lib/git-observation/git-snapshot";
 import { addTaskEvent } from "@/lib/local-db/operations/events";
+import { replaceFileChangesForTask } from "@/lib/local-db/operations/file-changes";
 import { createGitSnapshot } from "@/lib/local-db/operations/git-snapshots";
 import type { GitSnapshotKind } from "@/lib/types";
 import type {
@@ -231,6 +233,60 @@ async function captureRunnerGitSnapshot(input: {
   }
 }
 
+async function captureRunnerChangedFiles(input: {
+  taskId: string;
+  projectId: string;
+  approvedProjectPath: string;
+  gitSnapshotId?: string;
+}): Promise<void> {
+  try {
+    const changes = await readChangedFiles({
+      approvedProjectPath: input.approvedProjectPath,
+    });
+    const created = await replaceFileChangesForTask({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      gitSnapshotId: input.gitSnapshotId,
+      changes,
+    });
+
+    await recordRunnerEvent({
+      id: `changed-files-captured-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "info",
+      message: "Changed files captured",
+      payload: {
+        lifecycleEvent: "changed_files_captured",
+        source: "git_diff_name_status",
+        changedFileCount: created.length,
+        fullDiffStored: false,
+        fileContentsStored: false,
+        additionsDeletionsStored: false,
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  } catch (error) {
+    await recordRunnerEvent({
+      id: `changed-files-unavailable-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "warning",
+      message: "Changed files unavailable",
+      payload: {
+        lifecycleEvent: "changed_files_unavailable",
+        source: "git_diff_name_status",
+        error: error instanceof Error ? error.message : "Changed files unavailable.",
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  }
+}
+
 export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise<ScopedCodexRunnerOutput> {
   const startedAt = new Date().toISOString();
   const eventIds: string[] = [];
@@ -335,11 +391,17 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     const endedAt = new Date().toISOString();
     const runDurationMs = durationMs(startedAt, endedAt);
 
-    await captureRunnerGitSnapshot({
+    const afterSnapshotId = await captureRunnerGitSnapshot({
       taskId: input.taskId,
       projectId: input.projectId,
       approvedProjectPath: input.approvedProjectPath,
       snapshotKind: "after_runner",
+    });
+    await captureRunnerChangedFiles({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      gitSnapshotId: afterSnapshotId,
     });
 
     eventIds.push(await recordRunnerEvent({
@@ -417,11 +479,17 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
     const endedAt = new Date().toISOString();
     const runDurationMs = durationMs(startedAt, endedAt);
 
-    await captureRunnerGitSnapshot({
+    const afterSnapshotId = await captureRunnerGitSnapshot({
       taskId: input.taskId,
       projectId: input.projectId,
       approvedProjectPath: input.approvedProjectPath,
       snapshotKind: "after_runner",
+    });
+    await captureRunnerChangedFiles({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      approvedProjectPath: input.approvedProjectPath,
+      gitSnapshotId: afterSnapshotId,
     });
 
     eventIds.push(await recordRunnerEvent({

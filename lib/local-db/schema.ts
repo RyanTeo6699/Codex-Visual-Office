@@ -4,6 +4,7 @@ import type {
   AgentStatus,
   BuildStatus,
   EventTone,
+  FileChangeStatus,
   GitSnapshotKind,
   ProjectStatus,
   ReviewDecision,
@@ -29,6 +30,7 @@ export const eventTones = ["info", "success", "warning", "danger"] as const sati
 export const buildStatuses = ["pending", "running", "passed", "failed", "skipped"] as const satisfies readonly BuildStatus[];
 export const reviewDecisions = ["pending", "approved", "rejected", "revision_requested"] as const satisfies readonly ReviewDecision[];
 export const gitSnapshotKinds = ["before_runner", "after_runner", "manual"] as const satisfies readonly GitSnapshotKind[];
+export const fileChangeStatuses = ["modified", "added", "deleted", "renamed", "copied", "unmerged", "unknown"] as const satisfies readonly FileChangeStatus[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -123,6 +125,19 @@ export const gitSnapshots = sqliteTable("git_snapshots", {
   createdAt: text("created_at").notNull(),
 });
 
+export const fileChanges = sqliteTable("file_changes", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  gitSnapshotId: text("git_snapshot_id").references(() => gitSnapshots.id),
+  changeStatus: text("change_status", { enum: fileChangeStatuses }).notNull(),
+  rawStatus: text("raw_status").notNull(),
+  filePath: text("file_path").notNull(),
+  previousFilePath: text("previous_file_path"),
+  source: text("source").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
@@ -156,6 +171,7 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   buildChecks: many(buildChecks),
   reviewRecord: one(reviewRecords),
   gitSnapshots: many(gitSnapshots),
+  fileChanges: many(fileChanges),
 }));
 
 export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
@@ -166,6 +182,21 @@ export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
   task: one(tasks, {
     fields: [gitSnapshots.taskId],
     references: [tasks.id],
+  }),
+}));
+
+export const fileChangesRelations = relations(fileChanges, ({ one }) => ({
+  project: one(projects, {
+    fields: [fileChanges.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [fileChanges.taskId],
+    references: [tasks.id],
+  }),
+  gitSnapshot: one(gitSnapshots, {
+    fields: [fileChanges.gitSnapshotId],
+    references: [gitSnapshots.id],
   }),
 }));
 

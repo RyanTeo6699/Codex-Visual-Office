@@ -1,4 +1,5 @@
-import type { AgentSeat, BuildCheck, GitSnapshot, Project, ReviewRecord, Task, TaskEvent } from "@/lib/types";
+import type { AgentSeat, BuildCheck, FileChange, GitSnapshot, Project, ReviewRecord, Task, TaskEvent } from "@/lib/types";
+import { readFileChangesForTask } from "./operations/file-changes";
 import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
@@ -30,6 +31,7 @@ export interface SelectedReviewRoomRead {
     before?: GitSnapshot;
     after?: GitSnapshot;
   };
+  fileChanges: FileChange[];
 }
 
 function parseStringArray(value: string): string[] {
@@ -170,10 +172,11 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     return undefined;
   }
 
-  const [reviewRow, taskEventRows, gitSnapshots] = await Promise.all([
+  const [reviewRow, taskEventRows, gitSnapshots, fileChanges] = await Promise.all([
     getReviewRecordByTaskId(taskId),
     listTaskEventsByProject(taskRow.projectId),
     getLatestBeforeAfterSnapshotsForTask(taskId),
+    readFileChangesForTask(taskId),
   ]);
 
   return {
@@ -184,5 +187,6 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
       .map(mapTaskEventRow),
     gitSnapshots,
+    fileChanges,
   };
 }

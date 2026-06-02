@@ -97,5 +97,18 @@ export function initializeLocalDb(): void {
       status_summary_json TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS file_changes (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      git_snapshot_id TEXT REFERENCES git_snapshots(id),
+      change_status TEXT NOT NULL,
+      raw_status TEXT NOT NULL,
+      file_path TEXT NOT NULL,
+      previous_file_path TEXT,
+      source TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
   `);
 }
