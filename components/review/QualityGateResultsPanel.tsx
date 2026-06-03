@@ -3,7 +3,9 @@
 import { useMemo, useState, useTransition } from "react";
 import clsx from "clsx";
 import { ListChecks, Play } from "lucide-react";
+import { summarizeQualityGates } from "@/lib/quality-gates/quality-gate-summary";
 import type { QualityGateConfig, QualityGateRun, QualityGateRunStatus } from "@/lib/types";
+import { QualityGateSummaryCard } from "./QualityGateSummaryCard";
 
 type RunEnabledQualityGatesAction = (taskId: string) => Promise<{
   ok: boolean;
@@ -45,6 +47,7 @@ export function QualityGateResultsPanel({
 
     return latest;
   }, [runs]);
+  const summary = useMemo(() => summarizeQualityGates(configs, runs), [configs, runs]);
 
   function handleRunEnabledGates() {
     setError(null);
@@ -81,6 +84,7 @@ export function QualityGateResultsPanel({
         Only allowlisted commands are executed. No auto fix, commit, push, or deploy.
       </p>
       {error ? <p className="mt-3 rounded-[12px] border border-rose-200/16 bg-rose-200/8 px-3 py-2 text-xs font-semibold text-rose-100">{error}</p> : null}
+      <QualityGateSummaryCard summary={summary} />
 
       {configs.length ? (
         <div className="mt-4 space-y-3">
@@ -113,8 +117,8 @@ export function QualityGateResultsPanel({
                   <p className="mt-3 text-[11px] font-semibold text-slate-500">Not run yet.</p>
                 )}
 
-                {run?.stdoutPreview ? <OutputPreview title={`stdout${run.stdoutTruncated ? " / truncated" : ""}`} value={run.stdoutPreview} /> : null}
-                {run?.stderrPreview ? <OutputPreview title={`stderr${run.stderrTruncated ? " / truncated" : ""}`} value={run.stderrPreview} tone="warning" /> : null}
+                {run?.stdoutPreview ? <OutputPreview title={`stdout${run.stdoutTruncated ? " / truncated" : ""}`} value={run.stdoutPreview} truncated={run.stdoutTruncated} /> : null}
+                {run?.stderrPreview ? <OutputPreview title={`stderr${run.stderrTruncated ? " / truncated" : ""}`} value={run.stderrPreview} tone="warning" truncated={run.stderrTruncated} /> : null}
               </div>
             );
           })}
@@ -130,11 +134,15 @@ export function QualityGateResultsPanel({
   );
 }
 
-function OutputPreview({ title, value, tone = "default" }: { title: string; value: string; tone?: "default" | "warning" }) {
+function OutputPreview({ title, value, tone = "default", truncated = false }: { title: string; value: string; tone?: "default" | "warning"; truncated?: boolean }) {
   return (
-    <div className={clsx("mt-3 rounded-[12px] border p-3", tone === "warning" ? "border-amber-200/12 bg-amber-950/10" : "border-slate-200/10 bg-black/14")}>
-      <p className={clsx("text-[10px] font-bold uppercase", tone === "warning" ? "text-amber-100" : "text-slate-400")}>{title}</p>
+    <details className={clsx("mt-3 rounded-[12px] border p-3", tone === "warning" ? "border-amber-200/12 bg-amber-950/10" : "border-slate-200/10 bg-black/14")}>
+      <summary className={clsx("cursor-pointer text-[10px] font-bold uppercase", tone === "warning" ? "text-amber-100" : "text-slate-400")}>
+        {title}
+        {truncated ? <span className="ml-2 rounded-md border border-amber-200/14 bg-amber-200/8 px-1.5 py-0.5 text-amber-100">bounded preview</span> : null}
+        <span className="ml-2 text-slate-500">redacted if sensitive markers appear</span>
+      </summary>
       <pre className="mt-2 max-h-44 overflow-auto whitespace-pre-wrap break-words text-[11px] leading-relaxed text-slate-300">{value}</pre>
-    </div>
+    </details>
   );
 }
