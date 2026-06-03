@@ -10,6 +10,7 @@ import { ChangedFilesPanel } from "./ChangedFilesPanel";
 import { GitSnapshotPanel } from "./GitSnapshotPanel";
 import { DiffSummaryCard } from "./DiffSummaryCard";
 import { MockDiffSummary } from "./MockDiffSummary";
+import { QualityGateConfigPreview } from "./QualityGateConfigPreview";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { ScopeGuardPanel } from "./ScopeGuardPanel";
 import { ScopedCodexRunnerPanel } from "./ScopedCodexRunnerPanel";
@@ -17,7 +18,7 @@ import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
-import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, ReviewDecision, ReviewRecord, ScopeCheck, Task, TaskEvent, TaskStatus } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, ReviewDecision, ReviewRecord, ScopeCheck, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
   ok: boolean;
@@ -53,6 +54,7 @@ export function ReviewPanel({
   fileChanges,
   diffSummary,
   scopeCheck,
+  qualityGateConfigs,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
   runScopedCodexTaskAction,
@@ -74,6 +76,7 @@ export function ReviewPanel({
   fileChanges: FileChange[];
   diffSummary?: DiffSummary;
   scopeCheck?: ScopeCheck;
+  qualityGateConfigs: QualityGateConfig[];
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
@@ -142,6 +145,7 @@ export function ReviewPanel({
       <ChangedFilesPanel fileChanges={fileChanges} />
       <DiffSummaryCard diffSummary={diffSummary} />
       <ScopeGuardPanel scopeCheck={scopeCheck} forbiddenScope={task.forbiddenScope} />
+      <QualityGateConfigPreview configs={qualityGateConfigs} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (

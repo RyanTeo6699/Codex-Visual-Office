@@ -7,6 +7,7 @@ import type {
   FileChangeStatus,
   GitSnapshotKind,
   ProjectStatus,
+  QualityGateCommandKey,
   ReviewDecision,
   ScopeCheckStatus,
   TaskStatus,
@@ -33,6 +34,7 @@ export const reviewDecisions = ["pending", "approved", "rejected", "revision_req
 export const gitSnapshotKinds = ["before_runner", "after_runner", "manual"] as const satisfies readonly GitSnapshotKind[];
 export const fileChangeStatuses = ["modified", "added", "deleted", "renamed", "copied", "unmerged", "unknown"] as const satisfies readonly FileChangeStatus[];
 export const scopeCheckStatuses = ["pass", "warning", "blocked"] as const satisfies readonly ScopeCheckStatus[];
+export const qualityGateCommandKeys = ["npm_typecheck", "npm_build", "npm_lint", "npm_test", "npm_run_test", "git_diff_check"] as const satisfies readonly QualityGateCommandKey[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -170,11 +172,25 @@ export const scopeChecks = sqliteTable("scope_checks", {
   createdAt: text("created_at").notNull(),
 });
 
+export const qualityGateConfigs = sqliteTable("quality_gate_configs", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  name: text("name").notNull(),
+  commandKey: text("command_key", { enum: qualityGateCommandKeys }).notNull(),
+  command: text("command").notNull(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull(),
+  allowlisted: integer("allowlisted", { mode: "boolean" }).notNull(),
+  description: text("description").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
   taskEvents: many(taskEvents),
   buildChecks: many(buildChecks),
+  qualityGateConfigs: many(qualityGateConfigs),
 }));
 
 export const agentSeatsRelations = relations(agentSeats, ({ one, many }) => ({
@@ -257,6 +273,13 @@ export const scopeChecksRelations = relations(scopeChecks, ({ one }) => ({
   task: one(tasks, {
     fields: [scopeChecks.taskId],
     references: [tasks.id],
+  }),
+}));
+
+export const qualityGateConfigsRelations = relations(qualityGateConfigs, ({ one }) => ({
+  project: one(projects, {
+    fields: [qualityGateConfigs.projectId],
+    references: [projects.id],
   }),
 }));
 

@@ -1,7 +1,8 @@
-import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
 import { readLatestDiffSummaryForTask } from "./operations/diff-summaries";
 import { readFileChangesForTask } from "./operations/file-changes";
 import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
+import { listQualityGateConfigsForProject, seedDefaultQualityGateConfigsForProject } from "./operations/quality-gate-configs";
 import { readLatestScopeCheckForTask } from "./operations/scope-checks";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
@@ -23,6 +24,7 @@ export interface SelectedProjectRoomRead {
   agentSeats: AgentSeat[];
   buildChecks: BuildCheck[];
   taskEvents: TaskEvent[];
+  qualityGateConfigs: QualityGateConfig[];
 }
 
 export interface SelectedReviewRoomRead {
@@ -36,6 +38,7 @@ export interface SelectedReviewRoomRead {
   fileChanges: FileChange[];
   diffSummary?: DiffSummary;
   scopeCheck?: ScopeCheck;
+  qualityGateConfigs: QualityGateConfig[];
 }
 
 function parseStringArray(value: string): string[] {
@@ -146,11 +149,14 @@ export async function readSelectedProjectRoom(projectId: string): Promise<Select
     return undefined;
   }
 
-  const [taskRows, allAgentSeatRows, buildCheckRows, taskEventRows] = await Promise.all([
+  await seedDefaultQualityGateConfigsForProject(projectId);
+
+  const [taskRows, allAgentSeatRows, buildCheckRows, taskEventRows, qualityGateConfigs] = await Promise.all([
     listTasksByProject(projectId),
     listAgentSeats(),
     listBuildChecksByProject(projectId),
     listTaskEventsByProject(projectId),
+    listQualityGateConfigsForProject(projectId),
   ]);
 
   const assignedAgentSeatRows = allAgentSeatRows.filter((agentSeat) => {
@@ -165,6 +171,7 @@ export async function readSelectedProjectRoom(projectId: string): Promise<Select
     agentSeats: assignedAgentSeatRows.map(mapAgentSeatRow),
     buildChecks: buildCheckRows.map(mapBuildCheckRow),
     taskEvents: [...taskEventRows].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    qualityGateConfigs,
   };
 }
 
@@ -176,13 +183,16 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     return undefined;
   }
 
-  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary, scopeCheck] = await Promise.all([
+  await seedDefaultQualityGateConfigsForProject(taskRow.projectId);
+
+  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary, scopeCheck, qualityGateConfigs] = await Promise.all([
     getReviewRecordByTaskId(taskId),
     listTaskEventsByProject(taskRow.projectId),
     getLatestBeforeAfterSnapshotsForTask(taskId),
     readFileChangesForTask(taskId),
     readLatestDiffSummaryForTask(taskId),
     readLatestScopeCheckForTask(taskId),
+    listQualityGateConfigsForProject(taskRow.projectId),
   ]);
 
   return {
@@ -196,5 +206,6 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     fileChanges,
     diffSummary,
     scopeCheck,
+    qualityGateConfigs,
   };
 }

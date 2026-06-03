@@ -4,6 +4,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AgentSeat } from "@/components/office/AgentSeat";
 import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
+import { QualityGateConfigStatus } from "@/components/office/QualityGateConfigStatus";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
 import { readSelectedProjectRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
@@ -74,6 +75,7 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
             <TaskBoard tasks={projectTasks} projects={allProjects} agentSeats={allAgentSeats} />
           </div>
           <div className="space-y-5">
+            <QualityGateConfigStatus configs={localRead?.qualityGateConfigs ?? []} />
             <BuildWall checks={projectChecks} projects={allProjects} />
             <EventTicker events={projectEvents} projects={allProjects} />
           </div>

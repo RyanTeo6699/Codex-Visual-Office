@@ -17,6 +17,7 @@ export type ReviewDecision = "pending" | "approved" | "rejected" | "revision_req
 export type GitSnapshotKind = "before_runner" | "after_runner" | "manual";
 export type FileChangeStatus = "modified" | "added" | "deleted" | "renamed" | "copied" | "unmerged" | "unknown";
 export type ScopeCheckStatus = "pass" | "warning" | "blocked";
+export type QualityGateCommandKey = "npm_typecheck" | "npm_build" | "npm_lint" | "npm_test" | "npm_run_test" | "git_diff_check";
 
 export interface Project {
   id: string;
@@ -148,6 +149,19 @@ export interface ScopeCheck {
   reason: string;
   checkSource: "path_level_forbidden_scope";
   createdAt: string;
+}
+
+export interface QualityGateConfig {
+  id: string;
+  projectId: string;
+  name: string;
+  commandKey: QualityGateCommandKey;
+  command: string;
+  enabled: boolean;
+  allowlisted: boolean;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ReviewRecord {

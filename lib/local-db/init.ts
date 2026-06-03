@@ -140,5 +140,18 @@ export function initializeLocalDb(): void {
       check_source TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS quality_gate_configs (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      name TEXT NOT NULL,
+      command_key TEXT NOT NULL,
+      command TEXT NOT NULL,
+      enabled INTEGER NOT NULL,
+      allowlisted INTEGER NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
 }
