@@ -7,6 +7,7 @@ import { listFileChanges } from "@/lib/local-db/repositories/file-changes";
 import { listGitSnapshots } from "@/lib/local-db/repositories/git-snapshots";
 import { listProjects } from "@/lib/local-db/repositories/projects";
 import { listReviewRecords } from "@/lib/local-db/repositories/review-records";
+import { listScopeChecks } from "@/lib/local-db/operations/scope-checks";
 import { listSettings } from "@/lib/local-db/repositories/settings";
 import { listTaskEvents } from "@/lib/local-db/repositories/task-events";
 import { listTasks } from "@/lib/local-db/repositories/tasks";
@@ -22,6 +23,7 @@ type CountKey =
   | "file_changes"
   | "git_snapshots"
   | "review_records"
+  | "scope_checks"
   | "settings";
 
 const minimumExpectedCounts: Record<CountKey, number> = {
@@ -34,6 +36,7 @@ const minimumExpectedCounts: Record<CountKey, number> = {
   file_changes: 0,
   git_snapshots: 0,
   review_records: 3,
+  scope_checks: 0,
   settings: 2,
 };
 
@@ -52,6 +55,7 @@ async function main(): Promise<void> {
     file_changes: (await listFileChanges()).length,
     git_snapshots: (await listGitSnapshots()).length,
     review_records: (await listReviewRecords()).length,
+    scope_checks: (await listScopeChecks()).length,
     settings: (await listSettings()).length,
   };
 

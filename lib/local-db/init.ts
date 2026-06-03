@@ -126,5 +126,19 @@ export function initializeLocalDb(): void {
       source TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS scope_checks (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      status TEXT NOT NULL,
+      forbidden_scope_json TEXT NOT NULL DEFAULT '[]',
+      matched_files_json TEXT NOT NULL DEFAULT '[]',
+      unmatched_files_json TEXT NOT NULL DEFAULT '[]',
+      rule_results_json TEXT NOT NULL DEFAULT '[]',
+      reason TEXT NOT NULL,
+      check_source TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
   `);
 }

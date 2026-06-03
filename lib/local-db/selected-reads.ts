@@ -1,7 +1,8 @@
-import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, ReviewRecord, Task, TaskEvent } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
 import { readLatestDiffSummaryForTask } from "./operations/diff-summaries";
 import { readFileChangesForTask } from "./operations/file-changes";
 import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
+import { readLatestScopeCheckForTask } from "./operations/scope-checks";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
 import type { AgentSeatRow } from "./repositories/agent-seats";
@@ -34,6 +35,7 @@ export interface SelectedReviewRoomRead {
   };
   fileChanges: FileChange[];
   diffSummary?: DiffSummary;
+  scopeCheck?: ScopeCheck;
 }
 
 function parseStringArray(value: string): string[] {
@@ -174,12 +176,13 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     return undefined;
   }
 
-  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary] = await Promise.all([
+  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary, scopeCheck] = await Promise.all([
     getReviewRecordByTaskId(taskId),
     listTaskEventsByProject(taskRow.projectId),
     getLatestBeforeAfterSnapshotsForTask(taskId),
     readFileChangesForTask(taskId),
     readLatestDiffSummaryForTask(taskId),
+    readLatestScopeCheckForTask(taskId),
   ]);
 
   return {
@@ -192,5 +195,6 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     gitSnapshots,
     fileChanges,
     diffSummary,
+    scopeCheck,
   };
 }

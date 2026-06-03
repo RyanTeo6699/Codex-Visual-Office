@@ -102,6 +102,7 @@ export async function runScopedCodexTaskAction(
       projectId: project.id,
       approvedProjectPath: confirmations.projectPathApproved ? process.cwd() : "",
       prompt,
+      forbiddenScope: task.forbiddenScope,
       explicitConfirmation: true,
       promptReviewed: confirmations.promptReviewed,
       forbiddenScopeAcknowledged: confirmations.forbiddenScopeAcknowledged,

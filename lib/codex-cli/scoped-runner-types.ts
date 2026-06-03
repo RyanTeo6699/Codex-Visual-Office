@@ -3,6 +3,7 @@ export interface ScopedCodexRunnerInput {
   projectId: string;
   approvedProjectPath: string;
   prompt: string;
+  forbiddenScope?: string[];
   explicitConfirmation: boolean;
   promptReviewed: boolean;
   forbiddenScopeAcknowledged: boolean;

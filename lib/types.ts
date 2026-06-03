@@ -16,6 +16,7 @@ export type EventTone = "info" | "success" | "warning" | "danger";
 export type ReviewDecision = "pending" | "approved" | "rejected" | "revision_requested";
 export type GitSnapshotKind = "before_runner" | "after_runner" | "manual";
 export type FileChangeStatus = "modified" | "added" | "deleted" | "renamed" | "copied" | "unmerged" | "unknown";
+export type ScopeCheckStatus = "pass" | "warning" | "blocked";
 
 export interface Project {
   id: string;
@@ -122,6 +123,30 @@ export interface DiffSummary {
   stdoutTruncated: boolean;
   numstatTruncated: boolean;
   source: "git_diff_stat_numstat";
+  createdAt: string;
+}
+
+export interface ScopeCheckRuleResult {
+  rule: string;
+  parsed: boolean;
+  category: "supabase" | "auth" | "payment" | "deploy" | "generic" | "unknown";
+  matchStrength: "none" | "weak" | "strong";
+  status: ScopeCheckStatus;
+  matchedFiles: string[];
+  reason: string;
+}
+
+export interface ScopeCheck {
+  id: string;
+  taskId: string;
+  projectId: string;
+  status: ScopeCheckStatus;
+  forbiddenScope: string[];
+  matchedFiles: string[];
+  unmatchedFiles: string[];
+  ruleResults: ScopeCheckRuleResult[];
+  reason: string;
+  checkSource: "path_level_forbidden_scope";
   createdAt: string;
 }
 

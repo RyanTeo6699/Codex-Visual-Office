@@ -6,10 +6,12 @@ import { createScopedCodexRunnerPolicy } from "./runner-policy";
 import { readChangedFiles } from "@/lib/git-observation/changed-files";
 import { readDiffSummary } from "@/lib/git-observation/diff-summary";
 import { readGitSnapshot } from "@/lib/git-observation/git-snapshot";
+import { checkForbiddenScope } from "@/lib/git-observation/scope-check";
 import { replaceDiffSummaryForTask } from "@/lib/local-db/operations/diff-summaries";
 import { addTaskEvent } from "@/lib/local-db/operations/events";
-import { replaceFileChangesForTask } from "@/lib/local-db/operations/file-changes";
+import { readFileChangesForTask, replaceFileChangesForTask } from "@/lib/local-db/operations/file-changes";
 import { createGitSnapshot } from "@/lib/local-db/operations/git-snapshots";
+import { replaceScopeCheckForTask } from "@/lib/local-db/operations/scope-checks";
 import type { GitSnapshotKind } from "@/lib/types";
 import type {
   ScopedCodexRunnerInput,
@@ -354,6 +356,70 @@ async function captureRunnerDiffSummary(input: {
   }
 }
 
+async function captureRunnerScopeCheck(input: {
+  taskId: string;
+  projectId: string;
+  forbiddenScope: string[];
+}): Promise<void> {
+  try {
+    const fileChanges = await readFileChangesForTask(input.taskId);
+    const result = checkForbiddenScope({
+      forbiddenScope: input.forbiddenScope,
+      changedFiles: fileChanges,
+    });
+    const created = await replaceScopeCheckForTask({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      status: result.status,
+      forbiddenScope: result.forbiddenScope,
+      matchedFiles: result.matchedFiles,
+      unmatchedFiles: result.unmatchedFiles,
+      ruleResults: result.ruleResults,
+      reason: result.reason,
+    });
+
+    await recordRunnerEvent({
+      id: `scope-check-completed-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: created.status === "blocked" ? "danger" : created.status === "warning" ? "warning" : "success",
+      message: `Scope guard ${created.status}`,
+      payload: {
+        lifecycleEvent: "scope_check_completed",
+        scopeCheckId: created.id,
+        status: created.status,
+        matchedFileCount: created.matchedFiles.length,
+        unmatchedFileCount: created.unmatchedFiles.length,
+        checkSource: created.checkSource,
+        pathLevelOnly: true,
+        semanticCodeReviewAttempted: false,
+        fullDiffStored: false,
+        fileContentsStored: false,
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  } catch (error) {
+    await recordRunnerEvent({
+      id: `scope-check-unavailable-${input.taskId}`,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      type: "warning",
+      message: "Scope guard unavailable",
+      payload: {
+        lifecycleEvent: "scope_check_unavailable",
+        error: error instanceof Error ? error.message : "Scope guard unavailable.",
+        pathLevelOnly: true,
+        semanticCodeReviewAttempted: false,
+        autoCommitAttempted: false,
+        autoPushAttempted: false,
+        autoDeployAttempted: false,
+      },
+    });
+  }
+}
+
 export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise<ScopedCodexRunnerOutput> {
   const startedAt = new Date().toISOString();
   const eventIds: string[] = [];
@@ -476,6 +542,11 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       approvedProjectPath: input.approvedProjectPath,
       gitSnapshotId: afterSnapshotId,
     });
+    await captureRunnerScopeCheck({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      forbiddenScope: input.forbiddenScope ?? [],
+    });
 
     eventIds.push(await recordRunnerEvent({
       id: `codex-runner-output-${input.taskId}`,
@@ -569,6 +640,11 @@ export async function runScopedCodexTask(input: ScopedCodexRunnerInput): Promise
       projectId: input.projectId,
       approvedProjectPath: input.approvedProjectPath,
       gitSnapshotId: afterSnapshotId,
+    });
+    await captureRunnerScopeCheck({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      forbiddenScope: input.forbiddenScope ?? [],
     });
 
     eventIds.push(await recordRunnerEvent({

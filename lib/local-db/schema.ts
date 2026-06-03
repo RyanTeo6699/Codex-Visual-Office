@@ -8,6 +8,7 @@ import type {
   GitSnapshotKind,
   ProjectStatus,
   ReviewDecision,
+  ScopeCheckStatus,
   TaskStatus,
 } from "@/lib/types";
 
@@ -31,6 +32,7 @@ export const buildStatuses = ["pending", "running", "passed", "failed", "skipped
 export const reviewDecisions = ["pending", "approved", "rejected", "revision_requested"] as const satisfies readonly ReviewDecision[];
 export const gitSnapshotKinds = ["before_runner", "after_runner", "manual"] as const satisfies readonly GitSnapshotKind[];
 export const fileChangeStatuses = ["modified", "added", "deleted", "renamed", "copied", "unmerged", "unknown"] as const satisfies readonly FileChangeStatus[];
+export const scopeCheckStatuses = ["pass", "warning", "blocked"] as const satisfies readonly ScopeCheckStatus[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -154,6 +156,20 @@ export const diffSummaries = sqliteTable("diff_summaries", {
   createdAt: text("created_at").notNull(),
 });
 
+export const scopeChecks = sqliteTable("scope_checks", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  status: text("status", { enum: scopeCheckStatuses }).notNull(),
+  forbiddenScopeJson: text("forbidden_scope_json").notNull().default("[]"),
+  matchedFilesJson: text("matched_files_json").notNull().default("[]"),
+  unmatchedFilesJson: text("unmatched_files_json").notNull().default("[]"),
+  ruleResultsJson: text("rule_results_json").notNull().default("[]"),
+  reason: text("reason").notNull(),
+  checkSource: text("check_source").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
@@ -189,6 +205,7 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   gitSnapshots: many(gitSnapshots),
   fileChanges: many(fileChanges),
   diffSummaries: many(diffSummaries),
+  scopeChecks: many(scopeChecks),
 }));
 
 export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
@@ -229,6 +246,17 @@ export const diffSummariesRelations = relations(diffSummaries, ({ one }) => ({
   gitSnapshot: one(gitSnapshots, {
     fields: [diffSummaries.gitSnapshotId],
     references: [gitSnapshots.id],
+  }),
+}));
+
+export const scopeChecksRelations = relations(scopeChecks, ({ one }) => ({
+  project: one(projects, {
+    fields: [scopeChecks.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [scopeChecks.taskId],
+    references: [tasks.id],
   }),
 }));
 
