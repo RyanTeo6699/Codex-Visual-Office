@@ -8,7 +8,7 @@ import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-type
 import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, reviewRecords, tasks } from "@/lib/mock-data";
 import type { TaskEvent } from "@/lib/types";
-import { persistReviewDecisionAction, recordCodexPromptHandoffAction, runScopedCodexTaskAction } from "./actions";
+import { persistReviewDecisionAction, recordCodexPromptHandoffAction, runEnabledQualityGatesAction, runScopedCodexTaskAction } from "./actions";
 
 function readStringPayload(event: TaskEvent | undefined, key: string): string | undefined {
   const value = event?.payload?.[key];
@@ -139,9 +139,11 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           diffSummary={localRead?.diffSummary}
           scopeCheck={localRead?.scopeCheck}
           qualityGateConfigs={localRead?.qualityGateConfigs ?? []}
+          qualityGateRuns={localRead?.qualityGateRuns ?? []}
           persistDecisionAction={persistReviewDecisionAction}
           recordCodexPromptHandoffAction={recordCodexPromptHandoffAction}
           runScopedCodexTaskAction={runScopedCodexTaskAction}
+          runEnabledQualityGatesAction={runEnabledQualityGatesAction}
         />
       </div>
     </AppShell>

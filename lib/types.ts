@@ -18,6 +18,14 @@ export type GitSnapshotKind = "before_runner" | "after_runner" | "manual";
 export type FileChangeStatus = "modified" | "added" | "deleted" | "renamed" | "copied" | "unmerged" | "unknown";
 export type ScopeCheckStatus = "pass" | "warning" | "blocked";
 export type QualityGateCommandKey = "npm_typecheck" | "npm_build" | "npm_lint" | "npm_test" | "npm_run_test" | "git_diff_check";
+export type QualityGateRunStatus = "pending" | "running" | "passed" | "failed" | "skipped" | "blocked";
+export type QualityGateEventType =
+  | "quality_gate_queued"
+  | "quality_gate_started"
+  | "quality_gate_passed"
+  | "quality_gate_failed"
+  | "quality_gate_skipped"
+  | "quality_gate_blocked";
 
 export interface Project {
   id: string;
@@ -162,6 +170,37 @@ export interface QualityGateConfig {
   description: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface QualityGateRun {
+  id: string;
+  taskId: string;
+  projectId: string;
+  configId: string;
+  commandKey: QualityGateCommandKey;
+  command: string;
+  status: QualityGateRunStatus;
+  exitCode?: number;
+  durationMs?: number;
+  stdoutPreview: string;
+  stderrPreview: string;
+  stdoutTruncated: boolean;
+  stderrTruncated: boolean;
+  skippedReason?: string;
+  failedReason?: string;
+  startedAt?: string;
+  endedAt?: string;
+  createdAt: string;
+}
+
+export interface QualityGateEvent {
+  id: string;
+  runId: string;
+  taskId: string;
+  projectId: string;
+  eventType: QualityGateEventType;
+  payload: Record<string, unknown>;
+  createdAt: string;
 }
 
 export interface ReviewRecord {

@@ -10,7 +10,7 @@ import { ChangedFilesPanel } from "./ChangedFilesPanel";
 import { GitSnapshotPanel } from "./GitSnapshotPanel";
 import { DiffSummaryCard } from "./DiffSummaryCard";
 import { MockDiffSummary } from "./MockDiffSummary";
-import { QualityGateConfigPreview } from "./QualityGateConfigPreview";
+import { QualityGateResultsPanel } from "./QualityGateResultsPanel";
 import { QualityGatePanel } from "./QualityGatePanel";
 import { ScopeGuardPanel } from "./ScopeGuardPanel";
 import { ScopedCodexRunnerPanel } from "./ScopedCodexRunnerPanel";
@@ -18,7 +18,7 @@ import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
-import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, ReviewDecision, ReviewRecord, ScopeCheck, Task, TaskEvent, TaskStatus } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, QualityGateRun, ReviewDecision, ReviewRecord, ScopeCheck, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
 interface PersistDecisionResult {
   ok: boolean;
@@ -38,6 +38,11 @@ type RunScopedCodexTaskAction = (
     noAutoCommitPushDeployAcknowledged: boolean;
   },
 ) => Promise<ScopedCodexRunnerOutput>;
+type RunEnabledQualityGatesAction = (taskId: string) => Promise<{
+  ok: boolean;
+  runs: QualityGateRun[];
+  error?: string;
+}>;
 
 export function ReviewPanel({
   task,
@@ -55,9 +60,11 @@ export function ReviewPanel({
   diffSummary,
   scopeCheck,
   qualityGateConfigs,
+  qualityGateRuns,
   persistDecisionAction,
   recordCodexPromptHandoffAction,
   runScopedCodexTaskAction,
+  runEnabledQualityGatesAction,
 }: {
   task: Task;
   project: Project;
@@ -77,9 +84,11 @@ export function ReviewPanel({
   diffSummary?: DiffSummary;
   scopeCheck?: ScopeCheck;
   qualityGateConfigs: QualityGateConfig[];
+  qualityGateRuns: QualityGateRun[];
   persistDecisionAction: PersistDecisionAction;
   recordCodexPromptHandoffAction: RecordCodexPromptHandoffAction;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
+  runEnabledQualityGatesAction: RunEnabledQualityGatesAction;
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
@@ -145,7 +154,7 @@ export function ReviewPanel({
       <ChangedFilesPanel fileChanges={fileChanges} />
       <DiffSummaryCard diffSummary={diffSummary} />
       <ScopeGuardPanel scopeCheck={scopeCheck} forbiddenScope={task.forbiddenScope} />
-      <QualityGateConfigPreview configs={qualityGateConfigs} />
+      <QualityGateResultsPanel taskId={task.id} configs={qualityGateConfigs} initialRuns={qualityGateRuns} runEnabledQualityGatesAction={runEnabledQualityGatesAction} />
       <MockDiffSummary task={task} review={review} />
       <QualityGatePanel checks={checks} />
       {events.length ? (

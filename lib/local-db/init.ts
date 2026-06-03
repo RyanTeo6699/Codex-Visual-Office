@@ -153,5 +153,36 @@ export function initializeLocalDb(): void {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS quality_gate_runs (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      config_id TEXT NOT NULL REFERENCES quality_gate_configs(id),
+      command_key TEXT NOT NULL,
+      command TEXT NOT NULL,
+      status TEXT NOT NULL,
+      exit_code INTEGER,
+      duration_ms INTEGER,
+      stdout_preview TEXT NOT NULL DEFAULT '',
+      stderr_preview TEXT NOT NULL DEFAULT '',
+      stdout_truncated INTEGER NOT NULL,
+      stderr_truncated INTEGER NOT NULL,
+      skipped_reason TEXT,
+      failed_reason TEXT,
+      started_at TEXT,
+      ended_at TEXT,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS quality_gate_events (
+      id TEXT PRIMARY KEY,
+      run_id TEXT NOT NULL REFERENCES quality_gate_runs(id),
+      task_id TEXT NOT NULL REFERENCES tasks(id),
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      event_type TEXT NOT NULL,
+      payload_json TEXT NOT NULL DEFAULT '{}',
+      created_at TEXT NOT NULL
+    );
   `);
 }

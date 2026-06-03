@@ -8,6 +8,8 @@ import type {
   GitSnapshotKind,
   ProjectStatus,
   QualityGateCommandKey,
+  QualityGateEventType,
+  QualityGateRunStatus,
   ReviewDecision,
   ScopeCheckStatus,
   TaskStatus,
@@ -35,6 +37,15 @@ export const gitSnapshotKinds = ["before_runner", "after_runner", "manual"] as c
 export const fileChangeStatuses = ["modified", "added", "deleted", "renamed", "copied", "unmerged", "unknown"] as const satisfies readonly FileChangeStatus[];
 export const scopeCheckStatuses = ["pass", "warning", "blocked"] as const satisfies readonly ScopeCheckStatus[];
 export const qualityGateCommandKeys = ["npm_typecheck", "npm_build", "npm_lint", "npm_test", "npm_run_test", "git_diff_check"] as const satisfies readonly QualityGateCommandKey[];
+export const qualityGateRunStatuses = ["pending", "running", "passed", "failed", "skipped", "blocked"] as const satisfies readonly QualityGateRunStatus[];
+export const qualityGateEventTypes = [
+  "quality_gate_queued",
+  "quality_gate_started",
+  "quality_gate_passed",
+  "quality_gate_failed",
+  "quality_gate_skipped",
+  "quality_gate_blocked",
+] as const satisfies readonly QualityGateEventType[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -185,12 +196,45 @@ export const qualityGateConfigs = sqliteTable("quality_gate_configs", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const qualityGateRuns = sqliteTable("quality_gate_runs", {
+  id: text("id").primaryKey(),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  configId: text("config_id").notNull().references(() => qualityGateConfigs.id),
+  commandKey: text("command_key", { enum: qualityGateCommandKeys }).notNull(),
+  command: text("command").notNull(),
+  status: text("status", { enum: qualityGateRunStatuses }).notNull(),
+  exitCode: integer("exit_code"),
+  durationMs: integer("duration_ms"),
+  stdoutPreview: text("stdout_preview").notNull().default(""),
+  stderrPreview: text("stderr_preview").notNull().default(""),
+  stdoutTruncated: integer("stdout_truncated", { mode: "boolean" }).notNull(),
+  stderrTruncated: integer("stderr_truncated", { mode: "boolean" }).notNull(),
+  skippedReason: text("skipped_reason"),
+  failedReason: text("failed_reason"),
+  startedAt: text("started_at"),
+  endedAt: text("ended_at"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const qualityGateEvents = sqliteTable("quality_gate_events", {
+  id: text("id").primaryKey(),
+  runId: text("run_id").notNull().references(() => qualityGateRuns.id),
+  taskId: text("task_id").notNull().references(() => tasks.id),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  eventType: text("event_type", { enum: qualityGateEventTypes }).notNull(),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  createdAt: text("created_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
   taskEvents: many(taskEvents),
   buildChecks: many(buildChecks),
   qualityGateConfigs: many(qualityGateConfigs),
+  qualityGateRuns: many(qualityGateRuns),
+  qualityGateEvents: many(qualityGateEvents),
 }));
 
 export const agentSeatsRelations = relations(agentSeats, ({ one, many }) => ({
@@ -222,6 +266,8 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   fileChanges: many(fileChanges),
   diffSummaries: many(diffSummaries),
   scopeChecks: many(scopeChecks),
+  qualityGateRuns: many(qualityGateRuns),
+  qualityGateEvents: many(qualityGateEvents),
 }));
 
 export const gitSnapshotsRelations = relations(gitSnapshots, ({ one }) => ({
@@ -280,6 +326,37 @@ export const qualityGateConfigsRelations = relations(qualityGateConfigs, ({ one 
   project: one(projects, {
     fields: [qualityGateConfigs.projectId],
     references: [projects.id],
+  }),
+}));
+
+export const qualityGateRunsRelations = relations(qualityGateRuns, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [qualityGateRuns.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [qualityGateRuns.taskId],
+    references: [tasks.id],
+  }),
+  config: one(qualityGateConfigs, {
+    fields: [qualityGateRuns.configId],
+    references: [qualityGateConfigs.id],
+  }),
+  events: many(qualityGateEvents),
+}));
+
+export const qualityGateEventsRelations = relations(qualityGateEvents, ({ one }) => ({
+  project: one(projects, {
+    fields: [qualityGateEvents.projectId],
+    references: [projects.id],
+  }),
+  task: one(tasks, {
+    fields: [qualityGateEvents.taskId],
+    references: [tasks.id],
+  }),
+  run: one(qualityGateRuns, {
+    fields: [qualityGateEvents.runId],
+    references: [qualityGateRuns.id],
   }),
 }));
 

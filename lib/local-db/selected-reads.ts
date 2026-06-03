@@ -1,8 +1,9 @@
-import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
+import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, QualityGateRun, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
 import { readLatestDiffSummaryForTask } from "./operations/diff-summaries";
 import { readFileChangesForTask } from "./operations/file-changes";
 import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
 import { listQualityGateConfigsForProject, seedDefaultQualityGateConfigsForProject } from "./operations/quality-gate-configs";
+import { getLatestQualityGateRunsForTask } from "./operations/quality-gate-runs";
 import { readLatestScopeCheckForTask } from "./operations/scope-checks";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
@@ -39,6 +40,7 @@ export interface SelectedReviewRoomRead {
   diffSummary?: DiffSummary;
   scopeCheck?: ScopeCheck;
   qualityGateConfigs: QualityGateConfig[];
+  qualityGateRuns: QualityGateRun[];
 }
 
 function parseStringArray(value: string): string[] {
@@ -185,7 +187,7 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
 
   await seedDefaultQualityGateConfigsForProject(taskRow.projectId);
 
-  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary, scopeCheck, qualityGateConfigs] = await Promise.all([
+  const [reviewRow, taskEventRows, gitSnapshots, fileChanges, diffSummary, scopeCheck, qualityGateConfigs, qualityGateRuns] = await Promise.all([
     getReviewRecordByTaskId(taskId),
     listTaskEventsByProject(taskRow.projectId),
     getLatestBeforeAfterSnapshotsForTask(taskId),
@@ -193,6 +195,7 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     readLatestDiffSummaryForTask(taskId),
     readLatestScopeCheckForTask(taskId),
     listQualityGateConfigsForProject(taskRow.projectId),
+    getLatestQualityGateRunsForTask(taskId),
   ]);
 
   return {
@@ -207,5 +210,6 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     diffSummary,
     scopeCheck,
     qualityGateConfigs,
+    qualityGateRuns,
   };
 }

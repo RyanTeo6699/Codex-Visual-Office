@@ -9,8 +9,9 @@ import { runScopedCodexTask } from "@/lib/codex-cli/scoped-runner";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 import { persistReviewDecisionForTask } from "@/lib/local-db/operations/reviews";
 import { readSelectedReviewRoom } from "@/lib/local-db/selected-reads";
+import { runEnabledQualityGates } from "@/lib/quality-gates/quality-gate-runner";
 import { projects, tasks } from "@/lib/mock-data";
-import type { ReviewDecision, TaskStatus } from "@/lib/types";
+import type { QualityGateRun, ReviewDecision, TaskStatus } from "@/lib/types";
 
 export interface PersistReviewDecisionActionResult {
   ok: boolean;
@@ -129,6 +130,41 @@ export async function runScopedCodexTaskAction(
       autoPushAttempted: false,
       autoDeployAttempted: false,
       eventIds: [],
+    };
+  }
+}
+
+export interface RunEnabledQualityGatesActionResult {
+  ok: boolean;
+  runs: QualityGateRun[];
+  error?: string;
+}
+
+export async function runEnabledQualityGatesAction(taskId: string): Promise<RunEnabledQualityGatesActionResult> {
+  try {
+    initializeLocalDb();
+    const localRead = await readSelectedReviewRoom(taskId);
+    if (!localRead) {
+      throw new Error(`Task not found: ${taskId}`);
+    }
+
+    const result = await runEnabledQualityGates({
+      taskId,
+      projectId: localRead.task.projectId,
+      configs: localRead.qualityGateConfigs,
+      cwd: process.cwd(),
+    });
+
+    revalidatePath(`/review/${taskId}`);
+    return {
+      ok: true,
+      runs: result.runs,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      runs: [],
+      error: error instanceof Error ? error.message : "Quality gates could not run.",
     };
   }
 }
