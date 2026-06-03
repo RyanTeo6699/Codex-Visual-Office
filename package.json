@@ -23,7 +23,8 @@
     "git:verify:scope-check": "tsx scripts/verify-scope-check.ts",
     "quality:verify:config": "tsx scripts/verify-quality-gate-config.ts",
     "quality:verify:runner": "tsx scripts/verify-quality-gate-runner.ts",
-    "quality:verify:summary": "tsx scripts/verify-quality-gate-summary.ts"
+    "quality:verify:summary": "tsx scripts/verify-quality-gate-summary.ts",
+    "review:verify:readiness": "tsx scripts/verify-review-room-readiness.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

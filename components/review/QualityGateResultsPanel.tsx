@@ -28,11 +28,13 @@ export function QualityGateResultsPanel({
   configs,
   initialRuns,
   runEnabledQualityGatesAction,
+  onRunsChange,
 }: {
   taskId: string;
   configs: QualityGateConfig[];
   initialRuns: QualityGateRun[];
   runEnabledQualityGatesAction: RunEnabledQualityGatesAction;
+  onRunsChange?: (runs: QualityGateRun[]) => void;
 }) {
   const [runs, setRuns] = useState<QualityGateRun[]>(initialRuns);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +60,9 @@ export function QualityGateResultsPanel({
         return;
       }
 
-      setRuns([...result.runs, ...runs]);
+      const nextRuns = [...result.runs, ...runs];
+      setRuns(nextRuns);
+      onRunsChange?.(nextRuns);
     });
   }
 

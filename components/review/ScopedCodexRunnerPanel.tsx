@@ -19,11 +19,13 @@ export function ScopedCodexRunnerPanel({
   approvedProjectPath,
   initialResult,
   runScopedCodexTaskAction,
+  onResultChange,
 }: {
   taskId: string;
   approvedProjectPath: string;
   initialResult?: ScopedCodexRunnerOutput;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
+  onResultChange?: (result: ScopedCodexRunnerOutput) => void;
 }) {
   const [projectPathApproved, setProjectPathApproved] = useState(false);
   const [promptReviewed, setPromptReviewed] = useState(false);
@@ -39,7 +41,7 @@ export function ScopedCodexRunnerPanel({
 
   function runScopedTask() {
     const startedAt = new Date().toISOString();
-    setResult({
+    const runningResult: ScopedCodexRunnerOutput = {
       status: "running",
       startedAt,
       endedAt: "",
@@ -54,7 +56,9 @@ export function ScopedCodexRunnerPanel({
       autoPushAttempted: false,
       autoDeployAttempted: false,
       eventIds: [],
-    });
+    };
+    setResult(runningResult);
+    onResultChange?.(runningResult);
 
     startTransition(async () => {
       const nextResult = await runScopedCodexTaskAction(taskId, {
@@ -64,6 +68,7 @@ export function ScopedCodexRunnerPanel({
         noAutoCommitPushDeployAcknowledged,
       });
       setResult(nextResult);
+      onResultChange?.(nextResult);
     });
   }
 

@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import clsx from "clsx";
-import { Check, RotateCcw, X } from "lucide-react";
 import { TaskStatusBadge } from "@/components/tasks/TaskStatusBadge";
 import { CodexPromptHandoff } from "./CodexPromptHandoff";
 import { CodexRunnerSafetyPanel } from "./CodexRunnerSafetyPanel";
-import { ChangedFilesPanel } from "./ChangedFilesPanel";
-import { GitSnapshotPanel } from "./GitSnapshotPanel";
-import { DiffSummaryCard } from "./DiffSummaryCard";
 import { MockDiffSummary } from "./MockDiffSummary";
 import { QualityGateResultsPanel } from "./QualityGateResultsPanel";
 import { QualityGatePanel } from "./QualityGatePanel";
+import { ReviewDecisionPanel } from "./ReviewDecisionPanel";
+import { ReviewEvidenceGrid } from "./ReviewEvidenceGrid";
+import { ReviewReadinessSummary } from "./ReviewReadinessSummary";
 import { ScopeGuardPanel } from "./ScopeGuardPanel";
 import { ScopedCodexRunnerPanel } from "./ScopedCodexRunnerPanel";
+import { evaluateReviewReadiness } from "@/lib/review/readiness";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
+import { summarizeQualityGates } from "@/lib/quality-gates/quality-gate-summary";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
@@ -92,9 +93,21 @@ export function ReviewPanel({
 }) {
   const [decision, setDecision] = useState<ReviewDecision>(review?.decision ?? "pending");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>(task.status);
+  const [runnerResult, setRunnerResult] = useState<ScopedCodexRunnerOutput | undefined>(initialRunnerResult);
+  const [gateRuns, setGateRuns] = useState<QualityGateRun[]>(qualityGateRuns);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const activityEvents = prioritizeReviewActivity(events);
+  const qualityGateSummary = useMemo(() => summarizeQualityGates(qualityGateConfigs, gateRuns), [gateRuns, qualityGateConfigs]);
+  const readinessSummary = useMemo(() => evaluateReviewReadiness({
+    taskStatus,
+    reviewDecision: decision,
+    runnerStatus: runnerResult?.status,
+    scopeCheck,
+    changedFilesCount: fileChanges.length,
+    diffSummaryAvailable: Boolean(diffSummary),
+    qualityGateSummary,
+  }), [decision, diffSummary, fileChanges.length, qualityGateSummary, runnerResult?.status, scopeCheck, taskStatus]);
 
   function handleDecision(nextDecision: ReviewDecision) {
     setError(null);
@@ -114,11 +127,15 @@ export function ReviewPanel({
 
   return (
     <div className="space-y-5">
+      <ReviewReadinessSummary summary={readinessSummary} />
       <section className="rounded-[22px] border border-white/8 bg-[#111a25]/78 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Review Desk / {project.name} / {agent?.name ?? "Unassigned"}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Task Brief / {project.name} / {agent?.name ?? "Unassigned"}</p>
             <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-white">{task.title}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
+              Review the generated prompt, runner result, Git evidence, Scope Guard, and Quality Gates before making the final manual decision.
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <TaskStatusBadge status={taskStatus} />
@@ -131,35 +148,40 @@ export function ReviewPanel({
           <ReviewList title="Acceptance Criteria" items={task.acceptanceCriteria} tone="cyan" />
           <ReviewList title="Forbidden Scope" items={task.forbiddenScope} tone="red" />
         </div>
-        <div className="mt-7 flex flex-wrap gap-3 border-t border-white/8 pt-5">
-          <button disabled={isPending} onClick={() => handleDecision("approved")} className="inline-flex items-center gap-2 rounded-[14px] border border-emerald-200/24 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/16 disabled:cursor-not-allowed disabled:opacity-50">
-            <Check className="h-4 w-4" />
-            Approve
-          </button>
-          <button disabled={isPending} onClick={() => handleDecision("rejected")} className="inline-flex items-center gap-2 rounded-[14px] border border-rose-200/20 bg-rose-200/8 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-200/14 disabled:cursor-not-allowed disabled:opacity-50">
-            <X className="h-4 w-4" />
-            Reject
-          </button>
-          <button disabled={isPending} onClick={() => handleDecision("revision_requested")} className="inline-flex items-center gap-2 rounded-[14px] border border-amber-200/24 bg-amber-200/10 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-200/16 disabled:cursor-not-allowed disabled:opacity-50">
-            <RotateCcw className="h-4 w-4" />
-            Ask Revision
-          </button>
-        </div>
-        {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
       </section>
-      <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
-      <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
-      <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} initialResult={initialRunnerResult} runScopedCodexTaskAction={runScopedCodexTaskAction} />
-      <GitSnapshotPanel before={gitSnapshots.before} after={gitSnapshots.after} />
-      <ChangedFilesPanel fileChanges={fileChanges} />
-      <DiffSummaryCard diffSummary={diffSummary} />
-      <ScopeGuardPanel scopeCheck={scopeCheck} forbiddenScope={task.forbiddenScope} />
-      <QualityGateResultsPanel taskId={task.id} configs={qualityGateConfigs} initialRuns={qualityGateRuns} runEnabledQualityGatesAction={runEnabledQualityGatesAction} />
-      <MockDiffSummary task={task} review={review} />
-      <QualityGatePanel checks={checks} />
+
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
+        <div className="space-y-4">
+          <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
+          <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
+        </div>
+        <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} initialResult={runnerResult} runScopedCodexTaskAction={runScopedCodexTaskAction} onResultChange={setRunnerResult} />
+      </section>
+
+      <ReviewEvidenceGrid gitSnapshots={gitSnapshots} fileChanges={fileChanges} diffSummary={diffSummary} />
+
+      <section className="space-y-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Acceptance</p>
+          <h2 className="mt-1 text-lg font-bold text-slate-100">Scope / Quality / Decision</h2>
+        </div>
+        <div className="grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
+          <ScopeGuardPanel scopeCheck={scopeCheck} forbiddenScope={task.forbiddenScope} />
+          <QualityGateResultsPanel taskId={task.id} configs={qualityGateConfigs} initialRuns={gateRuns} runEnabledQualityGatesAction={runEnabledQualityGatesAction} onRunsChange={setGateRuns} />
+        </div>
+        <ReviewDecisionPanel decision={decision} isPending={isPending} error={error} readiness={readinessSummary} onDecision={handleDecision} />
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-2">
+        <MockDiffSummary task={task} review={review} />
+        <QualityGatePanel checks={checks} />
+      </section>
       {events.length ? (
         <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
-          <h2 className="text-sm font-bold tracking-tight text-slate-100">Review Activity</h2>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Timeline</p>
+            <h2 className="mt-1 text-sm font-bold tracking-tight text-slate-100">Review Activity</h2>
+          </div>
           <div className="mt-3 space-y-2">
             {activityEvents.map((event) => (
               <div key={event.id} className="grid grid-cols-[42px_1fr] gap-3 rounded-[14px] border border-white/[0.04] bg-white/[0.025] px-3 py-2.5">
