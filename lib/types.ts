@@ -26,6 +26,7 @@ export type QualityGateEventType =
   | "quality_gate_failed"
   | "quality_gate_skipped"
   | "quality_gate_blocked";
+export type ApprovedProjectPathApprovalSource = "manual";
 
 export interface Project {
   id: string;
@@ -209,6 +210,19 @@ export interface LocalSetting {
   category: string;
   description: string;
   updatedAt: string;
+}
+
+export interface ApprovedProjectPath {
+  id: string;
+  projectId: string;
+  localPath: string;
+  label: string;
+  approved: boolean;
+  approvalSource: ApprovedProjectPathApprovalSource;
+  approvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  note?: string;
 }
 
 export interface ReviewRecord {

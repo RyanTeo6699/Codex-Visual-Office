@@ -92,6 +92,19 @@ export function initializeLocalDb(): void {
       updated_at TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS approved_project_paths (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      local_path TEXT NOT NULL,
+      label TEXT NOT NULL DEFAULT '',
+      approved INTEGER NOT NULL,
+      approval_source TEXT NOT NULL DEFAULT 'manual',
+      approved_at TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      note TEXT
+    );
+
     CREATE TABLE IF NOT EXISTS git_snapshots (
       id TEXT PRIMARY KEY,
       task_id TEXT NOT NULL REFERENCES tasks(id),

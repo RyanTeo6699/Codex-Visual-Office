@@ -25,7 +25,8 @@
     "quality:verify:runner": "tsx scripts/verify-quality-gate-runner.ts",
     "quality:verify:summary": "tsx scripts/verify-quality-gate-summary.ts",
     "review:verify:readiness": "tsx scripts/verify-review-room-readiness.ts",
-    "settings:verify": "tsx scripts/verify-local-settings.ts"
+    "settings:verify": "tsx scripts/verify-local-settings.ts",
+    "settings:verify:project-paths": "tsx scripts/verify-approved-project-paths.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

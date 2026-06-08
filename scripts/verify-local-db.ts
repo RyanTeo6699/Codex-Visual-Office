@@ -1,6 +1,7 @@
 import { initializeLocalDb } from "@/lib/local-db/init";
 import { LOCAL_DB_PATH } from "@/lib/local-db/paths";
 import { listAgentSeats } from "@/lib/local-db/repositories/agent-seats";
+import { listApprovedProjectPaths } from "@/lib/local-db/operations/approved-project-paths";
 import { listBuildChecks } from "@/lib/local-db/repositories/build-checks";
 import { listDiffSummaries } from "@/lib/local-db/operations/diff-summaries";
 import { listFileChanges } from "@/lib/local-db/repositories/file-changes";
@@ -20,6 +21,7 @@ import { seedFromMockData } from "@/lib/local-db/seed/seed-from-mock-data";
 type CountKey =
   | "projects"
   | "agent_seats"
+  | "approved_project_paths"
   | "tasks"
   | "task_events"
   | "build_checks"
@@ -37,6 +39,7 @@ type CountKey =
 const minimumExpectedCounts: Record<CountKey, number> = {
   projects: 5,
   agent_seats: 3,
+  approved_project_paths: 0,
   tasks: 8,
   task_events: 12,
   build_checks: 8,
@@ -60,6 +63,7 @@ async function main(): Promise<void> {
   const counts: Record<CountKey, number> = {
     projects: (await listProjects()).length,
     agent_seats: (await listAgentSeats()).length,
+    approved_project_paths: (await listApprovedProjectPaths()).length,
     tasks: (await listTasks()).length,
     task_events: (await listTaskEvents()).length,
     build_checks: (await listBuildChecks()).length,

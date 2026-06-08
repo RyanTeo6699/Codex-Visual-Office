@@ -104,6 +104,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
   const reviewChecks = buildChecks.filter((check) => review?.qualityGateIds.includes(check.id) || check.taskId === task.id);
   const reviewEvents = localRead?.taskEvents ?? [];
   const runnerResult = buildRunnerResultFromEvents(reviewEvents);
+  const approvedProjectPath = localRead?.approvedProjectPath?.localPath ?? "";
   const codexPrompt = buildCodexTaskPrompt({ project, task }).prompt;
   const runnerSafetyStatus = getRunnerSafetyStatus({
     projectId: project.id,
@@ -132,7 +133,8 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           events={reviewEvents}
           codexPrompt={codexPrompt}
           runnerSafetyStatus={runnerSafetyStatus}
-          approvedProjectPath={process.cwd()}
+          approvedProjectPath={approvedProjectPath}
+          approvedProjectPathSource={approvedProjectPath ? "approved_path" : "missing"}
           initialRunnerResult={runnerResult}
           gitSnapshots={localRead?.gitSnapshots ?? {}}
           fileChanges={localRead?.fileChanges ?? []}

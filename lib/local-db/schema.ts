@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import type {
   AgentStatus,
+  ApprovedProjectPathApprovalSource,
   BuildStatus,
   EventTone,
   FileChangeStatus,
@@ -46,6 +47,7 @@ export const qualityGateEventTypes = [
   "quality_gate_skipped",
   "quality_gate_blocked",
 ] as const satisfies readonly QualityGateEventType[];
+export const approvedProjectPathApprovalSources = ["manual"] as const satisfies readonly ApprovedProjectPathApprovalSource[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -132,6 +134,19 @@ export const localSettings = sqliteTable("local_settings", {
   category: text("category").notNull(),
   description: text("description").notNull().default(""),
   updatedAt: text("updated_at").notNull(),
+});
+
+export const approvedProjectPaths = sqliteTable("approved_project_paths", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id").notNull().references(() => projects.id),
+  localPath: text("local_path").notNull(),
+  label: text("label").notNull().default(""),
+  approved: integer("approved", { mode: "boolean" }).notNull(),
+  approvalSource: text("approval_source", { enum: approvedProjectPathApprovalSources }).notNull().default("manual"),
+  approvedAt: text("approved_at"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+  note: text("note"),
 });
 
 export const gitSnapshots = sqliteTable("git_snapshots", {
@@ -240,6 +255,7 @@ export const projectsRelations = relations(projects, ({ many }) => ({
   tasks: many(tasks),
   taskEvents: many(taskEvents),
   buildChecks: many(buildChecks),
+  approvedProjectPaths: many(approvedProjectPaths),
   qualityGateConfigs: many(qualityGateConfigs),
   qualityGateRuns: many(qualityGateRuns),
   qualityGateEvents: many(qualityGateEvents),
@@ -365,6 +381,13 @@ export const qualityGateEventsRelations = relations(qualityGateEvents, ({ one })
   run: one(qualityGateRuns, {
     fields: [qualityGateEvents.runId],
     references: [qualityGateRuns.id],
+  }),
+}));
+
+export const approvedProjectPathsRelations = relations(approvedProjectPaths, ({ one }) => ({
+  project: one(projects, {
+    fields: [approvedProjectPaths.projectId],
+    references: [projects.id],
   }),
 }));
 

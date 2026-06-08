@@ -55,6 +55,7 @@ export function ReviewPanel({
   codexPrompt,
   runnerSafetyStatus,
   approvedProjectPath,
+  approvedProjectPathSource,
   initialRunnerResult,
   gitSnapshots,
   fileChanges,
@@ -76,6 +77,7 @@ export function ReviewPanel({
   codexPrompt: string;
   runnerSafetyStatus: RunnerSafetyStatus;
   approvedProjectPath: string;
+  approvedProjectPathSource?: "approved_path" | "fallback" | "missing";
   initialRunnerResult?: ScopedCodexRunnerOutput;
   gitSnapshots: {
     before?: GitSnapshot;
@@ -155,7 +157,14 @@ export function ReviewPanel({
           <CodexPromptHandoff taskId={task.id} prompt={codexPrompt} recordHandoffAction={recordCodexPromptHandoffAction} />
           <CodexRunnerSafetyPanel status={runnerSafetyStatus} />
         </div>
-        <ScopedCodexRunnerPanel taskId={task.id} approvedProjectPath={approvedProjectPath} initialResult={runnerResult} runScopedCodexTaskAction={runScopedCodexTaskAction} onResultChange={setRunnerResult} />
+          <ScopedCodexRunnerPanel
+            taskId={task.id}
+            approvedProjectPath={approvedProjectPath}
+            approvedProjectPathSource={approvedProjectPathSource}
+            initialResult={runnerResult}
+            runScopedCodexTaskAction={runScopedCodexTaskAction}
+            onResultChange={setRunnerResult}
+          />
       </section>
 
       <ReviewEvidenceGrid gitSnapshots={gitSnapshots} fileChanges={fileChanges} diffSummary={diffSummary} />

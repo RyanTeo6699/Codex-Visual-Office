@@ -98,10 +98,11 @@ export async function runScopedCodexTaskAction(
     }
 
     const prompt = buildCodexTaskPrompt({ project, task }).prompt;
+    const approvedProjectPath = localRead?.approvedProjectPath?.localPath ?? "";
     const result = await runScopedCodexTask({
       taskId,
       projectId: project.id,
-      approvedProjectPath: confirmations.projectPathApproved ? process.cwd() : "",
+      approvedProjectPath: confirmations.projectPathApproved ? approvedProjectPath : "",
       prompt,
       forbiddenScope: task.forbiddenScope,
       explicitConfirmation: true,

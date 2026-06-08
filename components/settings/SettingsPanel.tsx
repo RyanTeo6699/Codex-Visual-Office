@@ -1,21 +1,28 @@
+import type { ReactNode } from "react";
 import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, MonitorCog, ShieldCheck } from "lucide-react";
+import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
-import type { LocalSetting } from "@/lib/types";
+import type { ApprovedProjectPath, LocalSetting } from "@/lib/types";
 
 export function SettingsPanel({
   settings,
   codexStatus,
   localDbPath,
+  projects,
+  approvedPaths,
+  saveApprovedProjectPathAction,
 }: {
   settings: LocalSetting[];
   codexStatus: CodexCliStatus;
   localDbPath: string;
+  projects: SettingsProjectOption[];
+  approvedPaths: ApprovedProjectPath[];
+  saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
 }) {
   const settingMap = new Map(settings.map((setting) => [setting.key, setting]));
   const localMode = settingMap.get("app.localMode")?.value;
   const themePreference = settingMap.get("app.themePreference")?.value;
   const qualityDefaults = settingMap.get("quality.defaultEnabledGateKeys")?.value;
-  const projectPaths = settingMap.get("projectPaths.statusDisplay")?.value;
   const backup = settingMap.get("backup.statusDisplay")?.value;
   const desktopPackaging = settingMap.get("desktopPackaging.statusDisplay")?.value;
 
@@ -27,7 +34,7 @@ export function SettingsPanel({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Phase 6 / Local Productization</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Local-only settings and runtime status. No cloud sync, token storage, folder picker, backup execution, or desktop packaging action exists in this step.
+              Local-only settings and runtime status. No cloud sync, token storage, project browsing control, backup execution, or desktop packaging action exists in this step.
             </p>
           </div>
           <span className="rounded-md border border-emerald-200/16 bg-emerald-200/8 px-3 py-1.5 text-xs font-bold text-emerald-100">
@@ -95,16 +102,7 @@ export function SettingsPanel({
           ]}
         />
 
-        <SettingsCard
-          icon={<Boxes className="h-4 w-4 text-amber-100/80" />}
-          title="Approved Project Paths"
-          badge={readString(projectPaths?.status) || "planned"}
-          rows={[
-            ["Status", readString(projectPaths?.status) || "planned"],
-            ["Note", readString(projectPaths?.note) || "Project Import starts in Phase 6 Step 2"],
-            ["Folder picker", "Unavailable in Step 1"],
-          ]}
-        />
+        <ApprovedProjectPathsCard projects={projects} approvedPaths={approvedPaths} saveApprovedProjectPathAction={saveApprovedProjectPathAction} />
 
         <SettingsCard
           icon={<HardDrive className="h-4 w-4 text-violet-100/80" />}
@@ -139,7 +137,7 @@ export function SettingsPanel({
         <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400 md:grid-cols-2 xl:grid-cols-4">
           <BoundaryItem icon={<KeyRound className="h-3.5 w-3.5" />} label="No token storage" />
           <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="No cloud sync" />
-          <BoundaryItem icon={<Boxes className="h-3.5 w-3.5" />} label="No Project Import yet" />
+          <BoundaryItem icon={<Boxes className="h-3.5 w-3.5" />} label="Manual paths only" />
           <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="No Backup / Restore yet" />
         </div>
       </section>
@@ -154,7 +152,7 @@ function SettingsCard({
   rows,
   note,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   badge: string;
   rows: Array<[string, string]>;
@@ -184,7 +182,7 @@ function SettingsCard({
   );
 }
 
-function BoundaryItem({ icon, label }: { icon: React.ReactNode; label: string }) {
+function BoundaryItem({ icon, label }: { icon: ReactNode; label: string }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
       {icon}

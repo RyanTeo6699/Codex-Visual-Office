@@ -17,12 +17,14 @@ type RunScopedCodexTaskAction = (
 export function ScopedCodexRunnerPanel({
   taskId,
   approvedProjectPath,
+  approvedProjectPathSource = "missing",
   initialResult,
   runScopedCodexTaskAction,
   onResultChange,
 }: {
   taskId: string;
   approvedProjectPath: string;
+  approvedProjectPathSource?: "approved_path" | "fallback" | "missing";
   initialResult?: ScopedCodexRunnerOutput;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
   onResultChange?: (result: ScopedCodexRunnerOutput) => void;
@@ -34,9 +36,10 @@ export function ScopedCodexRunnerPanel({
   const [result, setResult] = useState<ScopedCodexRunnerOutput | null>(initialResult ?? null);
   const [isPending, startTransition] = useTransition();
 
+  const hasApprovedProjectPath = approvedProjectPath.trim().length > 0;
   const canRun = useMemo(
-    () => projectPathApproved && promptReviewed && forbiddenScopeAcknowledged && noAutoCommitPushDeployAcknowledged,
-    [forbiddenScopeAcknowledged, noAutoCommitPushDeployAcknowledged, projectPathApproved, promptReviewed],
+    () => hasApprovedProjectPath && projectPathApproved && promptReviewed && forbiddenScopeAcknowledged && noAutoCommitPushDeployAcknowledged,
+    [forbiddenScopeAcknowledged, hasApprovedProjectPath, noAutoCommitPushDeployAcknowledged, projectPathApproved, promptReviewed],
   );
 
   function runScopedTask() {
@@ -88,7 +91,8 @@ export function ScopedCodexRunnerPanel({
       </div>
 
       <div className="mt-4 grid gap-2 text-xs md:grid-cols-2">
-        <RunnerRow label="Approved project path" value={approvedProjectPath} />
+        <RunnerRow label="Approved project path" value={approvedProjectPath || "Missing approved path"} />
+        <RunnerRow label="Path source" value={approvedProjectPathSource === "approved_path" ? "approved_project_paths" : approvedProjectPathSource} />
         <RunnerRow label="Command shape" value="codex exec --cd [approved] --sandbox read-only --json [generated prompt]" />
         <RunnerRow label="Auto push" value="Disabled" />
         <RunnerRow label="Auto deploy" value="Disabled" />
@@ -97,7 +101,9 @@ export function ScopedCodexRunnerPanel({
       </div>
 
       <div className="mt-4 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
-        This will run Codex CLI locally for this task only. It will not auto commit, push, or deploy.
+        {hasApprovedProjectPath
+          ? "This will run Codex CLI locally for this task only. It will not auto commit, push, or deploy."
+          : "Missing approved project path. Add a manual approved path in Settings before running this task."}
       </div>
 
       <div className="mt-4 space-y-2">

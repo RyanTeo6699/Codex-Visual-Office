@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { AgentSeat } from "@/components/office/AgentSeat";
+import { ApprovedProjectPathStatus } from "@/components/office/ApprovedProjectPathStatus";
 import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
 import { QualityGateConfigStatus } from "@/components/office/QualityGateConfigStatus";
@@ -75,6 +76,7 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
             <TaskBoard tasks={projectTasks} projects={allProjects} agentSeats={allAgentSeats} />
           </div>
           <div className="space-y-5">
+            <ApprovedProjectPathStatus primaryPath={localRead?.primaryApprovedProjectPath} />
             <QualityGateConfigStatus configs={localRead?.qualityGateConfigs ?? []} />
             <BuildWall checks={projectChecks} projects={allProjects} />
             <EventTicker events={projectEvents} projects={allProjects} />
