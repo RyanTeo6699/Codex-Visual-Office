@@ -105,6 +105,19 @@ export function initializeLocalDb(): void {
       note TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS backup_records (
+      id TEXT PRIMARY KEY,
+      backup_path TEXT NOT NULL,
+      backup_kind TEXT NOT NULL,
+      source_db_path TEXT NOT NULL,
+      file_size_bytes INTEGER NOT NULL,
+      checksum_sha256 TEXT NOT NULL,
+      status TEXT NOT NULL,
+      note TEXT,
+      created_at TEXT NOT NULL,
+      restored_at TEXT
+    );
+
     CREATE TABLE IF NOT EXISTS git_snapshots (
       id TEXT PRIMARY KEY,
       task_id TEXT NOT NULL REFERENCES tasks(id),

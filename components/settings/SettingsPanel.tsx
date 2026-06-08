@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, MonitorCog, ShieldCheck } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
+import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
-import type { ApprovedProjectPath, LocalSetting } from "@/lib/types";
+import type { ApprovedProjectPath, BackupRecord, LocalSetting } from "@/lib/types";
 
 export function SettingsPanel({
   settings,
@@ -10,20 +11,29 @@ export function SettingsPanel({
   localDbPath,
   projects,
   approvedPaths,
+  backupDir,
+  backupRecords,
   saveApprovedProjectPathAction,
+  createBackupNowAction,
+  restoreDryRunAction,
+  confirmRestoreAction,
 }: {
   settings: LocalSetting[];
   codexStatus: CodexCliStatus;
   localDbPath: string;
   projects: SettingsProjectOption[];
   approvedPaths: ApprovedProjectPath[];
+  backupDir: string;
+  backupRecords: BackupRecord[];
   saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
+  createBackupNowAction: BackupFormAction;
+  restoreDryRunAction: BackupFormAction;
+  confirmRestoreAction: BackupFormAction;
 }) {
   const settingMap = new Map(settings.map((setting) => [setting.key, setting]));
   const localMode = settingMap.get("app.localMode")?.value;
   const themePreference = settingMap.get("app.themePreference")?.value;
   const qualityDefaults = settingMap.get("quality.defaultEnabledGateKeys")?.value;
-  const backup = settingMap.get("backup.statusDisplay")?.value;
   const desktopPackaging = settingMap.get("desktopPackaging.statusDisplay")?.value;
 
   return (
@@ -34,7 +44,7 @@ export function SettingsPanel({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Phase 6 / Local Productization</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Local-only settings and runtime status. No cloud sync, token storage, project browsing control, backup execution, or desktop packaging action exists in this step.
+              Local-only settings and runtime status. Backup / Restore is limited to the local SQLite database under .local.
             </p>
           </div>
           <span className="rounded-md border border-emerald-200/16 bg-emerald-200/8 px-3 py-1.5 text-xs font-bold text-emerald-100">
@@ -104,16 +114,13 @@ export function SettingsPanel({
 
         <ApprovedProjectPathsCard projects={projects} approvedPaths={approvedPaths} saveApprovedProjectPathAction={saveApprovedProjectPathAction} />
 
-        <SettingsCard
-          icon={<HardDrive className="h-4 w-4 text-violet-100/80" />}
-          title="Backup / Restore"
-          badge={readString(backup?.status) || "planned"}
-          rows={[
-            ["Status", readString(backup?.status) || "planned"],
-            ["Note", readString(backup?.note) || "Backup / Restore starts in Phase 6 Step 3"],
-            ["Backup execution", "Unavailable in Step 1"],
-            ["Restore execution", "Unavailable in Step 1"],
-          ]}
+        <BackupRestoreCard
+          dbPath={localDbPath}
+          backupDir={backupDir}
+          backupRecords={backupRecords}
+          createBackupNowAction={createBackupNowAction}
+          restoreDryRunAction={restoreDryRunAction}
+          confirmRestoreAction={confirmRestoreAction}
         />
 
         <SettingsCard
@@ -138,7 +145,7 @@ export function SettingsPanel({
           <BoundaryItem icon={<KeyRound className="h-3.5 w-3.5" />} label="No token storage" />
           <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="No cloud sync" />
           <BoundaryItem icon={<Boxes className="h-3.5 w-3.5" />} label="Manual paths only" />
-          <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="No Backup / Restore yet" />
+          <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="SQLite backup only" />
         </div>
       </section>
     </div>

@@ -3,6 +3,8 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import type {
   AgentStatus,
   ApprovedProjectPathApprovalSource,
+  BackupKind,
+  BackupRecordStatus,
   BuildStatus,
   EventTone,
   FileChangeStatus,
@@ -48,6 +50,8 @@ export const qualityGateEventTypes = [
   "quality_gate_blocked",
 ] as const satisfies readonly QualityGateEventType[];
 export const approvedProjectPathApprovalSources = ["manual"] as const satisfies readonly ApprovedProjectPathApprovalSource[];
+export const backupKinds = ["manual", "pre_restore_safety"] as const satisfies readonly BackupKind[];
+export const backupRecordStatuses = ["created", "verified", "failed", "restored", "dry_run_passed"] as const satisfies readonly BackupRecordStatus[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -147,6 +151,19 @@ export const approvedProjectPaths = sqliteTable("approved_project_paths", {
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
   note: text("note"),
+});
+
+export const backupRecords = sqliteTable("backup_records", {
+  id: text("id").primaryKey(),
+  backupPath: text("backup_path").notNull(),
+  backupKind: text("backup_kind", { enum: backupKinds }).notNull(),
+  sourceDbPath: text("source_db_path").notNull(),
+  fileSizeBytes: integer("file_size_bytes").notNull(),
+  checksumSha256: text("checksum_sha256").notNull(),
+  status: text("status", { enum: backupRecordStatuses }).notNull(),
+  note: text("note"),
+  createdAt: text("created_at").notNull(),
+  restoredAt: text("restored_at"),
 });
 
 export const gitSnapshots = sqliteTable("git_snapshots", {

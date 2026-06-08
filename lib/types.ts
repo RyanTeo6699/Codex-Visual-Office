@@ -27,6 +27,8 @@ export type QualityGateEventType =
   | "quality_gate_skipped"
   | "quality_gate_blocked";
 export type ApprovedProjectPathApprovalSource = "manual";
+export type BackupKind = "manual" | "pre_restore_safety";
+export type BackupRecordStatus = "created" | "verified" | "failed" | "restored" | "dry_run_passed";
 
 export interface Project {
   id: string;
@@ -223,6 +225,19 @@ export interface ApprovedProjectPath {
   createdAt: string;
   updatedAt: string;
   note?: string;
+}
+
+export interface BackupRecord {
+  id: string;
+  backupPath: string;
+  backupKind: BackupKind;
+  sourceDbPath: string;
+  fileSizeBytes: number;
+  checksumSha256: string;
+  status: BackupRecordStatus;
+  note?: string;
+  createdAt: string;
+  restoredAt?: string;
 }
 
 export interface ReviewRecord {
