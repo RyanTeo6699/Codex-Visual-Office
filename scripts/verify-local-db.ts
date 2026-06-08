@@ -5,6 +5,7 @@ import { listBuildChecks } from "@/lib/local-db/repositories/build-checks";
 import { listDiffSummaries } from "@/lib/local-db/operations/diff-summaries";
 import { listFileChanges } from "@/lib/local-db/repositories/file-changes";
 import { listGitSnapshots } from "@/lib/local-db/repositories/git-snapshots";
+import { listLocalSettings } from "@/lib/local-db/operations/local-settings";
 import { listProjects } from "@/lib/local-db/repositories/projects";
 import { listQualityGateConfigs } from "@/lib/local-db/operations/quality-gate-configs";
 import { listQualityGateEvents } from "@/lib/local-db/operations/quality-gate-events";
@@ -25,6 +26,7 @@ type CountKey =
   | "diff_summaries"
   | "file_changes"
   | "git_snapshots"
+  | "local_settings"
   | "quality_gate_configs"
   | "quality_gate_events"
   | "quality_gate_runs"
@@ -41,6 +43,7 @@ const minimumExpectedCounts: Record<CountKey, number> = {
   diff_summaries: 0,
   file_changes: 0,
   git_snapshots: 0,
+  local_settings: 8,
   quality_gate_configs: 30,
   quality_gate_events: 0,
   quality_gate_runs: 0,
@@ -63,6 +66,7 @@ async function main(): Promise<void> {
     diff_summaries: (await listDiffSummaries()).length,
     file_changes: (await listFileChanges()).length,
     git_snapshots: (await listGitSnapshots()).length,
+    local_settings: (await listLocalSettings()).length,
     quality_gate_configs: (await listQualityGateConfigs()).length,
     quality_gate_events: (await listQualityGateEvents()).length,
     quality_gate_runs: (await listQualityGateRuns()).length,

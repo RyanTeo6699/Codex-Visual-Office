@@ -126,6 +126,14 @@ export const settings = sqliteTable("settings", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const localSettings = sqliteTable("local_settings", {
+  key: text("key").primaryKey(),
+  valueJson: text("value_json").notNull(),
+  category: text("category").notNull(),
+  description: text("description").notNull().default(""),
+  updatedAt: text("updated_at").notNull(),
+});
+
 export const gitSnapshots = sqliteTable("git_snapshots", {
   id: text("id").primaryKey(),
   taskId: text("task_id").notNull().references(() => tasks.id),

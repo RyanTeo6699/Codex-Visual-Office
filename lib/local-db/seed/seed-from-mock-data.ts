@@ -11,6 +11,7 @@ import type {
   NewAgentSeatRow,
 } from "../repositories/agent-seats";
 import type { NewBuildCheckRow } from "../repositories/build-checks";
+import type { NewLocalSettingRow } from "../repositories/local-settings";
 import type { NewProjectRow } from "../repositories/projects";
 import type { NewQualityGateConfigRow } from "../repositories/quality-gate-configs";
 import type { NewReviewRecordRow } from "../repositories/review-records";
@@ -20,6 +21,7 @@ import type { NewTaskRow } from "../repositories/tasks";
 import {
   agentSeats as agentSeatsTable,
   buildChecks as buildChecksTable,
+  localSettings as localSettingsTable,
   projects as projectsTable,
   qualityGateConfigs as qualityGateConfigsTable,
   reviewRecords as reviewRecordsTable,
@@ -28,6 +30,7 @@ import {
   tasks as tasksTable,
 } from "../schema";
 import { qualityGateCommandCatalog, qualityGateCommandKeys } from "../operations/quality-gate-configs";
+import { defaultLocalSettings } from "../operations/local-settings";
 
 const seedTimestamp = "2026-05-31T00:00:00.000Z";
 
@@ -152,6 +155,16 @@ export function mapDefaultQualityGateConfigsToSeedRows(): NewQualityGateConfigRo
   });
 }
 
+export function mapDefaultLocalSettingsToSeedRows(): NewLocalSettingRow[] {
+  return defaultLocalSettings.map((setting) => ({
+    key: setting.key,
+    valueJson: JSON.stringify(setting.value),
+    category: setting.category,
+    description: setting.description,
+    updatedAt: seedTimestamp,
+  }));
+}
+
 export function seedFromMockData(): void {
   db.transaction((tx) => {
     for (const project of mapMockProjectsToSeedRows()) {
@@ -267,6 +280,18 @@ export function seedFromMockData(): void {
           allowlisted: qualityGateConfig.allowlisted,
           description: qualityGateConfig.description,
           updatedAt: qualityGateConfig.updatedAt,
+        },
+      }).run();
+    }
+
+    for (const localSetting of mapDefaultLocalSettingsToSeedRows()) {
+      tx.insert(localSettingsTable).values(localSetting).onConflictDoUpdate({
+        target: localSettingsTable.key,
+        set: {
+          valueJson: localSetting.valueJson,
+          category: localSetting.category,
+          description: localSetting.description,
+          updatedAt: localSetting.updatedAt,
         },
       }).run();
     }

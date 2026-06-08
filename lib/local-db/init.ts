@@ -84,6 +84,14 @@ export function initializeLocalDb(): void {
       updated_at TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS local_settings (
+      key TEXT PRIMARY KEY,
+      value_json TEXT NOT NULL,
+      category TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS git_snapshots (
       id TEXT PRIMARY KEY,
       task_id TEXT NOT NULL REFERENCES tasks(id),

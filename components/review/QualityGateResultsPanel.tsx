@@ -132,7 +132,7 @@ export function QualityGateResultsPanel({
       )}
 
       <p className="mt-3 text-[11px] font-semibold text-slate-500">
-        No command text box, arbitrary shell, terminal emulator, automatic repair, commit, push, or deploy action is available.
+        No custom command entry, arbitrary shell, terminal emulator, automatic repair, commit, push, or deploy action is available.
       </p>
     </section>
   );

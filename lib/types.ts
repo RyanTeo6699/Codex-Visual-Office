@@ -203,6 +203,14 @@ export interface QualityGateEvent {
   createdAt: string;
 }
 
+export interface LocalSetting {
+  key: string;
+  value: Record<string, unknown>;
+  category: string;
+  description: string;
+  updatedAt: string;
+}
+
 export interface ReviewRecord {
   taskId: string;
   diffSummary: string[];
