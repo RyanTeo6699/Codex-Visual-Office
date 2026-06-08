@@ -12,6 +12,7 @@ import { listProjects } from "@/lib/local-db/repositories/projects";
 import { listQualityGateConfigs } from "@/lib/local-db/operations/quality-gate-configs";
 import { listQualityGateEvents } from "@/lib/local-db/operations/quality-gate-events";
 import { listQualityGateRuns } from "@/lib/local-db/operations/quality-gate-runs";
+import { listRetentionPolicies } from "@/lib/local-db/operations/retention-policies";
 import { listReviewRecords } from "@/lib/local-db/repositories/review-records";
 import { listScopeChecks } from "@/lib/local-db/operations/scope-checks";
 import { listSettings } from "@/lib/local-db/repositories/settings";
@@ -34,6 +35,7 @@ type CountKey =
   | "quality_gate_configs"
   | "quality_gate_events"
   | "quality_gate_runs"
+  | "retention_policies"
   | "review_records"
   | "scope_checks"
   | "settings";
@@ -53,6 +55,7 @@ const minimumExpectedCounts: Record<CountKey, number> = {
   quality_gate_configs: 30,
   quality_gate_events: 0,
   quality_gate_runs: 0,
+  retention_policies: 10,
   review_records: 3,
   scope_checks: 0,
   settings: 2,
@@ -78,6 +81,7 @@ async function main(): Promise<void> {
     quality_gate_configs: (await listQualityGateConfigs()).length,
     quality_gate_events: (await listQualityGateEvents()).length,
     quality_gate_runs: (await listQualityGateRuns()).length,
+    retention_policies: (await listRetentionPolicies()).length,
     review_records: (await listReviewRecords()).length,
     scope_checks: (await listScopeChecks()).length,
     settings: (await listSettings()).length,

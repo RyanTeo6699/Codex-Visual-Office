@@ -7,19 +7,22 @@ import { LOCAL_DB_PATH } from "@/lib/local-db/paths";
 import { listApprovedProjectPaths } from "@/lib/local-db/operations/approved-project-paths";
 import { listBackupRecords } from "@/lib/local-db/operations/backup-records";
 import { listLocalSettings, seedDefaultLocalSettings } from "@/lib/local-db/operations/local-settings";
+import { listRetentionPolicies, seedDefaultRetentionPolicies } from "@/lib/local-db/operations/retention-policies";
 import { listProjects } from "@/lib/local-db/repositories/projects";
 import { confirmRestoreAction, createBackupNowAction, restoreDryRunAction, saveApprovedProjectPathAction } from "./actions";
 
 export default async function SettingsPage() {
   initializeLocalDb();
   await seedDefaultLocalSettings();
+  await seedDefaultRetentionPolicies();
 
-  const [settings, codexStatus, projectRows, approvedPaths, backupRecords] = await Promise.all([
+  const [settings, codexStatus, projectRows, approvedPaths, backupRecords, retentionPolicies] = await Promise.all([
     listLocalSettings(),
     detectCodexCliStatus(),
     listProjects(),
     listApprovedProjectPaths(),
     listBackupRecords(),
+    listRetentionPolicies(),
   ]);
 
   return (
@@ -32,6 +35,7 @@ export default async function SettingsPage() {
         approvedPaths={approvedPaths}
         backupDir={LOCAL_BACKUP_DIR}
         backupRecords={backupRecords}
+        retentionPolicies={retentionPolicies}
         saveApprovedProjectPathAction={saveApprovedProjectPathAction}
         createBackupNowAction={createBackupNowAction}
         restoreDryRunAction={restoreDryRunAction}

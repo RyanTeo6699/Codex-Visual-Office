@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Boxes, CircuitBoard, ClipboardCheck, Home, MonitorCheck, Settings } from "lucide-react";
+import { Archive, Boxes, CircuitBoard, ClipboardCheck, Home, MonitorCheck, Settings } from "lucide-react";
 import { projects, tasks } from "@/lib/mock-data";
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { href: "/#tasks", label: "Tasks", icon: CircuitBoard },
   { href: "/#build", label: "Build", icon: MonitorCheck },
   { href: `/review/${tasks.find((task) => task.status === "waiting_review")?.id ?? tasks[0].id}`, label: "Review", icon: ClipboardCheck },
+  { href: "/archive", label: "Archive", icon: Archive },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

@@ -27,7 +27,8 @@
     "review:verify:readiness": "tsx scripts/verify-review-room-readiness.ts",
     "settings:verify": "tsx scripts/verify-local-settings.ts",
     "settings:verify:project-paths": "tsx scripts/verify-approved-project-paths.ts",
-    "backup:verify": "tsx scripts/verify-local-backup-restore.ts"
+    "backup:verify": "tsx scripts/verify-local-backup-restore.ts",
+    "archive:verify": "tsx scripts/verify-archive-retention.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

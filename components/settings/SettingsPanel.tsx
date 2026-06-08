@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, MonitorCog, ShieldCheck } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
+import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
-import type { ApprovedProjectPath, BackupRecord, LocalSetting } from "@/lib/types";
+import type { ApprovedProjectPath, BackupRecord, LocalSetting, RetentionPolicy } from "@/lib/types";
 
 export function SettingsPanel({
   settings,
@@ -13,6 +14,7 @@ export function SettingsPanel({
   approvedPaths,
   backupDir,
   backupRecords,
+  retentionPolicies,
   saveApprovedProjectPathAction,
   createBackupNowAction,
   restoreDryRunAction,
@@ -25,6 +27,7 @@ export function SettingsPanel({
   approvedPaths: ApprovedProjectPath[];
   backupDir: string;
   backupRecords: BackupRecord[];
+  retentionPolicies: RetentionPolicy[];
   saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
   createBackupNowAction: BackupFormAction;
   restoreDryRunAction: BackupFormAction;
@@ -122,6 +125,8 @@ export function SettingsPanel({
           restoreDryRunAction={restoreDryRunAction}
           confirmRestoreAction={confirmRestoreAction}
         />
+
+        <ArchiveRetentionCard policies={retentionPolicies} />
 
         <SettingsCard
           icon={<Laptop className="h-4 w-4 text-slate-100/80" />}

@@ -29,6 +29,19 @@ export type QualityGateEventType =
 export type ApprovedProjectPathApprovalSource = "manual";
 export type BackupKind = "manual" | "pre_restore_safety";
 export type BackupRecordStatus = "created" | "verified" | "failed" | "restored" | "dry_run_passed";
+export type RetentionTarget =
+  | "task_events"
+  | "runner_outputs"
+  | "quality_gate_events"
+  | "quality_gate_runs"
+  | "git_snapshots"
+  | "file_changes"
+  | "diff_summaries"
+  | "scope_checks"
+  | "review_records"
+  | "backup_records"
+  | "verify_target";
+export type RetentionMode = "dry_run_only";
 
 export interface Project {
   id: string;
@@ -238,6 +251,17 @@ export interface BackupRecord {
   note?: string;
   createdAt: string;
   restoredAt?: string;
+}
+
+export interface RetentionPolicy {
+  id: string;
+  target: RetentionTarget;
+  retentionDays: number;
+  enabled: boolean;
+  mode: RetentionMode;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ReviewRecord {

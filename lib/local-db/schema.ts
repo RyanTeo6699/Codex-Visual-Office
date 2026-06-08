@@ -14,6 +14,8 @@ import type {
   QualityGateEventType,
   QualityGateRunStatus,
   ReviewDecision,
+  RetentionMode,
+  RetentionTarget,
   ScopeCheckStatus,
   TaskStatus,
 } from "@/lib/types";
@@ -52,6 +54,20 @@ export const qualityGateEventTypes = [
 export const approvedProjectPathApprovalSources = ["manual"] as const satisfies readonly ApprovedProjectPathApprovalSource[];
 export const backupKinds = ["manual", "pre_restore_safety"] as const satisfies readonly BackupKind[];
 export const backupRecordStatuses = ["created", "verified", "failed", "restored", "dry_run_passed"] as const satisfies readonly BackupRecordStatus[];
+export const retentionTargets = [
+  "task_events",
+  "runner_outputs",
+  "quality_gate_events",
+  "quality_gate_runs",
+  "git_snapshots",
+  "file_changes",
+  "diff_summaries",
+  "scope_checks",
+  "review_records",
+  "backup_records",
+  "verify_target",
+] as const satisfies readonly RetentionTarget[];
+export const retentionModes = ["dry_run_only"] as const satisfies readonly RetentionMode[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -164,6 +180,17 @@ export const backupRecords = sqliteTable("backup_records", {
   note: text("note"),
   createdAt: text("created_at").notNull(),
   restoredAt: text("restored_at"),
+});
+
+export const retentionPolicies = sqliteTable("retention_policies", {
+  id: text("id").primaryKey(),
+  target: text("target", { enum: retentionTargets }).notNull(),
+  retentionDays: integer("retention_days").notNull(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull(),
+  mode: text("mode", { enum: retentionModes }).notNull(),
+  description: text("description").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
 });
 
 export const gitSnapshots = sqliteTable("git_snapshots", {

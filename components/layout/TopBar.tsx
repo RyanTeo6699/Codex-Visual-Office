@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Circle, Settings, ShieldCheck } from "lucide-react";
+import { Archive, Circle, Settings, ShieldCheck } from "lucide-react";
 
 export function TopBar() {
   return (
@@ -18,6 +18,10 @@ export function TopBar() {
             <ShieldCheck className="h-4 w-4 text-sky-200/80" />
             <span>Local mock workspace</span>
           </div>
+          <Link href="/archive" className="inline-flex items-center gap-1.5 rounded-md border border-white/8 bg-white/[0.04] px-2 py-1 font-semibold text-slate-300 hover:text-white">
+            <Archive className="h-3.5 w-3.5" />
+            Archive
+          </Link>
           <Link href="/settings" className="inline-flex items-center gap-1.5 rounded-md border border-white/8 bg-white/[0.04] px-2 py-1 font-semibold text-slate-300 hover:text-white">
             <Settings className="h-3.5 w-3.5" />
             Settings

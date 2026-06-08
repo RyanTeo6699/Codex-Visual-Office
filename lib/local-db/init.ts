@@ -118,6 +118,17 @@ export function initializeLocalDb(): void {
       restored_at TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS retention_policies (
+      id TEXT PRIMARY KEY,
+      target TEXT NOT NULL,
+      retention_days INTEGER NOT NULL,
+      enabled INTEGER NOT NULL,
+      mode TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS git_snapshots (
       id TEXT PRIMARY KEY,
       task_id TEXT NOT NULL REFERENCES tasks(id),
