@@ -3,7 +3,9 @@ import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChe
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
 import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
+import { LocalAppShellCard } from "./LocalAppShellCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
+import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
 import type { ApprovedProjectPath, BackupRecord, LocalSetting, RetentionPolicy } from "@/lib/types";
 
 export function SettingsPanel({
@@ -15,6 +17,7 @@ export function SettingsPanel({
   backupDir,
   backupRecords,
   retentionPolicies,
+  localShellStatus,
   saveApprovedProjectPathAction,
   createBackupNowAction,
   restoreDryRunAction,
@@ -28,6 +31,7 @@ export function SettingsPanel({
   backupDir: string;
   backupRecords: BackupRecord[];
   retentionPolicies: RetentionPolicy[];
+  localShellStatus: LocalShellStatus;
   saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
   createBackupNowAction: BackupFormAction;
   restoreDryRunAction: BackupFormAction;
@@ -57,6 +61,8 @@ export function SettingsPanel({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-2">
+        <LocalAppShellCard status={localShellStatus} />
+
         <SettingsCard
           icon={<ShieldCheck className="h-4 w-4 text-emerald-100/80" />}
           title="Local-first status"

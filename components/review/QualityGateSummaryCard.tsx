@@ -78,7 +78,7 @@ function formatTimestamp(value: string): string {
     return value;
   }
 
-  return date.toLocaleString(undefined, {
+  return date.toLocaleString("en-US", {
     month: "short",
     day: "2-digit",
     hour: "2-digit",

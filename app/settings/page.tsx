@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
 import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
+import { getLocalShellStatus } from "@/lib/local-shell/local-shell-status";
 import { LOCAL_BACKUP_DIR } from "@/lib/local-backup/backup-paths";
 import { initializeLocalDb } from "@/lib/local-db/init";
 import { LOCAL_DB_PATH } from "@/lib/local-db/paths";
@@ -16,13 +17,14 @@ export default async function SettingsPage() {
   await seedDefaultLocalSettings();
   await seedDefaultRetentionPolicies();
 
-  const [settings, codexStatus, projectRows, approvedPaths, backupRecords, retentionPolicies] = await Promise.all([
+  const [settings, codexStatus, projectRows, approvedPaths, backupRecords, retentionPolicies, localShellStatus] = await Promise.all([
     listLocalSettings(),
     detectCodexCliStatus(),
     listProjects(),
     listApprovedProjectPaths(),
     listBackupRecords(),
     listRetentionPolicies(),
+    getLocalShellStatus(),
   ]);
 
   return (
@@ -36,6 +38,7 @@ export default async function SettingsPage() {
         backupDir={LOCAL_BACKUP_DIR}
         backupRecords={backupRecords}
         retentionPolicies={retentionPolicies}
+        localShellStatus={localShellStatus}
         saveApprovedProjectPathAction={saveApprovedProjectPathAction}
         createBackupNowAction={createBackupNowAction}
         restoreDryRunAction={restoreDryRunAction}

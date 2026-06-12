@@ -43,7 +43,7 @@ export function CodexRuntimeStatus({ status }: { status: CodexCliStatus }) {
 
       <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
         <ShieldCheck className="h-3.5 w-3.5 text-sky-200/70" />
-        <span>Checked {new Date(status.checkedAt).toLocaleString()}</span>
+        <span>Checked {new Date(status.checkedAt).toLocaleString("en-US")}</span>
       </div>
     </section>
   );
