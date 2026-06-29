@@ -41,6 +41,74 @@ a {
   background-size: 72px 72px;
 }
 
+.command-card {
+  position: relative;
+  min-height: 150px;
+  border: 1px solid rgba(226, 232, 240, 0.09);
+  background: rgba(15, 23, 42, 0.64);
+  padding: 18px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.command-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-left: 4px solid rgba(125, 211, 252, 0.55);
+  pointer-events: none;
+}
+
+.command-card::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  width: 74px;
+  height: 10px;
+  background:
+    linear-gradient(90deg, rgba(226, 232, 240, 0.18) 40%, transparent 40% 55%, rgba(226, 232, 240, 0.12) 55%);
+  opacity: 0.55;
+}
+
+.command-card-cyan::before {
+  border-left-color: #7dd3fc;
+}
+
+.project-dot-cyan {
+  background-color: #7dd3fc;
+}
+
+.command-card-violet::before {
+  border-left-color: #bfdbfe;
+}
+
+.project-dot-violet {
+  background-color: #bfdbfe;
+}
+
+.command-card-emerald::before {
+  border-left-color: #86efac;
+}
+
+.project-dot-teal {
+  background-color: #86efac;
+}
+
+.command-card-rose::before {
+  border-left-color: #fda4af;
+}
+
+.project-dot-red {
+  background-color: #fda4af;
+}
+
+.project-dot-amber {
+  background-color: #f8c46b;
+}
+
 .pixel-shell,
 .pixel-hud,
 .pixel-side-panel,

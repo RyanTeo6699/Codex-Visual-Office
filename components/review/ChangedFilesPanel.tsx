@@ -20,7 +20,7 @@ export function ChangedFilesPanel({ fileChanges }: { fileChanges: FileChange[] }
   })).filter((group) => group.items.length > 0);
 
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
+    <section className="min-w-0 rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Files className="h-4 w-4 text-cyan-100/80" />
@@ -34,9 +34,9 @@ export function ChangedFilesPanel({ fileChanges }: { fileChanges: FileChange[] }
       {fileChanges.length === 0 ? (
         <p className="mt-4 rounded-[12px] bg-black/12 px-3 py-2 text-xs text-slate-500">No changed files captured yet.</p>
       ) : (
-        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-2">
           {grouped.map((group) => (
-            <div key={group.status} className="rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
+            <div key={group.status} className="min-w-0 rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
               <p className="text-xs font-bold text-slate-200">{statusLabels[group.status]} ({group.items.length})</p>
               <div className="mt-3 space-y-2">
                 {group.items.map((change) => (

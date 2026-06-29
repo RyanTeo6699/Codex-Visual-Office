@@ -21,7 +21,7 @@ export function ReviewEvidenceGrid({
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Evidence</p>
         <h2 className="mt-1 text-lg font-bold text-slate-100">Git / Files / Diff</h2>
       </div>
-      <div className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <GitSnapshotPanel before={gitSnapshots.before} after={gitSnapshots.after} />
         <ChangedFilesPanel fileChanges={fileChanges} />
       </div>

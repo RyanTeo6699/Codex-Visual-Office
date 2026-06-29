@@ -18,7 +18,7 @@ export function ScopeGuardPanel({ scopeCheck, forbiddenScope }: { scopeCheck?: S
   const rules = scopeCheck?.forbiddenScope.length ? scopeCheck.forbiddenScope : forbiddenScope;
 
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
+    <section className="min-w-0 rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <ShieldAlert className="h-4 w-4 text-rose-100/80" />
@@ -32,8 +32,8 @@ export function ScopeGuardPanel({ scopeCheck, forbiddenScope }: { scopeCheck?: S
       {!scopeCheck ? (
         <p className="mt-4 rounded-[12px] bg-black/12 px-3 py-2 text-xs text-slate-500">No scope check captured yet.</p>
       ) : (
-        <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
+        <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="min-w-0 rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
             <p className="text-xs font-bold text-slate-200">Reason</p>
             <p className="mt-2 text-xs leading-relaxed text-slate-400">{scopeCheck.reason}</p>
             <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">
@@ -41,7 +41,7 @@ export function ScopeGuardPanel({ scopeCheck, forbiddenScope }: { scopeCheck?: S
             </p>
           </div>
 
-          <div className="rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
+          <div className="min-w-0 rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3">
             <p className="text-xs font-bold text-slate-200">Matched Changed Files</p>
             {scopeCheck.matchedFiles.length ? (
               <div className="mt-3 space-y-2">

@@ -130,13 +130,14 @@ export function ReviewPanel({
   return (
     <div className="space-y-5">
       <ReviewReadinessSummary summary={readinessSummary} />
-      <section className="rounded-[22px] border border-white/8 bg-[#111a25]/78 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+      <section className="relative overflow-hidden border border-white/8 bg-[#0d1724]/82 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/70 to-transparent" />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Task Brief / {project.name} / {agent?.name ?? "Unassigned"}</p>
-            <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-white">{task.title}</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-100/60">Review Desk / {project.name} / {agent?.name ?? "Unassigned"}</p>
+            <h1 className="mt-2 max-w-4xl text-3xl font-black leading-tight tracking-tight text-white">{task.title}</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Review the generated prompt, runner result, Git evidence, Scope Guard, and Quality Gates before making the final manual decision.
+              Validate the prompt, scoped runner result, Git evidence, Scope Guard, and Quality Gates before making the final manual decision.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -145,6 +146,12 @@ export function ReviewPanel({
               {reviewDecisionLabel[decision]}
             </span>
           </div>
+        </div>
+        <div className="mt-6 grid gap-2 text-xs font-bold text-slate-400 md:grid-cols-4">
+          <EvidenceSignal label="Runner" value={runnerResult?.status ?? "not run"} />
+          <EvidenceSignal label="Changed files" value={`${fileChanges.length}`} />
+          <EvidenceSignal label="Scope guard" value={scopeCheck?.status ?? "pending"} />
+          <EvidenceSignal label="Quality" value={qualityGateSummary.overallStatus} />
         </div>
         <div className="mt-7 grid gap-4 lg:grid-cols-2">
           <ReviewList title="Acceptance Criteria" items={task.acceptanceCriteria} tone="cyan" />
@@ -236,6 +243,15 @@ function ReviewList({ title, items, tone }: { title: string; items: string[]; to
           <li key={item} className="rounded-[12px] bg-black/12 px-3 py-2 text-sm leading-relaxed text-slate-300">{item}</li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function EvidenceSignal({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-white/[0.06] bg-white/[0.025] px-3 py-2.5">
+      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
+      <p className="mt-1 break-words text-sm font-black text-slate-100">{value.replaceAll("_", " ")}</p>
     </div>
   );
 }

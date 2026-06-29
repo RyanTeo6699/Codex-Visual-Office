@@ -36,20 +36,35 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
   const allProjects: Project[] = localRead ? [project, ...projects.filter((item) => item.id !== project.id)] : projects;
   const allAgentSeats: AgentSeatType[] = localRead ? [...projectAgents, ...agentSeats.filter((agent) => !projectAgents.some((localAgent) => localAgent.id === agent.id))] : agentSeats;
   const activeTasks = projectTasks.filter((task) => task.status === "running" || task.status === "waiting_review" || task.status === "blocked");
+  const waitingReview = projectTasks.filter((task) => task.status === "waiting_review").length;
+  const blockedTasks = projectTasks.filter((task) => task.status === "blocked").length;
 
   return (
     <AppShell>
       <div className="space-y-6">
         <section className={`pixel-room pixel-room-${project.accent} relative overflow-hidden border-4 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)]`}>
-          <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-300">Project Room</p>
               <h1 className="pixel-room-title mt-2 text-3xl font-black tracking-tight text-white">{project.name}</h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">{project.summary}</p>
+              <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
+                <span className="border border-cyan-200/18 bg-cyan-200/10 px-3 py-2 text-cyan-100">Codex seats: {projectAgents.length}</span>
+                <span className="border border-blue-200/18 bg-blue-200/10 px-3 py-2 text-blue-100">Waiting review: {waitingReview}</span>
+                <span className="border border-rose-200/18 bg-rose-200/10 px-3 py-2 text-rose-100">Blocked: {blockedTasks}</span>
+              </div>
             </div>
-            <Link href="/" className="rounded-[14px] border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/[0.1]">
-              Office Home
-            </Link>
+            <div className="border border-white/10 bg-black/18 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Room objective</p>
+                <Link href="/" className="border border-white/10 bg-white/[0.07] px-3 py-2 text-xs font-bold text-slate-100 hover:bg-white/[0.1]">
+                  Office Home
+                </Link>
+              </div>
+              <p className="mt-4 text-sm font-semibold leading-relaxed text-white">
+                Keep Codex work observable: approved path, active task tray, build wall, quality gate config, and review handoff.
+              </p>
+            </div>
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <RoomField label="Phase" value={project.phase} />

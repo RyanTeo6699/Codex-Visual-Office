@@ -26,22 +26,24 @@ export function OfficeMap({
   const running = tasks.filter((task) => task.status === "running").length;
   const blocked = tasks.filter((task) => task.status === "blocked").length;
   const review = tasks.filter((task) => task.status === "waiting_review").length;
+  const occupiedSeats = agentSeats.filter((agent) => agent.status !== "idle").length;
 
   return (
     <section id="projects" className="pixel-shell relative overflow-hidden border border-slate-700/80 bg-[#0f1722] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.34)] lg:p-6">
       <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-sky-200/70 to-transparent" />
       <div className="mb-5 flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-100/70">Local AI Office</p>
-          <h1 className="pixel-title mt-2 text-2xl font-black text-white md:text-4xl">Codex Visual Office</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-100/70">2D Codex Operations Floor</p>
+          <h2 className="pixel-title mt-2 text-2xl font-black text-white md:text-4xl">Project rooms with AI employees at work</h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300/90">
-            Project rooms, Codex work pods, task trays, and human review desks in one local visual workspace.
+            Every room has a task tray, Codex work pod, progress signal, and a path back to human review.
           </p>
         </div>
-        <div className="pixel-hud grid grid-cols-3 gap-2 border border-slate-600/70 bg-[#141d2c] p-2 text-center">
+        <div className="pixel-hud grid grid-cols-4 gap-2 border border-slate-600/70 bg-[#141d2c] p-2 text-center">
           <Metric label="Running" value={running} />
           <Metric label="Blocked" value={blocked} />
           <Metric label="Review" value={review} />
+          <Metric label="Seats" value={occupiedSeats} />
         </div>
       </div>
 
@@ -87,6 +89,14 @@ export function OfficeMap({
               />
             ))}
           </div>
+          <div className="mt-4 border border-cyan-200/10 bg-cyan-200/[0.035] p-3">
+            <p className="pixel-label text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Office protocol</p>
+            <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400">
+              <p>1. Codex works inside an approved local path.</p>
+              <p>2. Git evidence and quality gates are visible.</p>
+              <p>3. Final approval stays human-controlled.</p>
+            </div>
+          </div>
         </aside>
       </div>
     </section>
@@ -104,6 +114,8 @@ function PixelProjectRoom({
 }) {
   const activeTask = tasks.find((task) => task.status === "running" || task.status === "blocked" || task.status === "waiting_review") ?? tasks[0];
   const progress = activeTask ? progressByStatus[activeTask.status] : 0;
+  const waitingCount = tasks.filter((task) => task.status === "waiting_review").length;
+  const blockedCount = tasks.filter((task) => task.status === "blocked").length;
   const nextAction = activeTask?.status === "waiting_review"
     ? "Open review desk"
     : activeTask?.status === "blocked"
@@ -133,6 +145,8 @@ function PixelProjectRoom({
           </p>
           <div className="flex flex-wrap gap-1.5">
             <span className="pixel-task-chip bg-slate-700">{projectStatusLabel[project.status]}</span>
+            {waitingCount ? <span className="pixel-task-chip pixel-task-waiting_review">{waitingCount} review</span> : null}
+            {blockedCount ? <span className="pixel-task-chip pixel-task-blocked">{blockedCount} blocked</span> : null}
             {tasks.slice(0, 3).map((task) => (
               <span key={task.id} className={`pixel-task-chip pixel-task-${task.status}`}>{taskStatusLabel[task.status]}</span>
             ))}
