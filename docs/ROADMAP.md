@@ -2,14 +2,14 @@
 
 版本：v1.0  
 项目：Codex Visual Office  
-路线类型：Local-first → Real Codex Integration → Cloud Sync → Team / ChatGPT App  
+路线类型：Local-first → Real Codex Integration → Desktop Shell → Optional Cloud Sync → Team / ChatGPT App
 日期：2026-05-30  
 
 ---
 
 ## 1. 总路线
 
-Codex Visual Office 的完整路线分为 10 个阶段：
+Codex Visual Office 的完整路线从 Phase 0 到 Phase 11：
 
 ```txt
 Phase 0：项目总控基线 / Scope Lock
@@ -19,16 +19,27 @@ Phase 3：本地 Codex CLI 接入 / Local Codex Runner
 Phase 4：Git / 文件 / Terminal 状态监听
 Phase 5：本地质量门与验收室
 Phase 6：本地可用版封装
-Phase 7：云同步与 GitHub / Vercel 集成
-Phase 8：团队版与权限系统
-Phase 9：ChatGPT App / MCP 接入
-Phase 10：商业化完整版
+Phase 7A：Scope Lock / Roadmap Reconciliation
+Phase 7B：Desktop Shell Evaluation
+Phase 7C：Local Launcher
+Phase 7D：Packaging Prototype
+Phase 8：Cloud Sync Planning
+Phase 9：Cloud Sync Implementation
+Phase 10：Team Workspace
+Phase 11：ChatGPT App / MCP
 ```
 
-当前只执行：
+历史 PRD 1.0 首轮只执行：
 
 ```txt
 Phase 1：视觉原型 / Mock Data Demo
+```
+
+当前路线位置：
+
+```txt
+Phase 7A：Scope Lock / Roadmap Reconciliation
+下一阶段：Phase 7B Desktop Shell Evaluation，需要 GM 明确批准后开始
 ```
 
 ---
@@ -303,35 +314,77 @@ optional Tauri packaging
 
 ---
 
-## 9. Phase 7：云同步与 GitHub / Vercel 集成
+## 9. Phase 7A-D：本地桌面壳路线 / Desktop Shell Path
 
 ### 目标
 
-在本地体验成立后，才接入云端工程状态。
+在 Phase 6 本地产品化之后，先完成 Phase 7A-D 的本地桌面壳路线，再进入任何云同步实现。
 
-### 允许新增
+### 阶段拆分
 
 ```txt
-Supabase cloud sync
-GitHub App
-GitHub PR sync
-GitHub Checks sync
-Vercel Preview sync
-Deployment status
+Phase 7A：Scope Lock / Roadmap Reconciliation
+Phase 7B：Desktop Shell Evaluation
+Phase 7C：Local Launcher
+Phase 7D：Packaging Prototype
 ```
 
 ### 完成效果
 
-本地 Codex 执行状态可以和 GitHub PR、Vercel Preview、云端任务状态同步。
+产品路线先解决本地桌面启动、壳层评估和包装原型，再考虑云端能力。
 
 ### 注意
 
-云同步必须是可选功能。  
-不能破坏 local-first 原则。
+Phase 7A 只做文档和范围锁定。
+Phase 7B 实现尚未开始。
+云同步必须后置到 Phase 8 / Phase 9，并且必须保持可选。
 
 ---
 
-## 10. Phase 8：团队版与权限系统
+## 10. Phase 8：Cloud Sync Planning
+
+### 目标
+
+规划可选云同步，不实现云同步。
+
+### 允许新增
+
+```txt
+cloud sync architecture plan
+data ownership model
+offline / conflict behavior
+privacy and security boundaries
+optional sync UX
+```
+
+### 完成效果
+
+明确如何在不破坏 local-first 原则的前提下，后续可选接入云同步。
+
+---
+
+## 11. Phase 9：Cloud Sync Implementation
+
+### 目标
+
+在 Phase 8 规划获批后，实现可选云同步。
+
+### 允许新增
+
+```txt
+optional cloud sync
+sync status
+conflict handling
+approved provider integration
+```
+
+### 完成效果
+
+本地 Codex 执行状态可以选择性同步到云端，同时离线本地使用不受影响。
+
+---
+
+## 12. Phase 10：Team Workspace
 
 ### 目标
 
@@ -348,23 +401,13 @@ Audit Logs
 Team Review
 ```
 
-### 角色
-
-```txt
-owner
-admin
-developer
-reviewer
-viewer
-```
-
 ### 完成效果
 
 团队可以使用同一个 Visual Office 管理 AI coding workflow。
 
 ---
 
-## 11. Phase 9：ChatGPT App / MCP 接入
+## 13. Phase 11：ChatGPT App / MCP 接入
 
 ### 目标
 
@@ -383,54 +426,20 @@ office widget
 
 ### 完成效果
 
-用户可以在 ChatGPT 内说：
-
-```txt
-查看我的 Codex Office
-列出阻塞任务
-打开当前 Review Room
-创建一个 Codex 任务
-```
+用户可以在 ChatGPT 内查看办公室状态、查询任务、创建任务或进入验收流程。
 
 ---
 
-## 12. Phase 10：商业化完整版
+## 当前阶段提醒
 
-### 目标
-
-形成可销售产品。
-
-### 可能版本
-
-```txt
-Free / Local
-Pro
-Team
-Enterprise
-Self-hosted
-```
-
-### 商业能力
-
-```txt
-plans
-billing
-team workspace
-advanced audit
-self-hosting
-plugin system
-enterprise deployment
-```
-
----
-
-## 13. 当前阶段提醒
-
-当前仍然只允许执行：
+历史 PRD 1.0 阶段提醒只允许执行：
 
 ```txt
 Phase 1：视觉原型
 ```
+
+当前仓库已完成 Phase 6 closeout，并处于 Phase 7A docs-only roadmap reconciliation。
+Phase 7B Desktop Shell Evaluation 尚未开始，必须等待 GM 明确批准。
 
 不要提前做：
 
@@ -439,9 +448,11 @@ Phase 2 SQLite
 Phase 3 Codex CLI
 Phase 4 Git watcher
 Phase 5 real quality gates
-Phase 7 cloud sync
-Phase 8 team
-Phase 9 ChatGPT App
+Phase 7A-D desktop shell path
+Phase 8 cloud sync planning
+Phase 9 cloud sync implementation
+Phase 10 team
+Phase 11 ChatGPT App / MCP
 ```
 
 任何跨阶段开发都必须先经过 GM 明确批准。

@@ -4,10 +4,12 @@
 项目名称：Codex Visual Office  
 中文名：ChatGPT + Codex 可视化办公室  
 内部简称：CVO  
-阶段：Phase 1 - Visual Prototype / 视觉原型  
+PRD 1.0 阶段：Phase 1 - Visual Prototype / 视觉原型
+当前路线位置：Phase 7A - Scope Lock / Roadmap Reconciliation；Phase 7B 尚未开始
 运行形态：本地 Web App / Local-first Web App  
 目标交付：可运行、可点击、可演示的前端视觉原型  
-当前日期：2026-05-30  
+PRD 1.0 原始日期：2026-05-30
+当前路线修订日期：2026-06-29
 
 ---
 
@@ -205,7 +207,8 @@ http://localhost:3000
 3. 再接 Codex CLI。
 4. 再接 Git / 文件监听。
 5. 再做质量门与验收室。
-6. 最后才做云同步和团队版。
+6. 再做本地桌面壳评估、启动器与包装原型。
+7. 最后才做可选云同步、团队版和 ChatGPT App / MCP。
 
 ### 8.4 不要提前基础设施膨胀
 
@@ -1169,7 +1172,9 @@ PRD 1.0 做完后，用户会得到：
 
 ### Phase 1：视觉原型
 
-当前阶段。
+历史 PRD 1.0 首轮执行阶段。
+
+当前仓库状态已经完成 Phase 6 closeout，并进入 Phase 7A docs-only roadmap reconciliation。Phase 7B Desktop Shell Evaluation 尚未开始，必须等待 GM 明确批准。
 
 目标：
 
@@ -1258,22 +1263,95 @@ PRD 1.0 做完后，用户会得到：
 - 日志清理
 - 错误恢复
 
-### Phase 7：云同步
+### Phase 7A：Scope Lock / Roadmap Reconciliation
 
 目标：
 
 ```txt
-可选接入 GitHub、Vercel、Supabase。
+修正 Phase 6 之后的路线图编号与范围边界。
 ```
 
 新增：
 
-- GitHub PR sync
-- Vercel preview sync
-- Supabase cloud sync
-- workspace sync
+- 仅文档
+- 路线图协调
+- Scope lock
+- 明确 Phase 7B 尚未开始
 
-### Phase 8：团队版
+### Phase 7B：Desktop Shell Evaluation
+
+目标：
+
+```txt
+评估 Tauri、Electron、browser-only local launcher 等本地桌面壳路径。
+```
+
+新增：
+
+- 桌面壳方案比较
+- 包装风险
+- 本地运行边界
+- Phase 7C / 7D 推荐方向
+
+### Phase 7C：Local Launcher
+
+目标：
+
+```txt
+实现本地启动与打开 Codex Visual Office 的 launcher 体验。
+```
+
+新增：
+
+- local launcher
+- startup flow
+- local status messaging
+
+### Phase 7D：Packaging Prototype
+
+目标：
+
+```txt
+基于已选方向制作本地桌面包装原型。
+```
+
+新增：
+
+- packaging prototype
+- local desktop shell proof
+- packaging verification notes
+
+### Phase 8：Cloud Sync Planning
+
+目标：
+
+```txt
+规划可选云同步，不实现云同步。
+```
+
+新增：
+
+- cloud sync architecture plan
+- data ownership model
+- offline / conflict behavior
+- privacy and security boundaries
+
+### Phase 9：Cloud Sync Implementation
+
+目标：
+
+```txt
+在 Phase 8 获批后实现可选云同步。
+```
+
+新增：
+
+- optional cloud sync
+- sync status
+- conflict handling
+- approved provider integration
+
+### Phase 10：Team Workspace
 
 目标：
 
@@ -1289,7 +1367,7 @@ PRD 1.0 做完后，用户会得到：
 - Permissions
 - Audit log
 
-### Phase 9：ChatGPT App / MCP
+### Phase 11：ChatGPT App / MCP
 
 目标：
 
@@ -1304,7 +1382,7 @@ PRD 1.0 做完后，用户会得到：
 - Project status query
 - Task dispatch interface
 
-### Phase 10：商业化完整版
+### Phase 12+：商业化完整版
 
 目标：
 
@@ -1324,11 +1402,15 @@ PRD 1.0 做完后，用户会得到：
 
 ## 22. Codex 开发指令摘要
 
-Codex 第一轮开发必须只做 Phase 1。
+以下是 PRD 1.0 第一轮开发的历史指令摘要。
+
+当前仓库已完成 Phase 6 closeout，并处于 Phase 7A docs-only roadmap reconciliation。以下 Phase 1 指令不得被后续代理误读为当前开发范围。
+
+Codex 第一轮开发当时必须只做 Phase 1。
 
 ### 任务目标
 
-Build Phase 1 only.
+Historical PRD 1.0 task: Build Phase 1 only.
 
 Create a Next.js + TypeScript + Tailwind app for Codex Visual Office.
 
@@ -1377,7 +1459,11 @@ The product must not look like a generic admin dashboard.
 
 ## 23. AGENTS.md 建议内容
 
-项目根目录应创建 `AGENTS.md`：
+以下是 PRD 1.0 Phase 1 时期的历史 `AGENTS.md` 建议内容。
+
+当前仓库已完成 Phase 6 closeout，并处于 Phase 7A docs-only roadmap reconciliation。后续代理不得把这个历史模板误读为当前执行阶段。
+
+项目根目录当时应创建 `AGENTS.md`：
 
 ```md
 # AGENTS.md
@@ -1388,7 +1474,9 @@ Codex Visual Office is a local-first visual office for ChatGPT + Codex workflows
 
 ## Current Phase
 
-Phase 1: Visual prototype with mock data only.
+Historical PRD 1.0 scope: Phase 1 visual prototype with mock data only.
+
+Current repository roadmap position: Phase 7A docs-only roadmap reconciliation. Phase 7B Desktop Shell Evaluation has not started and requires GM approval.
 
 ## Hard Rules
 
