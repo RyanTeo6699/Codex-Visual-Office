@@ -98,6 +98,10 @@ It should not add a desktop runtime, installer, packaging scripts, auto updater,
 - Recommended shell / launcher direction.
 - Explicit no-go risks.
 
+### Status
+
+- Evaluation document exists and recommends Phase 7C Browser-only Local Launcher first.
+
 ## Phase 7C - Local Launcher
 
 ### Goal
