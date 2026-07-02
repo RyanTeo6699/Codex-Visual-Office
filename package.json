@@ -30,7 +30,10 @@
     "backup:verify": "tsx scripts/verify-local-backup-restore.ts",
     "archive:verify": "tsx scripts/verify-archive-retention.ts",
     "local:shell:status": "tsx scripts/local-shell-status.ts",
-    "local:shell:verify": "tsx scripts/verify-local-app-shell.ts"
+    "local:shell:verify": "tsx scripts/verify-local-app-shell.ts",
+    "local:launcher": "tsx scripts/local-launcher.ts",
+    "local:launcher:open": "tsx scripts/local-launcher.ts --open",
+    "local:launcher:verify": "tsx scripts/verify-local-launcher.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

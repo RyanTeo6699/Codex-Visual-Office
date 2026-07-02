@@ -127,6 +127,10 @@ It must not introduce cloud sync, GitHub API, Vercel, Supabase, auth, payment, t
 - Local launcher implementation plan or implementation only after GM approval.
 - Clear local runtime boundary.
 
+### Status
+
+- Phase 7C Browser-only Local Launcher implemented as a bounded local-only launcher; Phase 7D packaging has not started.
+
 ## Phase 7D - Packaging Prototype
 
 ### Goal

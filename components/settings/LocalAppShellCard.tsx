@@ -1,5 +1,6 @@
 import { LaptopMinimal, ShieldCheck } from "lucide-react";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
+import { DEFAULT_LOCAL_APP_URL, LOCAL_APP_URL_ENV } from "@/lib/local-launcher/local-launcher-config";
 
 export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
   const rows = [
@@ -11,6 +12,7 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
     ["Archive Room", status.archiveRoomReady ? `${status.counts.retentionPolicies} dry-run policies` : "Not ready"],
     ["Quality Gates ready", status.qualityGatesConfigured ? `${status.counts.qualityGateConfigs} configs` : "Not configured"],
     ["Codex CLI", status.codexCliDetected ? status.codexCliStatusLabel : "Not detected"],
+    ["Local Launcher URL", DEFAULT_LOCAL_APP_URL],
     ["Desktop Packaging", "Future evaluation only"],
   ] as const;
 
@@ -45,6 +47,10 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
             <p>npm run dev</p>
             <p>npm run local:shell:status</p>
             <p>npm run local:shell:verify</p>
+            <p>npm run local:launcher</p>
+            <p>npm run local:launcher:open</p>
+            <p>npm run local:launcher:verify</p>
+            <p>{LOCAL_APP_URL_ENV}=http://localhost:3000</p>
           </div>
         </div>
         <div className="rounded-[14px] border border-amber-200/12 bg-amber-200/[0.04] p-3">
