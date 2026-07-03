@@ -51,11 +51,11 @@ export function SettingsPanel({
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-md border border-cyan-200/14 bg-cyan-200/[0.055] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-100/80">
               <SlidersHorizontal className="h-3.5 w-3.5" />
-              Phase 9 / Control Center Polish
+              Phase 10 / Workspace Hardening
             </div>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Product controls for the local visual office. Settings stay local, backup / restore stays limited to the SQLite database under .local, and external connections remain outside this surface.
+              Product controls for the local visual office. Approved project paths are registered manually, Settings performs no workspace discovery, and runner access stays limited to approved path records.
             </p>
           </div>
           <div className="grid min-w-[220px] gap-2 text-xs font-semibold text-slate-300">
@@ -154,13 +154,13 @@ export function SettingsPanel({
             <CloudOff className="h-4 w-4 text-sky-100/80" />
             <h2 className="text-sm font-bold text-slate-100">Safety Boundary</h2>
           </div>
-          <p className="text-xs font-semibold text-slate-500">Presentation-only guardrails for the Settings and Archive rooms.</p>
+          <p className="text-xs font-semibold text-slate-500">Workspace guardrails for manual project registration and local records.</p>
         </div>
         <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400 md:grid-cols-2 xl:grid-cols-4">
           <BoundaryItem icon={<KeyRound className="h-3.5 w-3.5" />} label="No token storage" />
-          <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="Local records only" />
+          <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="No cloud workspace sync" />
           <BoundaryItem icon={<Boxes className="h-3.5 w-3.5" />} label="Manual paths only" />
-          <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="SQLite backup only" />
+          <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="Runner uses approved paths" />
         </div>
       </section>
     </div>

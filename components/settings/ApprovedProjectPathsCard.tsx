@@ -1,4 +1,4 @@
-import { Boxes, PlusCircle, ShieldCheck } from "lucide-react";
+import { Boxes, CheckCircle2, PlusCircle, ShieldCheck, XCircle } from "lucide-react";
 import type { ApprovedProjectPath } from "@/lib/types";
 
 export interface SettingsProjectOption {
@@ -22,13 +22,25 @@ export function ApprovedProjectPathsCard({
   return (
     <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4 xl:col-span-2">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Boxes className="h-4 w-4 text-amber-100/80" />
-          <h2 className="text-sm font-bold tracking-tight text-slate-100">Approved Project Paths</h2>
+        <div>
+          <div className="flex items-center gap-2">
+            <Boxes className="h-4 w-4 text-amber-100/80" />
+            <h2 className="text-sm font-bold tracking-tight text-slate-100">Approved Project Paths</h2>
+          </div>
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-slate-500">
+            Register workspace paths by typing them here. The runner can target only paths that appear in this approved list.
+          </p>
         </div>
         <span className="rounded-md border border-amber-200/14 bg-amber-200/8 px-2 py-1 text-[10px] font-semibold text-amber-100">
-          Manual approval only
+          Manual registration only
         </span>
+      </div>
+
+      <div className="mt-4 grid gap-2 text-[11px] font-semibold text-slate-400 md:grid-cols-2 xl:grid-cols-4">
+        <GuardrailItem allowed label="Typed path records only" />
+        <GuardrailItem allowed={false} label="No full disk scan" />
+        <GuardrailItem allowed={false} label="No source reads" />
+        <GuardrailItem allowed={false} label="No package.json auto-detect" />
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
@@ -55,7 +67,7 @@ export function ApprovedProjectPathsCard({
             ))
           ) : (
             <div className="rounded-[14px] border border-white/[0.04] bg-white/[0.025] p-3 text-xs leading-relaxed text-slate-500">
-              No approved project path is configured yet. Add one manually below; the app will store the string only.
+              No approved project path is configured yet. Add one manually below; Settings stores the typed record without browsing, scanning, or reading project files.
             </div>
           )}
         </div>
@@ -82,6 +94,9 @@ export function ApprovedProjectPathsCard({
                 placeholder="/Users/you/Projects/example"
                 className="mt-1 w-full rounded-[12px] border border-white/10 bg-[#0b111a] px-3 py-2 text-xs font-semibold text-slate-100 placeholder:text-slate-600"
               />
+              <span className="mt-1 block text-[11px] leading-relaxed text-slate-500">
+                Paste the exact workspace path. There is no folder picker, repo scan, source read, or framework detection.
+              </span>
             </label>
             <label className="block">
               <span className="text-[10px] font-bold uppercase text-slate-500">Label</span>
@@ -101,10 +116,21 @@ export function ApprovedProjectPathsCard({
             </button>
           </div>
           <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
-            String validation only. No browsing control, automatic discovery, file reads, auto Git, auto Codex, or auto Quality Gate run.
+            String validation only. Saving this record does not inspect the path, read package.json, import projects, run Git, start Codex, or trigger Quality Gates.
           </p>
         </form>
       </div>
     </section>
+  );
+}
+
+function GuardrailItem({ allowed, label }: { allowed: boolean; label: string }) {
+  const Icon = allowed ? CheckCircle2 : XCircle;
+
+  return (
+    <div className="inline-flex items-center gap-2 rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+      <Icon className={allowed ? "h-3.5 w-3.5 text-emerald-100/80" : "h-3.5 w-3.5 text-rose-100/75"} />
+      {label}
+    </div>
   );
 }

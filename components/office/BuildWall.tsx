@@ -30,7 +30,7 @@ export function BuildWall({ checks, projects }: { checks: BuildCheck[]; projects
           </span>
         </div>
         <div className="space-y-2">
-          {displayChecks.map((check) => {
+          {displayChecks.length ? displayChecks.map((check) => {
             const Icon = iconMap[check.status];
             const project = projects.find((item) => item.id === check.projectId);
             return (
@@ -45,7 +45,11 @@ export function BuildWall({ checks, projects }: { checks: BuildCheck[]; projects
                 </span>
               </div>
             );
-          })}
+          }) : (
+            <div className="border border-dashed border-white/10 bg-white/[0.025] p-3 text-xs leading-relaxed text-slate-500">
+              No quality or build checks are recorded for this room yet.
+            </div>
+          )}
         </div>
       </div>
     </section>

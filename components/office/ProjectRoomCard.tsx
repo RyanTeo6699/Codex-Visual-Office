@@ -1,8 +1,8 @@
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowUpRight, Armchair, FolderKanban, Route } from "lucide-react";
+import { ArrowUpRight, Armchair, FolderKanban, FolderLock, Route } from "lucide-react";
 import { projectStatusLabel, statusColor } from "@/lib/status";
-import type { AgentSeat, Project, Task } from "@/lib/types";
+import type { AgentSeat, ApprovedProjectPath, Project, Task } from "@/lib/types";
 
 const accentClass: Record<Project["accent"], string> = {
   cyan: "from-sky-200/14 via-slate-800/64 to-slate-900/68 border-sky-100/18",
@@ -16,10 +16,12 @@ export function ProjectRoomCard({
   project,
   tasks,
   agents,
+  approvedPath,
 }: {
   project: Project;
   tasks: Task[];
   agents: AgentSeat[];
+  approvedPath?: ApprovedProjectPath;
 }) {
   const activeTask = tasks.find((task) => task.status === "running" || task.status === "blocked" || task.status === "waiting_review");
   const waitingCount = tasks.filter((task) => task.status === "waiting_review").length;
@@ -47,6 +49,9 @@ export function ProjectRoomCard({
           <span className="border border-white/8 bg-white/[0.04] px-3 py-1 text-[11px] text-slate-300">{tasks.length} tasks</span>
           {waitingCount ? <span className="border border-blue-200/14 bg-blue-200/8 px-3 py-1 text-[11px] text-blue-100">{waitingCount} review</span> : null}
           {blockedCount ? <span className="border border-rose-200/14 bg-rose-200/8 px-3 py-1 text-[11px] text-rose-100">{blockedCount} blocked</span> : null}
+          <span className={approvedPath ? "border border-emerald-200/14 bg-emerald-200/8 px-3 py-1 text-[11px] text-emerald-100" : "border border-amber-200/14 bg-amber-200/8 px-3 py-1 text-[11px] text-amber-100"}>
+            {approvedPath ? "approved path" : "path setup"}
+          </span>
         </div>
         <div className="mt-6 grid gap-2">
           {agents.length ? (
@@ -69,11 +74,20 @@ export function ProjectRoomCard({
           <div className="mt-5 border border-white/[0.06] bg-black/14 p-3">
             <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
               <Route className="h-3.5 w-3.5" />
-              Active path
+              Active task path
             </div>
             <p className="text-sm font-semibold leading-relaxed text-slate-300">{activeTask.title}</p>
           </div>
         ) : null}
+        <div className="mt-3 border border-white/[0.06] bg-black/14 p-3">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
+            <FolderLock className="h-3.5 w-3.5" />
+            Approved local path
+          </div>
+          <p className="break-words text-xs font-semibold leading-relaxed text-slate-300">
+            {approvedPath?.localPath ?? "Not configured. Use Settings for manual approval."}
+          </p>
+        </div>
       </div>
       <div className="absolute -bottom-5 left-10 h-20 w-36 border border-white/8 bg-white/[0.035]" />
       <div className="absolute right-5 top-5 h-16 w-16 border border-white/8 bg-black/10" />

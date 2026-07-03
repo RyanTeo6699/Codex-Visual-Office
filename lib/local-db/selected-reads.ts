@@ -1,24 +1,28 @@
 import type { AgentSeat, ApprovedProjectPath, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, QualityGateRun, ReviewRecord, ScopeCheck, Task, TaskEvent } from "@/lib/types";
 import { getPrimaryApprovedPathForProject, listApprovedProjectPathsForProject } from "./operations/approved-project-paths";
+import { listBackupRecords } from "./operations/backup-records";
 import { readLatestDiffSummaryForTask } from "./operations/diff-summaries";
 import { readFileChangesForTask } from "./operations/file-changes";
-import { getLatestBeforeAfterSnapshotsForTask } from "./operations/git-snapshots";
+import { getLatestBeforeAfterSnapshotsForTask, listGitSnapshots, mapGitSnapshotRow } from "./operations/git-snapshots";
 import { listQualityGateConfigsForProject, seedDefaultQualityGateConfigsForProject } from "./operations/quality-gate-configs";
-import { getLatestQualityGateRunsForTask } from "./operations/quality-gate-runs";
+import { getLatestQualityGateRunsForTask, listQualityGateRuns, mapQualityGateRunRow } from "./operations/quality-gate-runs";
 import { readLatestScopeCheckForTask } from "./operations/scope-checks";
 import { initializeLocalDb } from "./init";
 import { listAgentSeats } from "./repositories/agent-seats";
 import type { AgentSeatRow } from "./repositories/agent-seats";
 import { listBuildChecksByProject } from "./repositories/build-checks";
 import type { BuildCheckRow } from "./repositories/build-checks";
-import { getProjectById } from "./repositories/projects";
+import { getProjectById, listProjects } from "./repositories/projects";
 import type { ProjectRow } from "./repositories/projects";
-import { getReviewRecordByTaskId } from "./repositories/review-records";
+import { getReviewRecordByTaskId, listReviewRecords } from "./repositories/review-records";
 import type { ReviewRecordRow } from "./repositories/review-records";
 import { listTaskEventsByProject } from "./repositories/task-events";
 import type { TaskEventRow } from "./repositories/task-events";
 import { getTaskById, listTasksByProject } from "./repositories/tasks";
 import type { TaskRow } from "./repositories/tasks";
+import { summarizeProjectHealth } from "@/lib/projects/project-health-summary";
+import { summarizeProjectWorkspace } from "@/lib/projects/project-workspace-summary";
+import type { ProjectHealthSummary, ProjectWorkspaceSummary } from "@/lib/projects/project-health-types";
 
 export interface SelectedProjectRoomRead {
   project: Project;
@@ -222,4 +226,80 @@ export async function readSelectedReviewRoom(taskId: string): Promise<SelectedRe
     qualityGateRuns,
     approvedProjectPath,
   };
+}
+
+function latestProjectActivity(row: ProjectRow): string {
+  return row.updatedAt || row.createdAt;
+}
+
+async function buildProjectHealthSummary(projectRow: ProjectRow): Promise<ProjectHealthSummary> {
+  const [taskRows, allAgentSeatRows, taskEventRows, reviewRows, qualityGateConfigs, qualityGateRunRows, gitSnapshotRows, approvedProjectPath, backupRecords] = await Promise.all([
+    listTasksByProject(projectRow.id),
+    listAgentSeats(),
+    listTaskEventsByProject(projectRow.id),
+    listReviewRecords(),
+    listQualityGateConfigsForProject(projectRow.id),
+    listQualityGateRuns(),
+    listGitSnapshots(),
+    getPrimaryApprovedPathForProject(projectRow.id),
+    listBackupRecords(),
+  ]);
+
+  const taskIds = new Set(taskRows.map((task) => task.id));
+  const assignedAgentSeatRows = allAgentSeatRows.filter((agentSeat) => {
+    const currentProjectMatch = agentSeat.currentProjectId === projectRow.id;
+    const assignedTaskMatch = taskRows.some((task) => task.assignedSeatId === agentSeat.id);
+    return currentProjectMatch || assignedTaskMatch;
+  });
+
+  return summarizeProjectHealth({
+    project: mapProjectRow(projectRow, assignedAgentSeatRows),
+    approvedProjectPath,
+    tasks: taskRows.map(mapTaskRow),
+    taskEvents: [...taskEventRows].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    reviewRecords: reviewRows
+      .filter((review) => taskIds.has(review.taskId))
+      .map((review) => ({
+        taskId: review.taskId,
+        decision: review.decision,
+        createdAt: review.createdAt,
+      })),
+    qualityGateConfigs,
+    qualityGateRuns: qualityGateRunRows
+      .filter((run) => run.projectId === projectRow.id)
+      .map(mapQualityGateRunRow),
+    gitSnapshots: gitSnapshotRows
+      .filter((snapshot) => snapshot.projectId === projectRow.id)
+      .map(mapGitSnapshotRow),
+    backupRecords,
+  });
+}
+
+export async function getProjectHealthSummaryForProject(projectId: string): Promise<ProjectHealthSummary | undefined> {
+  initializeLocalDb();
+
+  const projectRow = await getProjectById(projectId);
+  if (!projectRow) {
+    return undefined;
+  }
+
+  return buildProjectHealthSummary(projectRow);
+}
+
+export async function getAllProjectWorkspaceSummaries(): Promise<ProjectWorkspaceSummary[]> {
+  initializeLocalDb();
+
+  const projectRows = await listProjects();
+  const summaries = await Promise.all(
+    [...projectRows]
+      .sort((a, b) => latestProjectActivity(b).localeCompare(latestProjectActivity(a)))
+      .map(async (projectRow) => summarizeProjectWorkspace(await buildProjectHealthSummary(projectRow))),
+  );
+
+  return summaries;
+}
+
+export async function getRecentProjects(limit = 5): Promise<ProjectWorkspaceSummary[]> {
+  const summaries = await getAllProjectWorkspaceSummaries();
+  return summaries.slice(0, Math.max(0, limit));
 }

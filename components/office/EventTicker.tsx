@@ -14,7 +14,7 @@ export function EventTicker({ events, projects }: { events: TaskEvent[]; project
         <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{events.length} events</span>
       </div>
       <div className="thin-scroll max-h-72 space-y-2 overflow-y-auto pr-1">
-        {events.slice(0, 8).map((event) => {
+        {events.length ? events.slice(0, 8).map((event) => {
           const project = projects.find((item) => item.id === event.projectId);
           return (
             <div key={event.id} className="grid grid-cols-[48px_1fr] gap-3 border border-white/[0.04] bg-white/[0.025] px-3 py-2.5">
@@ -27,7 +27,11 @@ export function EventTicker({ events, projects }: { events: TaskEvent[]; project
               </div>
             </div>
           );
-        })}
+        }) : (
+          <div className="border border-dashed border-white/10 bg-white/[0.025] p-3 text-xs leading-relaxed text-slate-500">
+            No local task events have been recorded for this room yet.
+          </div>
+        )}
       </div>
     </section>
   );

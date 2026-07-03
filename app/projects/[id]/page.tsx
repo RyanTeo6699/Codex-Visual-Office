@@ -7,15 +7,18 @@ import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
 import { QualityGateConfigStatus } from "@/components/office/QualityGateConfigStatus";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
+import { listBackupRecords } from "@/lib/local-db/operations/backup-records";
+import { listRetentionPolicies } from "@/lib/local-db/operations/retention-policies";
 import { readSelectedProjectRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
-import { projectStatusLabel } from "@/lib/status";
-import type { AgentSeat as AgentSeatType, BuildCheck, Project, Task, TaskEvent } from "@/lib/types";
-import { ArrowLeft, DoorOpen, FolderLock, ShieldCheck, type LucideIcon } from "lucide-react";
+import { projectStatusLabel, taskStatusLabel } from "@/lib/status";
+import type { AgentSeat as AgentSeatType, BackupRecord, BuildCheck, Project, RetentionPolicy, Task, TaskEvent } from "@/lib/types";
+import { ArrowLeft, ArrowUpRight, Archive, Bot, ClipboardCheck, DoorOpen, FolderLock, ShieldCheck, Sparkles, TriangleAlert, type LucideIcon } from "lucide-react";
 
 export default async function ProjectRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   let localRead: Awaited<ReturnType<typeof readSelectedProjectRoom>> | undefined;
+  const localRecordsSummary = await readLocalRecordsSummary();
 
   try {
     localRead = await readSelectedProjectRoom(id);
@@ -40,6 +43,12 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
   const waitingReview = projectTasks.filter((task) => task.status === "waiting_review").length;
   const blockedTasks = projectTasks.filter((task) => task.status === "blocked").length;
   const failedChecks = projectChecks.filter((check) => check.status === "failed").length;
+  const recommendedAction = getRecommendedRoomAction({
+    project,
+    tasks: projectTasks,
+    hasApprovedPath: Boolean(localRead?.primaryApprovedProjectPath),
+    failedChecks,
+  });
 
   return (
     <AppShell>
@@ -85,6 +94,10 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
               <p className="mt-4 text-xs font-semibold leading-relaxed text-slate-400">
                 Local-first status is displayed here only; no runner or quality command is triggered by this room.
               </p>
+              <Link href="/settings" className="mt-4 inline-flex items-center gap-2 border border-amber-200/14 bg-amber-200/8 px-3 py-2 text-xs font-bold text-amber-100 hover:bg-amber-200/12">
+                <FolderLock className="h-3.5 w-3.5" />
+                Approved Path Settings
+              </Link>
             </div>
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-4">
@@ -93,6 +106,28 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
             <RoomField label="Active Work" value={`${activeTasks.length} tasks`} />
             <RoomField label="Assigned Seats" value={`${projectAgents.length} seats`} />
           </div>
+        </section>
+        <section className="grid gap-4 xl:grid-cols-[1fr_340px]">
+          <ProjectHealthSummary
+            project={project}
+            tasks={projectTasks}
+            checks={projectChecks}
+            hasApprovedPath={Boolean(localRead?.primaryApprovedProjectPath)}
+            qualityConfigCount={localRead?.qualityGateConfigs?.length ?? 0}
+            enabledQualityConfigCount={localRead?.qualityGateConfigs?.filter((config) => config.enabled).length ?? 0}
+            backupRecords={localRecordsSummary.backupRecords}
+            retentionPolicies={localRecordsSummary.retentionPolicies}
+          />
+          <Link href={recommendedAction.href} className="group flex min-h-32 flex-col justify-between border border-cyan-200/14 bg-cyan-200/[0.045] p-4 transition hover:border-cyan-100/30 hover:bg-cyan-200/[0.07]">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Recommended next action</p>
+              <ArrowUpRight className="h-4 w-4 text-cyan-100/70 transition group-hover:text-white" />
+            </div>
+            <div>
+              <p className="text-lg font-black text-white">{recommendedAction.label}</p>
+              <p className="mt-2 text-xs font-semibold leading-relaxed text-slate-300">{recommendedAction.detail}</p>
+            </div>
+          </Link>
         </section>
         <section className="grid gap-4 lg:grid-cols-3">
           {projectAgents.length ? (
@@ -113,6 +148,7 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
           </div>
           <div className="space-y-5">
             <ApprovedProjectPathStatus primaryPath={localRead?.primaryApprovedProjectPath} />
+            <ProjectCodexReadiness hasApprovedPath={Boolean(localRead?.primaryApprovedProjectPath)} events={projectEvents} />
             <QualityGateConfigStatus configs={localRead?.qualityGateConfigs ?? []} />
             <BuildWall checks={projectChecks} projects={allProjects} />
             <EventTicker events={projectEvents} projects={allProjects} />
@@ -120,6 +156,203 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
         </div>
       </div>
     </AppShell>
+  );
+}
+
+async function readLocalRecordsSummary(): Promise<{ backupRecords: BackupRecord[]; retentionPolicies: RetentionPolicy[] }> {
+  try {
+    const [backupRecords, retentionPolicies] = await Promise.all([
+      listBackupRecords(),
+      listRetentionPolicies(),
+    ]);
+
+    return { backupRecords, retentionPolicies };
+  } catch (error) {
+    console.error("Project Room local records summary read failed", error);
+    return { backupRecords: [], retentionPolicies: [] };
+  }
+}
+
+function ProjectCodexReadiness({ hasApprovedPath, events }: { hasApprovedPath: boolean; events: TaskEvent[] }) {
+  const latestRunnerEvent = events.find((event) => event.message.toLowerCase().includes("runner"));
+  const label = hasApprovedPath ? "Recorded status only" : "Missing approved path";
+  const detail = hasApprovedPath
+    ? "This room summarizes existing local records only. It does not detect Codex CLI or execute commands during page load."
+    : "Manual approved path setup is required before any scoped runner workflow can be requested.";
+
+  return (
+    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Bot className="h-4 w-4 text-sky-200/80" />
+          <h2 className="text-sm font-bold tracking-tight text-slate-100">Codex Readiness</h2>
+        </div>
+        <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${hasApprovedPath ? "border-sky-200/20 bg-sky-200/8 text-sky-100" : "border-amber-200/24 bg-amber-200/10 text-amber-100"}`}>
+          {label}
+        </span>
+      </div>
+
+      <div className="space-y-2 text-xs">
+        <RuntimeReadinessRow label="Approved path" value={hasApprovedPath ? "configured" : "missing"} />
+        <RuntimeReadinessRow label="Runtime check" value="not executed on this page" />
+        <RuntimeReadinessRow label="Last runner event" value={latestRunnerEvent ? `${latestRunnerEvent.message} / ${latestRunnerEvent.time}` : "none recorded"} />
+      </div>
+
+      <div className="mt-4 flex gap-2 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
+        <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+        <p>{detail}</p>
+      </div>
+    </section>
+  );
+}
+
+function RuntimeReadinessRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid grid-cols-[92px_1fr] gap-3 rounded-[12px] bg-white/[0.025] px-3 py-2">
+      <span className="font-medium text-slate-500">{label}</span>
+      <span className="min-w-0 break-words font-semibold text-slate-200">{value}</span>
+    </div>
+  );
+}
+
+function getRecommendedRoomAction({
+  project,
+  tasks,
+  hasApprovedPath,
+  failedChecks,
+}: {
+  project: Project;
+  tasks: Task[];
+  hasApprovedPath: boolean;
+  failedChecks: number;
+}) {
+  const waitingTask = tasks.find((task) => task.status === "waiting_review");
+  const blockedTask = tasks.find((task) => task.status === "blocked");
+  const runningTask = tasks.find((task) => task.status === "running");
+
+  if (!hasApprovedPath) {
+    return {
+      label: "Set approved path",
+      detail: "Open Settings and approve the local project path before Codex runtime work.",
+      href: "/settings",
+    };
+  }
+
+  if (waitingTask) {
+    return {
+      label: "Review waiting task",
+      detail: waitingTask.title,
+      href: `/review/${waitingTask.id}`,
+    };
+  }
+
+  if (blockedTask || failedChecks) {
+    return {
+      label: "Inspect project risk",
+      detail: blockedTask?.title ?? `${failedChecks} failed quality signal${failedChecks === 1 ? "" : "s"}`,
+      href: blockedTask ? `/review/${blockedTask.id}` : "#build",
+    };
+  }
+
+  if (runningTask) {
+    return {
+      label: "Monitor running task",
+      detail: runningTask.title,
+      href: `/review/${runningTask.id}`,
+    };
+  }
+
+  return {
+    label: "Return to office map",
+    detail: `${project.name} has no active task demanding review.`,
+    href: "/#projects",
+  };
+}
+
+function ProjectHealthSummary({
+  project,
+  tasks,
+  checks,
+  hasApprovedPath,
+  qualityConfigCount,
+  enabledQualityConfigCount,
+  backupRecords,
+  retentionPolicies,
+}: {
+  project: Project;
+  tasks: Task[];
+  checks: BuildCheck[];
+  hasApprovedPath: boolean;
+  qualityConfigCount: number;
+  enabledQualityConfigCount: number;
+  backupRecords: BackupRecord[];
+  retentionPolicies: RetentionPolicy[];
+}) {
+  const statusCounts = tasks.reduce<Record<Task["status"], number>>(
+    (counts, task) => ({ ...counts, [task.status]: counts[task.status] + 1 }),
+    { backlog: 0, ready: 0, running: 0, waiting_review: 0, blocked: 0, done: 0 },
+  );
+  const failedChecks = checks.filter((check) => check.status === "failed").length;
+  const latestBackup = [...backupRecords].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+
+  return (
+    <div className="border border-white/8 bg-[#111a25]/58 p-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-sky-100/70" />
+          <h2 className="text-sm font-bold tracking-tight text-slate-100">Project Health Summary</h2>
+        </div>
+        <span className="border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-black uppercase text-slate-300">
+          {projectStatusLabel[project.status]}
+        </span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <HealthTile icon={FolderLock} label="Approved path" value={hasApprovedPath ? "Configured" : "Needs setup"} detail={hasApprovedPath ? project.localPathPlaceholder : "Use Settings for manual approval."} tone={hasApprovedPath ? "emerald" : "amber"} />
+        <HealthTile icon={ClipboardCheck} label="Task breakdown" value={`${tasks.length} tasks`} detail={`Running ${statusCounts.running} / Review ${statusCounts.waiting_review} / Blocked ${statusCounts.blocked}`} tone={statusCounts.blocked ? "rose" : "cyan"} />
+        <HealthTile icon={ShieldCheck} label="Quality / review" value={`${enabledQualityConfigCount}/${qualityConfigCount} enabled`} detail={`${failedChecks} failed check${failedChecks === 1 ? "" : "s"} / ${statusCounts.waiting_review} waiting review`} tone={failedChecks ? "rose" : "emerald"} />
+        <HealthTile icon={Archive} label="Backup / archive" value={latestBackup ? latestBackup.status : "No backup record"} detail={`${backupRecords.length} backups / ${retentionPolicies.length} dry-run policies`} tone={latestBackup ? "cyan" : "slate"} />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+        {(Object.keys(statusCounts) as Array<Task["status"]>).map((status) => (
+          <span key={status} className="border border-white/[0.06] bg-black/12 px-2 py-1">
+            {taskStatusLabel[status]}: {statusCounts[status]}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HealthTile({
+  icon: Icon,
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  detail: string;
+  tone: "cyan" | "emerald" | "amber" | "rose" | "slate";
+}) {
+  const toneClass = {
+    cyan: "border-cyan-200/14 bg-cyan-200/[0.04] text-cyan-100",
+    emerald: "border-emerald-200/14 bg-emerald-200/[0.04] text-emerald-100",
+    amber: "border-amber-200/16 bg-amber-200/[0.045] text-amber-100",
+    rose: "border-rose-200/16 bg-rose-200/[0.045] text-rose-100",
+    slate: "border-white/8 bg-white/[0.03] text-slate-300",
+  }[tone];
+
+  return (
+    <div className={`border p-3 ${toneClass}`}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.14em]">{label}</p>
+        <Icon className="h-4 w-4" />
+      </div>
+      <p className="mt-3 text-sm font-black text-white">{value}</p>
+      <p className="mt-2 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-400">{detail}</p>
+    </div>
   );
 }
 

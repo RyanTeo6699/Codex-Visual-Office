@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CircleAlert, ClipboardCheck, Route, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, CircleAlert, ClipboardCheck, FolderLock, Route, type LucideIcon } from "lucide-react";
 import { AgentSeat } from "./AgentSeat";
 import { projectStatusLabel, taskStatusLabel } from "@/lib/status";
-import type { AgentSeat as AgentSeatType, Project, Task } from "@/lib/types";
+import type { AgentSeat as AgentSeatType, ApprovedProjectPath, Project, Task } from "@/lib/types";
 
 const progressByStatus: Record<Task["status"], number> = {
   backlog: 8,
@@ -20,10 +20,12 @@ export function OfficeMap({
   projects,
   tasks,
   agentSeats,
+  approvedPaths = [],
 }: {
   projects: Project[];
   tasks: Task[];
   agentSeats: AgentSeatType[];
+  approvedPaths?: ApprovedProjectPath[];
 }) {
   const running = tasks.filter((task) => task.status === "running").length;
   const blocked = tasks.filter((task) => task.status === "blocked").length;
@@ -62,9 +64,10 @@ export function OfficeMap({
           <div className="pointer-events-none absolute bottom-20 left-1/2 top-[86px] z-0 w-3 -translate-x-1/2 border-x border-sky-200/10 bg-sky-200/[0.035]" />
 
           <div className="relative z-10 grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
-            {projects.map((project, index) => {
+            {projects.length ? projects.map((project, index) => {
               const projectTasks = tasks.filter((task) => task.projectId === project.id);
               const agents = agentSeats.filter((agent) => project.agentSeatIds.includes(agent.id));
+              const approvedPath = approvedPaths.find((path) => path.projectId === project.id && path.approved);
 
               return (
                 <motion.div
@@ -73,10 +76,19 @@ export function OfficeMap({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: index * 0.04 }}
                 >
-                  <PixelProjectRoom project={project} tasks={projectTasks} agents={agents} />
+                  <PixelProjectRoom project={project} tasks={projectTasks} agents={agents} approvedPath={approvedPath} />
                 </motion.div>
               );
-            })}
+            }) : (
+              <div className="grid min-h-[360px] place-items-center border border-dashed border-slate-600/70 bg-black/12 p-6 text-center">
+                <div>
+                  <p className="text-lg font-black text-white">No project rooms yet</p>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">
+                    Once projects exist, this map will show room health, Codex seats, active tasks, blockers, and review doors.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -100,14 +112,18 @@ export function OfficeMap({
             />
           </div>
           <div className="mt-3 space-y-3">
-            {agentSeats.map((agent) => (
+            {agentSeats.length ? agentSeats.map((agent) => (
               <AgentSeat
                 key={agent.id}
                 agent={agent}
                 project={projects.find((project) => project.id === agent.projectId)}
                 task={tasks.find((task) => task.id === agent.taskId)}
               />
-            ))}
+            )) : (
+              <div className="border border-dashed border-white/10 bg-white/[0.025] p-3 text-xs leading-relaxed text-slate-500">
+                No Codex seats are active. Seats will appear here when a project has assigned local work.
+              </div>
+            )}
           </div>
           <div className="mt-4 border border-cyan-200/10 bg-cyan-200/[0.035] p-3">
             <div className="flex items-center gap-2">
@@ -130,10 +146,12 @@ function PixelProjectRoom({
   project,
   tasks,
   agents,
+  approvedPath,
 }: {
   project: Project;
   tasks: Task[];
   agents: AgentSeatType[];
+  approvedPath?: ApprovedProjectPath;
 }) {
   const activeTask = tasks.find((task) => task.status === "running" || task.status === "blocked" || task.status === "waiting_review") ?? tasks[0];
   const progress = activeTask ? progressByStatus[activeTask.status] : 0;
@@ -171,6 +189,9 @@ function PixelProjectRoom({
           </p>
           <div className="flex flex-wrap gap-1.5">
             <span className="pixel-task-chip bg-slate-700">{projectStatusLabel[project.status]}</span>
+            <span className={approvedPath ? "pixel-task-chip bg-emerald-700/70 text-emerald-50" : "pixel-task-chip bg-amber-700/70 text-amber-50"}>
+              {approvedPath ? "approved path" : "path setup"}
+            </span>
             {waitingCount ? <span className="pixel-task-chip pixel-task-waiting_review">{waitingCount} review</span> : null}
             {blockedCount ? <span className="pixel-task-chip pixel-task-blocked">{blockedCount} blocked</span> : null}
             {tasks.slice(0, 3).map((task) => (
@@ -178,7 +199,10 @@ function PixelProjectRoom({
             ))}
           </div>
           <div className="flex items-center justify-between gap-2 border border-black/20 bg-black/14 px-2 py-1.5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-300/80">{nextAction}</p>
+            <p className="flex min-w-0 items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-300/80">
+              <FolderLock className="h-3 w-3 shrink-0" />
+              <span className="truncate">{approvedPath ? nextAction : "Approve path in Settings"}</span>
+            </p>
             <span className="text-[10px] font-black text-white">{progress}%</span>
           </div>
         </div>

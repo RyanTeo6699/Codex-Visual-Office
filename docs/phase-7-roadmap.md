@@ -221,6 +221,10 @@ Cloud sync must remain optional if later approved. The local app must continue t
 
 ## Phase 10 - Team Workspace
 
+### 2026-07-03 Status Note
+
+Current GM direction tracks Phase 10 as "Real Project Workspace Hardening" instead of Team Workspace. Team workspace, auth, payment, permissions, and account behavior remain out of scope unless GM explicitly re-approves them in a later phase.
+
 ### Goal
 
 Introduce team workspace concepts after optional cloud sync exists.

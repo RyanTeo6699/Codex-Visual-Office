@@ -104,7 +104,8 @@ const forbiddenScriptPatterns = [
 const forbiddenUiPatterns = [
   /\b(connect|sync)\s+(github|vercel|supabase|cloud|openai)\b/i,
   /\b(github|vercel|supabase|cloud|openai)\s+(connect|sync)\b/i,
-  /\b(login|log in|register|sign in|sign up|oauth|billing|payment|checkout|team permissions)\b/i,
+  /\b(scan project|auto import|folder picker|github connect|cloud sync|team workspace|source file viewer)\b/i,
+  /\b(login|log in|register account|create account|sign in|sign up|oauth|billing|payment|checkout|team permissions)\b/i,
   /\b(command text box|terminal emulator|free-form shell|arbitrary command input)\b/i,
   /\b(delete archive|delete records|cleanup now|purge records|remove records)\b/i,
 ];
