@@ -11,6 +11,7 @@ import { readSelectedProjectRoom } from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
 import { projectStatusLabel } from "@/lib/status";
 import type { AgentSeat as AgentSeatType, BuildCheck, Project, Task, TaskEvent } from "@/lib/types";
+import { ArrowLeft, DoorOpen, FolderLock, ShieldCheck, type LucideIcon } from "lucide-react";
 
 export default async function ProjectRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -38,31 +39,51 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
   const activeTasks = projectTasks.filter((task) => task.status === "running" || task.status === "waiting_review" || task.status === "blocked");
   const waitingReview = projectTasks.filter((task) => task.status === "waiting_review").length;
   const blockedTasks = projectTasks.filter((task) => task.status === "blocked").length;
+  const failedChecks = projectChecks.filter((check) => check.status === "failed").length;
 
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className={`pixel-room pixel-room-${project.accent} relative overflow-hidden border-4 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)]`}>
+        <section className={`pixel-room pixel-room-${project.accent} relative overflow-hidden border-4 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)] lg:p-6`}>
           <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-300">Project Room</p>
+              <div className="mb-4 inline-flex items-center gap-2 border border-white/14 bg-black/18 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-300">
+                <DoorOpen className="h-3.5 w-3.5" />
+                Project Room
+              </div>
               <h1 className="pixel-room-title mt-2 text-3xl font-black tracking-tight text-white">{project.name}</h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">{project.summary}</p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
                 <span className="border border-cyan-200/18 bg-cyan-200/10 px-3 py-2 text-cyan-100">Codex seats: {projectAgents.length}</span>
                 <span className="border border-blue-200/18 bg-blue-200/10 px-3 py-2 text-blue-100">Waiting review: {waitingReview}</span>
                 <span className="border border-rose-200/18 bg-rose-200/10 px-3 py-2 text-rose-100">Blocked: {blockedTasks}</span>
+                <span className="border border-amber-200/18 bg-amber-200/10 px-3 py-2 text-amber-100">Failed checks: {failedChecks}</span>
               </div>
             </div>
             <div className="border border-white/10 bg-black/18 p-4">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Room objective</p>
-                <Link href="/" className="border border-white/10 bg-white/[0.07] px-3 py-2 text-xs font-bold text-slate-100 hover:bg-white/[0.1]">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Room console</p>
+                <Link href="/" className="inline-flex items-center gap-2 border border-white/10 bg-white/[0.07] px-3 py-2 text-xs font-bold text-slate-100 hover:bg-white/[0.1]">
+                  <ArrowLeft className="h-3.5 w-3.5" />
                   Office Home
                 </Link>
               </div>
-              <p className="mt-4 text-sm font-semibold leading-relaxed text-white">
-                Keep Codex work observable: approved path, active task tray, build wall, quality gate config, and review handoff.
+              <div className="mt-4 grid gap-2">
+                <ConsoleSignal
+                  icon={FolderLock}
+                  label="Approved path"
+                  value={localRead?.primaryApprovedProjectPath ? "Configured" : "Not configured"}
+                  tone={localRead?.primaryApprovedProjectPath ? "emerald" : "amber"}
+                />
+                <ConsoleSignal
+                  icon={ShieldCheck}
+                  label="Quality config"
+                  value={`${localRead?.qualityGateConfigs?.filter((config) => config.enabled).length ?? 0} enabled`}
+                  tone="cyan"
+                />
+              </div>
+              <p className="mt-4 text-xs font-semibold leading-relaxed text-slate-400">
+                Local-first status is displayed here only; no runner or quality command is triggered by this room.
               </p>
             </div>
           </div>
@@ -84,9 +105,9 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
         </section>
         <div className="grid gap-6 xl:grid-cols-[1fr_390px]">
           <div className="space-y-4">
-            <div>
+            <div className="border border-white/8 bg-[#111a25]/58 p-4">
               <h2 className="text-sm font-bold tracking-tight text-slate-100">Room Task Trays</h2>
-              <p className="mt-1 text-xs text-slate-500">{project.localPathPlaceholder}</p>
+              <p className="mt-1 break-words text-xs text-slate-500">{project.localPathPlaceholder}</p>
             </div>
             <TaskBoard tasks={projectTasks} projects={allProjects} agentSeats={allAgentSeats} />
           </div>
@@ -104,9 +125,37 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
 
 function RoomField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[14px] border border-white/10 bg-black/16 p-4">
-      <p className="text-xs font-medium text-slate-400">{label}</p>
+    <div className="border border-white/10 bg-black/16 p-4">
+      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{label}</p>
       <p className="mt-2 text-sm font-semibold text-slate-100">{value}</p>
+    </div>
+  );
+}
+
+function ConsoleSignal({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  tone: "emerald" | "amber" | "cyan";
+}) {
+  const toneClass = {
+    emerald: "border-emerald-200/16 bg-emerald-200/8 text-emerald-100",
+    amber: "border-amber-200/16 bg-amber-200/8 text-amber-100",
+    cyan: "border-cyan-200/16 bg-cyan-200/8 text-cyan-100",
+  }[tone];
+
+  return (
+    <div className={`grid grid-cols-[auto_1fr] items-center gap-3 border px-3 py-2.5 ${toneClass}`}>
+      <Icon className="h-4 w-4" />
+      <div className="min-w-0">
+        <p className="text-[10px] font-black uppercase tracking-[0.12em]">{label}</p>
+        <p className="mt-0.5 truncate text-xs font-bold text-white">{value}</p>
+      </div>
     </div>
   );
 }

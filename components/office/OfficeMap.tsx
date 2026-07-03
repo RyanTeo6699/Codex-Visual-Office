@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowUpRight, CircleAlert, ClipboardCheck, Route, type LucideIcon } from "lucide-react";
 import { AgentSeat } from "./AgentSeat";
 import { projectStatusLabel, taskStatusLabel } from "@/lib/status";
 import type { AgentSeat as AgentSeatType, Project, Task } from "@/lib/types";
@@ -27,6 +29,8 @@ export function OfficeMap({
   const blocked = tasks.filter((task) => task.status === "blocked").length;
   const review = tasks.filter((task) => task.status === "waiting_review").length;
   const occupiedSeats = agentSeats.filter((agent) => agent.status !== "idle").length;
+  const reviewTask = tasks.find((task) => task.status === "waiting_review");
+  const blockedTask = tasks.find((task) => task.status === "blocked");
 
   return (
     <section id="projects" className="pixel-shell relative overflow-hidden border border-slate-700/80 bg-[#0f1722] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.34)] lg:p-6">
@@ -34,9 +38,9 @@ export function OfficeMap({
       <div className="mb-5 flex flex-wrap items-end justify-between gap-5">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-100/70">2D Codex Operations Floor</p>
-          <h2 className="pixel-title mt-2 text-2xl font-black text-white md:text-4xl">Project rooms with AI employees at work</h2>
+          <h2 className="pixel-title mt-2 text-2xl font-black text-white md:text-4xl">Entrance map to project rooms</h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300/90">
-            Every room has a task tray, Codex work pod, progress signal, and a path back to human review.
+            Each room exposes its current task, active Codex seats, blocked work, and the next review doorway.
           </p>
         </div>
         <div className="pixel-hud grid grid-cols-4 gap-2 border border-slate-600/70 bg-[#141d2c] p-2 text-center">
@@ -54,6 +58,8 @@ export function OfficeMap({
           <div className="pixel-window right-[8%] top-5" />
           <div className="pixel-planter left-[18%] bottom-8" />
           <div className="pixel-planter right-[22%] bottom-10" />
+          <div className="pointer-events-none absolute inset-x-8 top-[86px] z-0 h-3 border-y border-sky-200/10 bg-sky-200/[0.035]" />
+          <div className="pointer-events-none absolute bottom-20 left-1/2 top-[86px] z-0 w-3 -translate-x-1/2 border-x border-sky-200/10 bg-sky-200/[0.035]" />
 
           <div className="relative z-10 grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
             {projects.map((project, index) => {
@@ -76,10 +82,24 @@ export function OfficeMap({
 
         <aside className="pixel-side-panel border border-slate-700/80 bg-[#101827] p-3">
           <div className="border-b border-slate-700/80 px-2 pb-3 pt-1">
-            <h2 className="pixel-label text-xs font-black uppercase text-slate-300">Codex Work Pods</h2>
-            <p className="mt-1 text-xs leading-5 text-slate-500">Active AI employees and their current work item.</p>
+            <h2 className="pixel-label text-xs font-black uppercase text-slate-300">Codex Staff Board</h2>
+            <p className="mt-1 text-xs leading-5 text-slate-500">Active seats and the work item currently attached to each desk.</p>
           </div>
-          <div className="space-y-3">
+          <div className="mt-3 grid gap-2">
+            <OfficeAlert
+              icon={ClipboardCheck}
+              label="Review doorway"
+              value={reviewTask?.title ?? "No review task waiting"}
+              tone="blue"
+            />
+            <OfficeAlert
+              icon={CircleAlert}
+              label="Blocked doorway"
+              value={blockedTask?.title ?? "No blocked task"}
+              tone="rose"
+            />
+          </div>
+          <div className="mt-3 space-y-3">
             {agentSeats.map((agent) => (
               <AgentSeat
                 key={agent.id}
@@ -90,7 +110,10 @@ export function OfficeMap({
             ))}
           </div>
           <div className="mt-4 border border-cyan-200/10 bg-cyan-200/[0.035] p-3">
-            <p className="pixel-label text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Office protocol</p>
+            <div className="flex items-center gap-2">
+              <Route className="h-3.5 w-3.5 text-cyan-100/80" />
+              <p className="pixel-label text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Office protocol</p>
+            </div>
             <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400">
               <p>1. Codex works inside an approved local path.</p>
               <p>2. Git evidence and quality gates are visible.</p>
@@ -125,13 +148,16 @@ function PixelProjectRoom({
         : "Open room";
 
   return (
-    <a href={`/projects/${project.id}`} className={`pixel-room pixel-room-${project.accent} group block min-h-[216px] border-4 p-3 transition hover:-translate-y-1 hover:brightness-110`}>
+    <Link href={`/projects/${project.id}`} className={`pixel-room pixel-room-${project.accent} group block min-h-[236px] border-4 p-3 transition hover:-translate-y-1 hover:brightness-110`}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="pixel-room-title text-base font-black leading-tight text-white">{project.name}</h3>
           <p className="mt-1 text-[10px] font-bold uppercase text-slate-300">{project.phase}</p>
         </div>
-        <div className="pixel-door" />
+        <div className="flex items-center gap-2">
+          <span className={`project-dot-${project.accent} h-2.5 w-2.5 border border-black/50`} />
+          <ArrowUpRight className="h-4 w-4 text-slate-200/80 transition group-hover:text-white" />
+        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-[1fr_auto] gap-3">
@@ -140,7 +166,7 @@ function PixelProjectRoom({
           <div className="pixel-progress border border-[#0f172a] bg-[#0b1220]">
             <div className="h-2 bg-[#67e8f9]" style={{ width: `${progress}%` }} />
           </div>
-          <p className="line-clamp-2 min-h-9 text-xs leading-relaxed text-slate-200">
+          <p className="line-clamp-2 min-h-9 text-xs font-semibold leading-relaxed text-slate-100">
             {activeTask ? activeTask.title : "No active task"}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -151,7 +177,10 @@ function PixelProjectRoom({
               <span key={task.id} className={`pixel-task-chip pixel-task-${task.status}`}>{taskStatusLabel[task.status]}</span>
             ))}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-300/80">{nextAction}</p>
+          <div className="flex items-center justify-between gap-2 border border-black/20 bg-black/14 px-2 py-1.5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-300/80">{nextAction}</p>
+            <span className="text-[10px] font-black text-white">{progress}%</span>
+          </div>
         </div>
 
         <div className="flex min-w-20 flex-col items-center justify-end gap-2">
@@ -167,7 +196,7 @@ function PixelProjectRoom({
           )}
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
 
@@ -205,6 +234,32 @@ function Metric({ label, value }: { label: string; value: number }) {
     <div className="min-w-20 px-3 py-2">
       <p className="text-xl font-bold text-slate-100">{value}</p>
       <p className="pixel-label mt-0.5 text-[10px] font-bold uppercase text-slate-500">{label}</p>
+    </div>
+  );
+}
+
+function OfficeAlert({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  tone: "blue" | "rose";
+}) {
+  const toneClass = tone === "blue"
+    ? "border-blue-200/12 bg-blue-200/[0.045] text-blue-100"
+    : "border-rose-200/14 bg-rose-200/[0.045] text-rose-100";
+
+  return (
+    <div className={`grid grid-cols-[auto_1fr] gap-3 border p-3 ${toneClass}`}>
+      <Icon className="mt-0.5 h-4 w-4" />
+      <div className="min-w-0">
+        <p className="text-[10px] font-black uppercase tracking-[0.14em]">{label}</p>
+        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-200">{value}</p>
+      </div>
     </div>
   );
 }

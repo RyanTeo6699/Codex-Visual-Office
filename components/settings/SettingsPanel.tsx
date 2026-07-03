@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, ShieldCheck } from "lucide-react";
+import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, Radar, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
 import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
@@ -46,18 +46,30 @@ export function SettingsPanel({
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[22px] border border-white/8 bg-[#111a25]/78 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Phase 6 / Local Productization</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
+      <section className="overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.13),transparent_34%),linear-gradient(135deg,rgba(17,26,37,0.92),rgba(7,12,20,0.96))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-md border border-cyan-200/14 bg-cyan-200/[0.055] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-100/80">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Phase 9 / Control Center Polish
+            </div>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Local-only settings and runtime status. Backup / Restore is limited to the local SQLite database under .local.
+              Product controls for the local visual office. Settings stay local, backup / restore stays limited to the SQLite database under .local, and external connections remain outside this surface.
             </p>
           </div>
-          <span className="rounded-md border border-emerald-200/16 bg-emerald-200/8 px-3 py-1.5 text-xs font-bold text-emerald-100">
-            Local-first
-          </span>
+          <div className="grid min-w-[220px] gap-2 text-xs font-semibold text-slate-300">
+            <span className="inline-flex items-center justify-between rounded-[14px] border border-emerald-200/16 bg-emerald-200/8 px-3 py-2 text-emerald-100">
+              <span>Local-first</span>
+              <Radar className="h-4 w-4" />
+            </span>
+            <span className="rounded-[14px] border border-white/[0.06] bg-white/[0.035] px-3 py-2">
+              {approvedPaths.filter((path) => path.approved).length} approved path records
+            </span>
+            <span className="rounded-[14px] border border-white/[0.06] bg-white/[0.035] px-3 py-2">
+              {retentionPolicies.filter((policy) => policy.enabled).length} dry-run policies enabled
+            </span>
+          </div>
         </div>
       </section>
 
@@ -71,7 +83,7 @@ export function SettingsPanel({
           rows={[
             ["Enabled", readBoolean(localMode?.enabled) ? "Yes" : "No"],
             ["Theme preference", readString(themePreference?.theme) || "dark"],
-            ["Cloud sync", "Not implemented"],
+            ["Remote account sync", "Not implemented"],
           ]}
         />
 
@@ -95,7 +107,7 @@ export function SettingsPanel({
           rows={[
             ["Remote", "https://github.com/RyanTeo6699/Codex-Visual-Office.git"],
             ["GitHub API", "Not connected"],
-            ["Cloud sync", "Not implemented"],
+            ["Remote account sync", "Not implemented"],
           ]}
           note="Static project remote display only. No GitHub API call is made."
         />
@@ -136,14 +148,17 @@ export function SettingsPanel({
         />
       </div>
 
-      <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
-        <div className="flex items-center gap-2">
-          <CloudOff className="h-4 w-4 text-sky-100/80" />
-          <h2 className="text-sm font-bold text-slate-100">Safety Boundary</h2>
+      <section className="rounded-[18px] border border-sky-200/10 bg-[linear-gradient(135deg,rgba(14,23,34,0.82),rgba(7,12,20,0.88))] p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <CloudOff className="h-4 w-4 text-sky-100/80" />
+            <h2 className="text-sm font-bold text-slate-100">Safety Boundary</h2>
+          </div>
+          <p className="text-xs font-semibold text-slate-500">Presentation-only guardrails for the Settings and Archive rooms.</p>
         </div>
         <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400 md:grid-cols-2 xl:grid-cols-4">
           <BoundaryItem icon={<KeyRound className="h-3.5 w-3.5" />} label="No token storage" />
-          <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="No cloud sync" />
+          <BoundaryItem icon={<CloudOff className="h-3.5 w-3.5" />} label="Local records only" />
           <BoundaryItem icon={<Boxes className="h-3.5 w-3.5" />} label="Manual paths only" />
           <BoundaryItem icon={<HardDrive className="h-3.5 w-3.5" />} label="SQLite backup only" />
         </div>

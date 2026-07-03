@@ -14,20 +14,34 @@ export function ArchiveRoomPanel({
 }) {
   return (
     <div className="space-y-5">
-      <section className="rounded-[22px] border border-white/8 bg-[#111a25]/78 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+      <section className="overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_85%_10%,rgba(251,191,36,0.14),transparent_28%),linear-gradient(135deg,rgba(17,26,37,0.92),rgba(7,12,20,0.96))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Phase 6 / Archive Room</p>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/60">Phase 9 / Records Room Polish</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Archive Room</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Local-only archive visibility for historical task, review, Git, quality, scope, and backup records.
+              A local records room for historical task, review, Git, quality, scope, and backup evidence. This view explains retention impact without adding cleanup execution.
             </p>
           </div>
           <Link href="/settings" className="rounded-[14px] border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/[0.1]">
             Settings
           </Link>
         </div>
-        <div className="mt-5 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3">
+            <p className="text-[10px] font-bold uppercase text-amber-100/70">Cleanup preview</p>
+            <p className="mt-1 text-xs font-bold text-amber-100">dry-run only</p>
+          </div>
+          <div className="rounded-[14px] border border-emerald-200/12 bg-emerald-200/[0.035] p-3">
+            <p className="text-[10px] font-bold uppercase text-emerald-100/70">Data deletion</p>
+            <p className="mt-1 text-xs font-bold text-emerald-100">No data is deleted</p>
+          </div>
+          <div className="rounded-[14px] border border-cyan-200/12 bg-cyan-200/[0.035] p-3">
+            <p className="text-[10px] font-bold uppercase text-cyan-100/70">Backup files</p>
+            <p className="mt-1 text-xs font-bold text-cyan-100">Backup files are never deleted</p>
+          </div>
+        </div>
+        <div className="mt-3 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
           Cleanup preview is dry-run only. No data is deleted in this step. Backup files are never deleted by Phase 6 Step 4.
         </div>
       </section>

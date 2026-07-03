@@ -36,6 +36,7 @@
     "local:launcher:open": "tsx scripts/local-launcher.ts --open",
     "local:launcher:verify": "tsx scripts/verify-local-launcher.ts",
     "tauri:verify:prototype": "tsx scripts/verify-tauri-prototype.ts",
+    "ui:verify:virtual-office": "tsx scripts/verify-virtual-office-ui.ts",
     "tauri:dev:prototype": "tauri dev"
   },
   "dependencies": {

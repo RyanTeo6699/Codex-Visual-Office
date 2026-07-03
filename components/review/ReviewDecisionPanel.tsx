@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { Check, RotateCcw, X } from "lucide-react";
+import { Check, Gavel, RotateCcw, X } from "lucide-react";
 import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import type { ReactNode } from "react";
 import type { ReviewDecision } from "@/lib/types";
@@ -21,24 +21,27 @@ export function ReviewDecisionPanel({
   onDecision: (decision: ReviewDecision) => void;
 }) {
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
+    <section className="border border-cyan-200/14 bg-[#0b1623]/88 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.24)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-bold tracking-tight text-slate-100">Final Decision</h2>
+          <div className="flex items-center gap-2">
+            <Gavel className="h-4 w-4 text-cyan-100/80" />
+            <h2 className="text-sm font-bold tracking-tight text-slate-100">Final Decision</h2>
+          </div>
           <p className="mt-1 text-xs text-slate-500">Human decision remains manual. Readiness only gives review context.</p>
         </div>
-        <span className={clsx("rounded-md border px-3 py-1.5 text-xs font-semibold", statusColor[decision])}>
+        <span className={clsx("border px-3 py-1.5 text-xs font-semibold", statusColor[decision])}>
           {reviewDecisionLabel[decision]}
         </span>
       </div>
 
       {readiness.reviewReadiness === "blocked_by_scope" ? (
-        <p className="mt-3 rounded-[12px] border border-rose-200/14 bg-rose-200/8 px-3 py-2 text-xs font-semibold text-rose-100">
+        <p className="mt-3 border border-rose-200/14 bg-rose-200/8 px-3 py-2 text-xs font-semibold text-rose-100">
           Scope Guard blocked. Review carefully before approving.
         </p>
       ) : null}
       {readiness.reviewReadiness === "blocked_by_quality" ? (
-        <p className="mt-3 rounded-[12px] border border-amber-200/14 bg-amber-200/8 px-3 py-2 text-xs font-semibold text-amber-100">
+        <p className="mt-3 border border-amber-200/14 bg-amber-200/8 px-3 py-2 text-xs font-semibold text-amber-100">
           Quality gates failed or blocked. Review output before approving.
         </p>
       ) : null}
@@ -79,7 +82,7 @@ function DecisionButton({ icon, title, description, disabled, className, onClick
     <button
       disabled={disabled}
       onClick={onClick}
-      className={clsx("rounded-[14px] border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50", className)}
+      className={clsx("border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50", className)}
     >
       <span className="inline-flex items-center gap-2 text-sm font-bold">
         {icon}

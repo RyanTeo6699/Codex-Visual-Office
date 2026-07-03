@@ -89,7 +89,7 @@ export function ScopedCodexRunnerPanel({
   }
 
   return (
-    <section className="rounded-[18px] border border-emerald-200/14 bg-[#111a25]/72 p-4">
+    <section className="border border-emerald-200/14 bg-[#0d1724]/78 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function ScopedCodexRunnerPanel({
           </div>
           <p className="mt-1 text-xs text-slate-500">Codex executable only. Generated prompt only. No shell commands.</p>
         </div>
-        <span className="rounded-md border border-emerald-200/20 bg-emerald-200/10 px-2 py-1 text-[10px] font-semibold text-emerald-100">
+        <span className="border border-emerald-200/20 bg-emerald-200/10 px-2 py-1 text-[10px] font-semibold text-emerald-100">
           Scoped runner
         </span>
       </div>
@@ -118,7 +118,7 @@ export function ScopedCodexRunnerPanel({
         <RunnerRow label="Output storage" value="Bounded preview only" />
       </div>
 
-      <div className="mt-4 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
+      <div className="mt-4 border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
         {hasApprovedProjectPath
           ? "This will run Codex CLI locally for this task only. It will not auto commit, push, or deploy."
           : "Missing approved project path. Add a manual approved path in Settings before running this task."}
@@ -134,7 +134,7 @@ export function ScopedCodexRunnerPanel({
       <button
         disabled={!canRun || isPending}
         onClick={runScopedTask}
-        className="mt-4 inline-flex items-center gap-2 rounded-[14px] border border-emerald-200/20 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/14 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-4 inline-flex items-center gap-2 border border-emerald-200/20 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/14 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Play className="h-4 w-4" />
         Run Scoped Codex Task
@@ -149,7 +149,7 @@ function RunnerStatusBlock({ result }: { result: ScopedCodexRunnerOutput }) {
   const duration = typeof result.durationMs === "number" ? `${result.durationMs} ms` : "Not available";
 
   return (
-    <div className="mt-4 rounded-[14px] border border-white/8 bg-black/16 p-3 text-xs">
+    <div className="mt-4 border border-white/8 bg-black/18 p-3 text-xs">
       <p className="text-sm font-bold text-slate-100">Runner Status</p>
       <div className="mt-3 grid gap-2 md:grid-cols-2">
         <RunnerRow label="Status" value={result.status} />
@@ -168,11 +168,11 @@ function RunnerStatusBlock({ result }: { result: ScopedCodexRunnerOutput }) {
       </div>
       <div className="mt-3">
         <p className="mb-2 font-semibold text-slate-300">Stdout Preview</p>
-        <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-white/[0.025] p-3 text-slate-300">{result.stdoutPreview || "No stdout captured."}</pre>
+        <pre className="max-h-44 overflow-auto whitespace-pre-wrap border border-white/[0.04] bg-white/[0.025] p-3 text-slate-300">{result.stdoutPreview || "No stdout captured."}</pre>
       </div>
       <div className="mt-3">
         <p className="mb-2 font-semibold text-rose-100">Stderr Preview</p>
-        <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] bg-rose-950/20 p-3 text-rose-100">{result.stderrPreview || "No stderr captured."}</pre>
+        <pre className="max-h-44 overflow-auto whitespace-pre-wrap border border-rose-200/10 bg-rose-950/20 p-3 text-rose-100">{result.stderrPreview || "No stderr captured."}</pre>
       </div>
     </div>
   );
@@ -180,7 +180,7 @@ function RunnerStatusBlock({ result }: { result: ScopedCodexRunnerOutput }) {
 
 function RunnerRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[12px] bg-white/[0.025] px-3 py-2">
+    <div className="border border-white/[0.04] bg-white/[0.025] px-3 py-2">
       <p className="font-medium text-slate-500">{label}</p>
       <p className="mt-1 break-words font-semibold text-slate-200">{value}</p>
     </div>
@@ -189,7 +189,7 @@ function RunnerRow({ label, value }: { label: string; value: string }) {
 
 function ConfirmRow({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) {
   return (
-    <label className="flex items-center gap-3 rounded-[12px] bg-white/[0.025] px-3 py-2 text-xs font-semibold text-slate-200">
+    <label className="flex items-center gap-3 border border-white/[0.04] bg-white/[0.025] px-3 py-2 text-xs font-semibold text-slate-200">
       <input
         type="checkbox"
         checked={checked}

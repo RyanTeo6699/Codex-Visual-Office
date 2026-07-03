@@ -195,6 +195,10 @@ It must not read `~/.codex/auth.json`, read `.env` / `.env.local`, store tokens,
 
 Plan future sync or cloud behavior only after Phase 8 runtime reliability is complete and GM explicitly approves the next phase.
 
+### Status
+
+Phase 9 Virtual Office UI Redesign Integration is being tracked as a UI/presentation-only design-system pass and does not start future sync or cloud planning.
+
 ### Allowed
 
 - Future sync planning.

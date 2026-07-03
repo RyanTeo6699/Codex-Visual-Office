@@ -13,7 +13,7 @@ const overallStyles: Record<QualityGateSummary["overallStatus"], string> = {
 
 export function QualityGateSummaryCard({ summary }: { summary: QualityGateSummary }) {
   return (
-    <div className="mt-4 rounded-[16px] border border-white/[0.06] bg-black/14 p-4">
+    <div className="mt-4 border border-white/[0.06] bg-black/16 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -22,8 +22,8 @@ export function QualityGateSummaryCard({ summary }: { summary: QualityGateSummar
           </div>
           <p className="mt-2 text-xs font-semibold text-slate-400">{summary.summaryMessage}</p>
         </div>
-        <span className={clsx("rounded-md border px-2.5 py-1 text-[10px] font-bold uppercase", overallStyles[summary.overallStatus])}>
-          {summary.overallStatus.replace("_", " ")}
+        <span className={clsx("border px-2.5 py-1 text-[10px] font-bold uppercase", overallStyles[summary.overallStatus])}>
+          {summary.overallStatus.replaceAll("_", " ")}
         </span>
       </div>
 
@@ -35,21 +35,21 @@ export function QualityGateSummaryCard({ summary }: { summary: QualityGateSummar
       </div>
 
       <div className="mt-3 grid gap-2 text-[11px] font-semibold text-slate-400 md:grid-cols-3">
-        <p className="rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+        <p className="border border-white/[0.04] bg-white/[0.025] px-3 py-2">
           Enabled: <span className="text-slate-100">{summary.enabledCount}</span> / Disabled: <span className="text-slate-100">{summary.disabledCount}</span>
         </p>
-        <p className="inline-flex items-center gap-2 rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+        <p className="inline-flex items-center gap-2 border border-white/[0.04] bg-white/[0.025] px-3 py-2">
           <Activity className="h-3.5 w-3.5" />
           Latest: <span className="text-slate-100">{summary.latestRunAt ? formatTimestamp(summary.latestRunAt) : "not run"}</span>
         </p>
-        <p className="inline-flex items-center gap-2 rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+        <p className="inline-flex items-center gap-2 border border-white/[0.04] bg-white/[0.025] px-3 py-2">
           <Timer className="h-3.5 w-3.5" />
           Total: <span className="text-slate-100">{summary.totalDurationMs}ms</span>
         </p>
       </div>
 
       {summary.failedGateNames.length ? (
-        <p className="mt-3 rounded-[12px] border border-rose-200/12 bg-rose-200/[0.035] px-3 py-2 text-xs font-semibold text-rose-100">
+        <p className="mt-3 border border-rose-200/12 bg-rose-200/[0.035] px-3 py-2 text-xs font-semibold text-rose-100">
           Failed gates: {summary.failedGateNames.join(", ")}
         </p>
       ) : null}
@@ -65,7 +65,7 @@ function Metric({ label, value, tone }: { label: string; value: number; tone: "e
   }[tone];
 
   return (
-    <div className="rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+    <div className="border border-white/[0.04] bg-white/[0.025] px-3 py-2">
       <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
       <p className={clsx("mt-1 text-lg font-bold", toneClass)}>{value}</p>
     </div>
@@ -78,10 +78,10 @@ function formatTimestamp(value: string): string {
     return value;
   }
 
-  return date.toLocaleString("en-US", {
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getUTCMonth()];
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hour = String(date.getUTCHours()).padStart(2, "0");
+  const minute = String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${month} ${day}, ${hour}:${minute} UTC`;
 }

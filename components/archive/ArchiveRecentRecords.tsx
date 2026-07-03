@@ -22,7 +22,12 @@ export function ArchiveRecentRecords({ records }: { records: ArchiveRecentRecord
 function RecordGroup({ title, items }: { title: string; items: string[] }) {
   return (
     <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
-      <h2 className="text-sm font-bold tracking-tight text-slate-100">{title}</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-bold tracking-tight text-slate-100">{title}</h2>
+        <span className="rounded-md border border-white/[0.06] bg-white/[0.035] px-2 py-1 text-[10px] font-semibold text-slate-400">
+          {items.length} records
+        </span>
+      </div>
       <div className="mt-3 space-y-2">
         {items.length ? (
           items.slice(0, 8).map((item) => (

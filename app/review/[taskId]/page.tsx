@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Building2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReviewPanel } from "@/components/review/ReviewPanel";
 import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
@@ -115,13 +116,16 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
 
   return (
     <AppShell>
-      <div className="space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="relative space-y-5">
+        <div className="pointer-events-none absolute inset-x-0 -top-7 h-48 bg-[radial-gradient(circle_at_22%_0%,rgba(56,189,248,0.16),transparent_34%),radial-gradient(circle_at_72%_10%,rgba(16,185,129,0.12),transparent_32%)]" />
+        <div className="relative flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-2 text-sm">
-            <Link href="/" className="rounded-[14px] border border-white/8 bg-white/[0.04] px-3 py-2 text-slate-300 hover:text-white">
+            <Link href="/" className="inline-flex items-center gap-2 border border-white/8 bg-white/[0.04] px-3 py-2 font-semibold text-slate-300 transition hover:border-white/16 hover:bg-white/[0.07] hover:text-white">
+              <ArrowLeft className="h-3.5 w-3.5" />
               Office Home
             </Link>
-            <Link href={`/projects/${project.id}`} className="rounded-[14px] border border-sky-200/16 bg-sky-200/8 px-3 py-2 text-sky-100 hover:bg-sky-200/12">
+            <Link href={`/projects/${project.id}`} className="inline-flex items-center gap-2 border border-sky-200/16 bg-sky-200/8 px-3 py-2 font-semibold text-sky-100 transition hover:bg-sky-200/12">
+              <Building2 className="h-3.5 w-3.5" />
               Project Room
             </Link>
           </div>

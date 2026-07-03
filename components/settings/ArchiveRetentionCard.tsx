@@ -6,7 +6,7 @@ export function ArchiveRetentionCard({ policies }: { policies: RetentionPolicy[]
   const enabledCount = policies.filter((policy) => policy.enabled).length;
 
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
+    <section className="rounded-[18px] border border-cyan-200/12 bg-[linear-gradient(135deg,rgba(17,26,37,0.78),rgba(8,18,27,0.9))] p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <Archive className="h-4 w-4 text-cyan-100/80" />
@@ -24,6 +24,10 @@ export function ArchiveRetentionCard({ policies }: { policies: RetentionPolicy[]
         <div className="rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
           <p className="text-[10px] font-bold uppercase text-slate-500">Cleanup mode</p>
           <p className="mt-1 text-xs font-semibold text-slate-200">Preview only. No deletion is implemented in this step.</p>
+        </div>
+        <div className="rounded-[12px] border border-amber-200/12 bg-amber-200/[0.04] px-3 py-2">
+          <p className="text-[10px] font-bold uppercase text-amber-100/70">Records room rule</p>
+          <p className="mt-1 text-xs font-semibold text-amber-100">Would-delete counts are labels, not actions.</p>
         </div>
       </div>
       <Link href="/archive" className="mt-4 inline-flex rounded-[12px] border border-cyan-200/14 bg-cyan-200/8 px-3 py-2 text-xs font-bold text-cyan-100 hover:bg-cyan-200/12">

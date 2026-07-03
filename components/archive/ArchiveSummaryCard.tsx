@@ -16,7 +16,7 @@ export function ArchiveSummaryCard({ summary }: { summary: ArchiveSummary }) {
   ] as const;
 
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4">
+    <section className="rounded-[18px] border border-cyan-200/10 bg-[linear-gradient(135deg,rgba(17,26,37,0.8),rgba(9,18,28,0.9))] p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Archive className="h-4 w-4 text-cyan-100/80" />
@@ -28,7 +28,7 @@ export function ArchiveSummaryCard({ summary }: { summary: ArchiveSummary }) {
       </div>
       <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-5">
         {rows.map(([label, count]) => (
-          <div key={label} className="rounded-[12px] border border-white/[0.04] bg-white/[0.025] px-3 py-2">
+          <div key={label} className="rounded-[12px] border border-white/[0.055] bg-white/[0.035] px-3 py-2">
             <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
             <p className="mt-1 text-lg font-black text-slate-100">{count}</p>
           </div>

@@ -16,12 +16,12 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
     ["Desktop shell prototype", "Tauri prototype configured"],
     ["Browser launcher fallback", "Available"],
     ["Production desktop packaging", "Not implemented"],
-    ["Auto updater", "Not implemented"],
+    ["Self-update service", "Not implemented"],
     ["Code signing / notarization", "Not implemented"],
   ] as const;
 
   return (
-    <section className="rounded-[18px] border border-white/8 bg-[#111a25]/72 p-4 xl:col-span-2">
+    <section className="rounded-[18px] border border-emerald-200/12 bg-[linear-gradient(135deg,rgba(17,26,37,0.82),rgba(10,16,25,0.9))] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.16)] xl:col-span-2">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <LaptopMinimal className="h-4 w-4 text-emerald-100/80" />
@@ -30,6 +30,12 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
         <span className="rounded-md border border-emerald-200/14 bg-emerald-200/8 px-2 py-1 text-[10px] font-semibold text-emerald-100">
           {status.shellReadiness}
         </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <StatusTile label="Shell readiness" value={status.shellReadiness} />
+        <StatusTile label="Local records" value={`${status.counts.backupRecords} backups`} />
+        <StatusTile label="Dry-run policies" value={`${status.counts.retentionPolicies} configured`} />
       </div>
 
       <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
@@ -63,14 +69,23 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
             <p>Tauri prototype configured.</p>
             <p>Browser fallback available.</p>
             <p>Production packaging not implemented.</p>
-            <p>Auto updater not implemented.</p>
+            <p>No self-update service.</p>
             <p>Code signing / notarization not implemented.</p>
             <p>Local-only runtime.</p>
             <p>No background daemon.</p>
-            <p>No cloud sync.</p>
+            <p>No remote account sync.</p>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function StatusTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[14px] border border-white/[0.06] bg-white/[0.035] px-3 py-3">
+      <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
+      <p className="mt-1 text-sm font-black text-slate-100">{value}</p>
+    </div>
   );
 }
