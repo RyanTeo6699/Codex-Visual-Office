@@ -1,15 +1,62 @@
 import clsx from "clsx";
 import { Bot, ShieldCheck, TriangleAlert } from "lucide-react";
+import { computeCodexRuntimeStatus, summarizeCodexLastRun } from "@/lib/codex-cli/runtime-status";
+import type { CodexRuntimeStatus as CodexRuntimeStatusModel } from "@/lib/codex-cli/runtime-status";
+import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
 
-const authStatusLabel: Record<CodexCliStatus["authStatus"], string> = {
-  unknown: "Auth unknown",
-  not_checked: "Auth not checked",
-  cli_unavailable: "CLI unavailable",
-  cli_available_auth_not_verified: "CLI available, auth not verified",
+const statusTone: Record<CodexRuntimeStatusModel["codexRuntimeReadiness"], { label: "Ready" | "Auth unknown" | "Missing CLI" | "Blocked" | "Last run failed"; detail: string; className: string }> = {
+  ready: {
+    label: "Ready",
+    detail: "Safe runtime checks did not report a blocker.",
+    className: "border-emerald-200/22 bg-emerald-200/9 text-emerald-100",
+  },
+  available_auth_unknown: {
+    label: "Auth unknown",
+    detail: "CLI is present; auth capability is not verified by design.",
+    className: "border-sky-200/20 bg-sky-200/8 text-sky-100",
+  },
+  blocked_missing_cli: {
+    label: "Missing CLI",
+    detail: "Codex CLI was not found on PATH.",
+    className: "border-rose-200/24 bg-rose-200/10 text-rose-100",
+  },
+  blocked_auth_likely_missing: {
+    label: "Blocked",
+    detail: "Codex auth appears unavailable.",
+    className: "border-amber-200/24 bg-amber-200/10 text-amber-100",
+  },
+  blocked_policy: {
+    label: "Blocked",
+    detail: "Runtime policy blocks Codex execution.",
+    className: "border-amber-200/24 bg-amber-200/10 text-amber-100",
+  },
+  blocked_missing_approved_path: {
+    label: "Blocked",
+    detail: "A task run needs an approved project path.",
+    className: "border-amber-200/24 bg-amber-200/10 text-amber-100",
+  },
+  failed_last_run: {
+    label: "Last run failed",
+    detail: "The most recent scoped run failed.",
+    className: "border-rose-200/24 bg-rose-200/10 text-rose-100",
+  },
+  unknown: {
+    label: "Blocked",
+    detail: "Codex runtime readiness is unknown.",
+    className: "border-slate-200/12 bg-slate-200/6 text-slate-300",
+  },
 };
 
-export function CodexRuntimeStatus({ status }: { status: CodexCliStatus }) {
+export function CodexRuntimeStatus({ status, lastRun }: { status: CodexCliStatus; lastRun?: ScopedCodexRunnerOutput }) {
+  const lastRunSummary = summarizeCodexLastRun({ runnerResult: lastRun });
+  const runtimeStatus = computeCodexRuntimeStatus({
+    cliStatus: status,
+    policy: { requireApprovedProjectPath: false },
+    lastRun: lastRunSummary,
+  });
+  const summary = statusTone[runtimeStatus.codexRuntimeReadiness];
+
   return (
     <section className="rounded-[18px] border border-white/8 bg-[#111a25]/66 p-4">
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -20,20 +67,20 @@ export function CodexRuntimeStatus({ status }: { status: CodexCliStatus }) {
         <span
           className={clsx(
             "rounded-md border px-2 py-1 text-[10px] font-semibold",
-            status.installed
-              ? "border-emerald-200/22 bg-emerald-200/9 text-emerald-100"
-              : "border-rose-200/24 bg-rose-200/10 text-rose-100",
+            summary.className,
           )}
         >
-          {status.installed ? "Installed" : "Not found"}
+          {summary.label}
         </span>
       </div>
 
       <div className="space-y-2 text-xs">
+        <RuntimeRow label="Readiness" value={summary.detail} />
         <RuntimeRow label="Version" value={status.version ?? "Not available"} />
         <RuntimeRow label="Path" value={status.path ?? "Not detected"} />
-        <RuntimeRow label="Auth" value={authStatusLabel[status.authStatus]} />
-        <RuntimeRow label="Mode" value="Safe detection only" />
+        <RuntimeRow label="Auth" value={runtimeStatus.codexAuthCapability} />
+        <RuntimeRow label="Last run" value={lastRunSummary.status} />
+        <RuntimeRow label="Failure" value={lastRunSummary.failureCategory ?? "none"} />
       </div>
 
       <div className="mt-4 flex gap-2 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">

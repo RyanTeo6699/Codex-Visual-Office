@@ -17,6 +17,7 @@
     "codex:verify:runner-safety": "tsx scripts/verify-codex-runner-safety.ts",
     "codex:verify:scoped-runner": "tsx scripts/verify-scoped-codex-runner.ts",
     "codex:verify:runner-output": "tsx scripts/verify-codex-runner-output-events.ts",
+    "codex:verify:runtime-reliability": "tsx scripts/verify-codex-runtime-reliability.ts",
     "git:verify:snapshots": "tsx scripts/verify-git-snapshots.ts",
     "git:verify:changed-files": "tsx scripts/verify-changed-files.ts",
     "git:verify:diff-summary": "tsx scripts/verify-diff-summary.ts",

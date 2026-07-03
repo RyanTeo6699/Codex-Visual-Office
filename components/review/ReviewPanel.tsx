@@ -18,6 +18,7 @@ import { reviewDecisionLabel, statusColor } from "@/lib/status";
 import { summarizeQualityGates } from "@/lib/quality-gates/quality-gate-summary";
 import type { CodexPromptHandoffMode, CodexPromptHandoffResult } from "@/lib/codex-cli/prompt-types";
 import type { RunnerSafetyStatus } from "@/lib/codex-cli/runner-types";
+import type { CodexCliStatus } from "@/lib/codex-cli/types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 import type { AgentSeat, BuildCheck, DiffSummary, FileChange, GitSnapshot, Project, QualityGateConfig, QualityGateRun, ReviewDecision, ReviewRecord, ScopeCheck, Task, TaskEvent, TaskStatus } from "@/lib/types";
 
@@ -54,6 +55,7 @@ export function ReviewPanel({
   events = [],
   codexPrompt,
   runnerSafetyStatus,
+  codexStatus,
   approvedProjectPath,
   approvedProjectPathSource,
   initialRunnerResult,
@@ -76,6 +78,7 @@ export function ReviewPanel({
   events?: TaskEvent[];
   codexPrompt: string;
   runnerSafetyStatus: RunnerSafetyStatus;
+  codexStatus?: CodexCliStatus;
   approvedProjectPath: string;
   approvedProjectPathSource?: "approved_path" | "fallback" | "missing";
   initialRunnerResult?: ScopedCodexRunnerOutput;
@@ -168,6 +171,7 @@ export function ReviewPanel({
             taskId={task.id}
             approvedProjectPath={approvedProjectPath}
             approvedProjectPathSource={approvedProjectPathSource}
+            codexStatus={codexStatus}
             initialResult={runnerResult}
             runScopedCodexTaskAction={runScopedCodexTaskAction}
             onResultChange={setRunnerResult}

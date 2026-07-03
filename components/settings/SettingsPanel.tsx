@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, MonitorCog, ShieldCheck } from "lucide-react";
+import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, ShieldCheck } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
 import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
+import { CodexRuntimeReliabilityCard } from "./CodexRuntimeReliabilityCard";
 import { LocalAppShellCard } from "./LocalAppShellCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
@@ -74,19 +75,7 @@ export function SettingsPanel({
           ]}
         />
 
-        <SettingsCard
-          icon={<MonitorCog className="h-4 w-4 text-sky-100/80" />}
-          title="Codex CLI status"
-          badge={codexStatus.installed ? "Installed" : "Unavailable"}
-          rows={[
-            ["Installed", codexStatus.installed ? "Yes" : "No"],
-            ["Version", codexStatus.version ?? "Not available"],
-            ["Path", codexStatus.path ?? "Not available"],
-            ["Auth", codexStatus.authStatus],
-            ["Detection", codexStatus.detectionMode],
-          ]}
-          note="Safe detection only. Tokens and ~/.codex/auth.json are not read."
-        />
+        <CodexRuntimeReliabilityCard status={codexStatus} approvedPaths={approvedPaths} />
 
         <SettingsCard
           icon={<Database className="h-4 w-4 text-cyan-100/80" />}

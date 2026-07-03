@@ -10,7 +10,7 @@ It is a planning document only. It does not claim any Phase 7B, 7C, 7D, Phase 8,
 
 Codex Visual Office remains local-first.
 
-Desktop shell, launcher, and packaging work must preserve the local app model before optional cloud sync is introduced. Cloud sync must remain optional and delayed until Phase 8 / Phase 9. Team workspace, auth, and payment must wait until Phase 10 or later. MCP and ChatGPT App work must wait until Phase 11.
+Desktop shell, launcher, packaging, and Codex runtime reliability work must preserve the local app model before optional cloud sync is introduced. Cloud sync must remain optional and delayed until a later GM-approved phase. Team workspace, auth, and payment must wait until Phase 10 or later. MCP and ChatGPT App work must wait until Phase 11.
 
 ## Corrected Phase Sequence
 
@@ -19,8 +19,8 @@ Phase 7A - Scope Lock / Roadmap Reconciliation
 Phase 7B - Desktop Shell Evaluation
 Phase 7C - Local Launcher
 Phase 7D - Packaging Prototype
-Phase 8 - Cloud Sync Planning
-Phase 9 - Cloud Sync Implementation
+Phase 8 - Codex Runtime Reliability
+Phase 9 - Future Sync / Cloud Planning
 Phase 10 - Team Workspace
 Phase 11 - ChatGPT App / MCP
 ```
@@ -161,58 +161,59 @@ It must not add account systems, remote sync, payment, team permissions, GitHub 
 
 - Phase 7D Tauri Packaging Prototype is configured as prototype-only; browser-only launcher fallback remains official, and Phase 8 implementation has not started.
 
-## Phase 8 - Cloud Sync Planning
+## Phase 8 - Codex Runtime Reliability
 
 ### Goal
 
-Plan optional cloud sync without breaking the local-first product.
+Validate Codex runtime reliability status, failure classification, and safety boundaries without running a real Codex coding task.
 
 ### Allowed
 
-- Cloud sync architecture planning.
+- Safe CLI found/version status.
+- Mocked or static runtime classification checks.
+- Last run summary validation.
+- Runner policy and safety status verification.
+- Settings / local shell status verification.
+- Runtime reliability documentation.
+
+### Boundaries
+
+Phase 8 is verification and documentation only unless GM explicitly approves additional implementation.
+
+It must not read `~/.codex/auth.json`, read `.env` / `.env.local`, store tokens, call OpenAI APIs, add arbitrary shell, add a command text box, add `node-pty`, add a terminal emulator, run a real Codex coding task, mutate Git, run Quality Gates, launch Tauri, open a browser, install dependencies, deploy, implement GitHub, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, UI redesign, cloud sync, or Phase 9.
+
+### Output
+
+- Runtime reliability scope lock.
+- Runtime reliability implementation summary.
+- Side-effect-safe verification command.
+- Explicit failure classification coverage.
+
+## Phase 9 - Future Sync / Cloud Planning
+
+### Goal
+
+Plan future sync or cloud behavior only after Phase 8 runtime reliability is complete and GM explicitly approves the next phase.
+
+### Allowed
+
+- Future sync planning.
+- Local-first preservation rules.
 - Data ownership model.
 - Conflict and offline behavior planning.
-- Privacy and security boundaries.
-- Optional sync UX design.
-- Provider evaluation.
+- Provider evaluation if GM-approved.
 
 ### Boundaries
 
-Phase 8 is planning only unless GM explicitly approves implementation.
+Phase 9 must not begin during Phase 8.
 
-It must not implement GitHub API, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, or live cloud sync.
-
-### Output
-
-- Cloud sync plan.
-- Local-first preservation rules.
-- Optional sync decision gates.
-
-## Phase 9 - Cloud Sync Implementation
-
-### Goal
-
-Implement optional cloud sync only after Phase 8 planning is approved.
-
-### Allowed
-
-- Optional cloud sync.
-- Remote project / task sync if approved.
-- Provider-specific integration only after explicit approval.
-- Sync status visibility.
-- Conflict handling based on Phase 8 plan.
-
-### Boundaries
-
-Cloud sync must remain optional.
-
-The local app must continue to work without cloud accounts or network access. Team workspace, role permissions, payment, MCP, and ChatGPT App remain out of scope.
+Cloud sync must remain optional if later approved. The local app must continue to work without cloud accounts or network access. Team workspace, role permissions, payment, MCP, and ChatGPT App remain out of scope.
 
 ### Output
 
-- Optional sync implementation.
-- Sync verification.
-- Local-offline verification.
+- Future sync plan only after approval.
+- Local-offline requirements.
+- Explicit implementation decision gates.
 
 ## Phase 10 - Team Workspace
 

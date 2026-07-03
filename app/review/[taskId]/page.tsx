@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReviewPanel } from "@/components/review/ReviewPanel";
+import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
 import { buildCodexTaskPrompt } from "@/lib/codex-cli/prompt-builder";
 import { getRunnerSafetyStatus } from "@/lib/codex-cli/runner-safety";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
@@ -104,6 +105,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
   const reviewChecks = buildChecks.filter((check) => review?.qualityGateIds.includes(check.id) || check.taskId === task.id);
   const reviewEvents = localRead?.taskEvents ?? [];
   const runnerResult = buildRunnerResultFromEvents(reviewEvents);
+  const codexStatus = await detectCodexCliStatus();
   const approvedProjectPath = localRead?.approvedProjectPath?.localPath ?? "";
   const codexPrompt = buildCodexTaskPrompt({ project, task }).prompt;
   const runnerSafetyStatus = getRunnerSafetyStatus({
@@ -133,6 +135,7 @@ export default async function ReviewRoom({ params }: { params: Promise<{ taskId:
           events={reviewEvents}
           codexPrompt={codexPrompt}
           runnerSafetyStatus={runnerSafetyStatus}
+          codexStatus={codexStatus}
           approvedProjectPath={approvedProjectPath}
           approvedProjectPathSource={approvedProjectPath ? "approved_path" : "missing"}
           initialRunnerResult={runnerResult}

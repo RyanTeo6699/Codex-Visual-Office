@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { Play, ShieldCheck } from "lucide-react";
+import { computeCodexRuntimeStatus, summarizeCodexLastRun } from "@/lib/codex-cli/runtime-status";
+import type { CodexCliStatus } from "@/lib/codex-cli/types";
 import type { ScopedCodexRunnerOutput } from "@/lib/codex-cli/scoped-runner-types";
 
 type RunScopedCodexTaskAction = (
@@ -18,6 +20,7 @@ export function ScopedCodexRunnerPanel({
   taskId,
   approvedProjectPath,
   approvedProjectPathSource = "missing",
+  codexStatus,
   initialResult,
   runScopedCodexTaskAction,
   onResultChange,
@@ -25,6 +28,7 @@ export function ScopedCodexRunnerPanel({
   taskId: string;
   approvedProjectPath: string;
   approvedProjectPathSource?: "approved_path" | "fallback" | "missing";
+  codexStatus?: CodexCliStatus;
   initialResult?: ScopedCodexRunnerOutput;
   runScopedCodexTaskAction: RunScopedCodexTaskAction;
   onResultChange?: (result: ScopedCodexRunnerOutput) => void;
@@ -37,6 +41,15 @@ export function ScopedCodexRunnerPanel({
   const [isPending, startTransition] = useTransition();
 
   const hasApprovedProjectPath = approvedProjectPath.trim().length > 0;
+  const lastRunSummary = summarizeCodexLastRun({ runnerResult: result ?? undefined, taskId });
+  const runtimeStatus = computeCodexRuntimeStatus({
+    cliStatus: codexStatus,
+    approvedProjectPath: {
+      approved: hasApprovedProjectPath,
+      localPath: approvedProjectPath,
+    },
+    lastRun: lastRunSummary,
+  });
   const canRun = useMemo(
     () => hasApprovedProjectPath && projectPathApproved && promptReviewed && forbiddenScopeAcknowledged && noAutoCommitPushDeployAcknowledged,
     [forbiddenScopeAcknowledged, hasApprovedProjectPath, noAutoCommitPushDeployAcknowledged, projectPathApproved, promptReviewed],
@@ -91,6 +104,11 @@ export function ScopedCodexRunnerPanel({
       </div>
 
       <div className="mt-4 grid gap-2 text-xs md:grid-cols-2">
+        <RunnerRow label="Runtime readiness" value={runtimeStatus.codexRuntimeReadiness} />
+        <RunnerRow label="Auth capability" value={runtimeStatus.codexAuthCapability} />
+        <RunnerRow label="Approved path status" value={hasApprovedProjectPath ? "Approved path selected" : "Missing approved path"} />
+        <RunnerRow label="Last run status" value={lastRunSummary.status} />
+        <RunnerRow label="Failure category" value={lastRunSummary.failureCategory ?? "none"} />
         <RunnerRow label="Approved project path" value={approvedProjectPath || "Missing approved path"} />
         <RunnerRow label="Path source" value={approvedProjectPathSource === "approved_path" ? "approved_project_paths" : approvedProjectPathSource} />
         <RunnerRow label="Command shape" value="codex exec --cd [approved] --sandbox read-only --json [generated prompt]" />
