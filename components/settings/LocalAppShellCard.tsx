@@ -13,7 +13,11 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
     ["Quality Gates ready", status.qualityGatesConfigured ? `${status.counts.qualityGateConfigs} configs` : "Not configured"],
     ["Codex CLI", status.codexCliDetected ? status.codexCliStatusLabel : "Not detected"],
     ["Local Launcher URL", DEFAULT_LOCAL_APP_URL],
-    ["Desktop Packaging", "Future evaluation only"],
+    ["Desktop shell prototype", "Tauri prototype configured"],
+    ["Browser launcher fallback", "Available"],
+    ["Production desktop packaging", "Not implemented"],
+    ["Auto updater", "Not implemented"],
+    ["Code signing / notarization", "Not implemented"],
   ] as const;
 
   return (
@@ -56,12 +60,14 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
         <div className="rounded-[14px] border border-amber-200/12 bg-amber-200/[0.04] p-3">
           <h3 className="text-xs font-bold text-amber-100">Runtime boundary</h3>
           <div className="mt-2 grid gap-1 text-xs font-semibold text-slate-300 md:grid-cols-2">
-            <p>No desktop packaging yet.</p>
-            <p>No auto update.</p>
+            <p>Tauri prototype configured.</p>
+            <p>Browser fallback available.</p>
+            <p>Production packaging not implemented.</p>
+            <p>Auto updater not implemented.</p>
+            <p>Code signing / notarization not implemented.</p>
+            <p>Local-only runtime.</p>
             <p>No background daemon.</p>
             <p>No cloud sync.</p>
-            <p>Local-only runtime.</p>
-            <p>Tauri / Electron not implemented.</p>
           </div>
         </div>
       </div>

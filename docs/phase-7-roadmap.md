@@ -129,7 +129,7 @@ It must not introduce cloud sync, GitHub API, Vercel, Supabase, auth, payment, t
 
 ### Status
 
-- Phase 7C Browser-only Local Launcher implemented as a bounded local-only launcher; Phase 7D packaging has not started.
+- Phase 7C Browser-only Local Launcher implemented as a bounded local-only launcher.
 
 ## Phase 7D - Packaging Prototype
 
@@ -156,6 +156,10 @@ It must not add account systems, remote sync, payment, team permissions, GitHub 
 - Packaging prototype.
 - Packaging verification notes.
 - Known limitations and release blockers.
+
+### Status
+
+- Phase 7D Tauri Packaging Prototype is configured as prototype-only; browser-only launcher fallback remains official, and Phase 8 implementation has not started.
 
 ## Phase 8 - Cloud Sync Planning
 

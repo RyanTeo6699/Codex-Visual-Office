@@ -1,5 +1,5 @@
 export type LocalShellReadiness = "ready_for_local_dev" | "partial" | "blocked";
-export type DesktopPackagingStatus = "future_evaluation";
+export type DesktopPackagingStatus = "future_evaluation" | "tauri_prototype_configured";
 
 export interface LocalShellCounts {
   approvedProjectPaths: number;

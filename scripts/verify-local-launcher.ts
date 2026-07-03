@@ -1,4 +1,5 @@
 import packageJson from "@/package.json";
+import { readFileSync } from "node:fs";
 import { DEFAULT_LOCAL_APP_URL, getConfiguredLocalAppUrl, validateLocalAppUrl } from "@/lib/local-launcher/local-launcher-config";
 import { buildLocalLauncherReport, maybeOpenBrowser, parseLocalLauncherArgs } from "@/lib/local-launcher/local-launcher-status";
 
@@ -9,6 +10,15 @@ type PackageShape = {
 };
 
 const typedPackage = packageJson as PackageShape;
+const allowedTauriPrototypeScriptName = "tauri:dev:prototype";
+const allowedTauriPrototypeScriptCommand = "tauri dev";
+const allowedTauriPrototypeVerifyScriptName = "tauri:verify:prototype";
+const allowedTauriPrototypeVerifyScriptCommand = "tsx scripts/verify-tauri-prototype.ts";
+const allowedTauriPrototypeDevDependency = "@tauri-apps/cli";
+const forbiddenDesktopRuntimeDependencyPattern = /electron|node-pty/i;
+const forbiddenCloudOrIntegrationDependencyPattern = /github|vercel|supabase|firebase|openai|mcp|auth|payment/i;
+const forbiddenDesktopPackagingScriptPattern = /tauri\s+build|cargo\s+tauri\s+build|electron-builder|electron-forge|auto.?updat|installer|release|daemon|cron|startup|cloud.?sync/i;
+const forbiddenLauncherTextPattern = /shell\s*:\s*true|node-pty|terminal|command text box/i;
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -35,6 +45,62 @@ function packageDependencyNames(): string[] {
   ];
 }
 
+function assertNoForbiddenLauncherText(): void {
+  const launcherFiles = [
+    "scripts/local-launcher.ts",
+    "lib/local-launcher/local-launcher-config.ts",
+    "lib/local-launcher/local-launcher-status.ts",
+    "lib/local-launcher/local-launcher-types.ts",
+  ];
+
+  for (const filePath of launcherFiles) {
+    const fileText = readFileSync(filePath, "utf8");
+    assert(!forbiddenLauncherTextPattern.test(fileText), `${filePath} must not include shell:true, terminal, node-pty, or command text box behavior`);
+  }
+}
+
+function assertPhase7dTauriPrototypeAllowance(scripts: Record<string, string>): void {
+  const productionDependencies = Object.keys(typedPackage.dependencies ?? {});
+  const developmentDependencies = Object.keys(typedPackage.devDependencies ?? {});
+  const tauriProductionDependencies = productionDependencies.filter((name) => /tauri/i.test(name));
+  const tauriDevelopmentDependencies = developmentDependencies.filter((name) => /tauri/i.test(name));
+  const tauriScripts = Object.entries(scripts).filter(([name, command]) => /tauri/i.test(name) || /tauri/i.test(command));
+
+  assert(tauriProductionDependencies.length === 0, "Tauri runtime dependency must not be added to production dependencies");
+  assert(
+    tauriDevelopmentDependencies.every((name) => name === allowedTauriPrototypeDevDependency),
+    "Only @tauri-apps/cli may be added as a Tauri devDependency for the Phase 7D prototype",
+  );
+  assert(
+    tauriScripts.every(([name, command]) => (
+      (name === allowedTauriPrototypeScriptName && command === allowedTauriPrototypeScriptCommand) ||
+      (name === allowedTauriPrototypeVerifyScriptName && command === allowedTauriPrototypeVerifyScriptCommand)
+    )),
+    "Only tauri:dev:prototype and tauri:verify:prototype may reference Tauri, and both must use fixed prototype commands",
+  );
+}
+
+function assertNoForbiddenDependencies(): void {
+  const dependencyNames = packageDependencyNames();
+  const disallowedRuntimeNames = dependencyNames.filter((name) => forbiddenDesktopRuntimeDependencyPattern.test(name));
+  const disallowedIntegrationNames = dependencyNames.filter((name) => forbiddenCloudOrIntegrationDependencyPattern.test(name));
+
+  assert(disallowedRuntimeNames.length === 0, `Forbidden desktop/runtime dependency found: ${disallowedRuntimeNames.join(", ")}`);
+  assert(disallowedIntegrationNames.length === 0, `Forbidden cloud/API/auth/payment/MCP dependency found: ${disallowedIntegrationNames.join(", ")}`);
+}
+
+function assertNoForbiddenScripts(scripts: Record<string, string>): void {
+  const forbiddenScripts = Object.entries(scripts).filter(([name, command]) => {
+    if (name === allowedTauriPrototypeScriptName && command === allowedTauriPrototypeScriptCommand) {
+      return false;
+    }
+
+    return forbiddenDesktopPackagingScriptPattern.test(name) || forbiddenDesktopPackagingScriptPattern.test(command) || /electron/i.test(name) || /electron/i.test(command);
+  });
+
+  assert(forbiddenScripts.length === 0, `Forbidden desktop packaging/updater/background script found: ${forbiddenScripts.map(([name]) => name).join(", ")}`);
+}
+
 async function main(): Promise<void> {
   assert(getConfiguredLocalAppUrl({}) === DEFAULT_LOCAL_APP_URL, "Default local app URL should be used without env override");
   assert(validateLocalAppUrl("http://localhost:3000") === "http://localhost:3000", "localhost URL should be accepted");
@@ -42,7 +108,14 @@ async function main(): Promise<void> {
   assert(validateLocalAppUrl("http://[::1]:3000") === "http://[::1]:3000", "::1 URL should be accepted");
   assertThrows(() => validateLocalAppUrl("https://localhost:3000"), "https localhost URL should be rejected");
   assertThrows(() => validateLocalAppUrl("http://example.com:3000"), "Remote URL should be rejected");
+  assertThrows(() => validateLocalAppUrl("http://0.0.0.0:3000"), "0.0.0.0 URL should be rejected");
+  assertThrows(() => validateLocalAppUrl("http://localhost.example.com:3000"), "localhost-looking remote URL should be rejected");
+  assertThrows(() => validateLocalAppUrl("http://user:pass@localhost:3000"), "URLs with credentials should be rejected");
+  assert(parseLocalLauncherArgs(["--json"]).json === true, "--json should be accepted");
+  assert(parseLocalLauncherArgs(["--open"]).open === true, "--open should be accepted");
+  assert(parseLocalLauncherArgs(["--check-url"]).checkUrl === true, "--check-url should be accepted");
   assertThrows(() => parseLocalLauncherArgs(["--command", "npm run dev"]), "Unknown CLI args should be rejected");
+  assertThrows(() => parseLocalLauncherArgs(["npm", "run", "dev"]), "Custom command positional args should be rejected");
 
   const statusOnlyReport = await buildLocalLauncherReport({
     mode: "status_only",
@@ -95,15 +168,14 @@ async function main(): Promise<void> {
   assert(openResult.attempted === true, "--open mode should call the injected opener");
   assert(openedUrl === "http://127.0.0.1:3000", "--open mode should only pass the validated fixed local URL");
 
-  const dependencyNames = packageDependencyNames();
-  assert(dependencyNames.every((name) => !/tauri/i.test(name)), "Tauri dependency must not be added");
-  assert(dependencyNames.every((name) => !/electron/i.test(name)), "Electron dependency must not be added");
-
   const scripts = typedPackage.scripts ?? {};
   assert(scripts["local:launcher"] === "tsx scripts/local-launcher.ts", "local:launcher script should be present");
   assert(scripts["local:launcher:open"] === "tsx scripts/local-launcher.ts --open", "local:launcher:open script should be present");
   assert(scripts["local:launcher:verify"] === "tsx scripts/verify-local-launcher.ts", "local:launcher:verify script should be present");
-  assert(Object.values(scripts).every((script) => !/tauri|electron/i.test(script)), "Tauri/Electron scripts must not be added");
+  assertPhase7dTauriPrototypeAllowance(scripts);
+  assertNoForbiddenDependencies();
+  assertNoForbiddenScripts(scripts);
+  assertNoForbiddenLauncherText();
 
   console.log("Local launcher verification passed");
   console.log(JSON.stringify({

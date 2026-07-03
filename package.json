@@ -33,7 +33,9 @@
     "local:shell:verify": "tsx scripts/verify-local-app-shell.ts",
     "local:launcher": "tsx scripts/local-launcher.ts",
     "local:launcher:open": "tsx scripts/local-launcher.ts --open",
-    "local:launcher:verify": "tsx scripts/verify-local-launcher.ts"
+    "local:launcher:verify": "tsx scripts/verify-local-launcher.ts",
+    "tauri:verify:prototype": "tsx scripts/verify-tauri-prototype.ts",
+    "tauri:dev:prototype": "tauri dev"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",
@@ -46,6 +48,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.10.2",

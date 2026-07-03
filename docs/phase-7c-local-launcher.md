@@ -82,6 +82,8 @@ Phase 7C does not add:
 - Command text box or custom command input.
 - User-provided command execution.
 
+Phase 7D compatibility note: the browser-only launcher remains unchanged. The launcher verifier permits only the prototype-scoped Tauri devDependency `@tauri-apps/cli` and the script `tauri:dev:prototype` with command `tauri dev`; production desktop packaging, installer, updater, release, daemon, startup, and cloud-sync scripts remain rejected.
+
 The launcher never starts:
 
 - Dev server.

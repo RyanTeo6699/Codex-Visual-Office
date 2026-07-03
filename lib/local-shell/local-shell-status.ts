@@ -17,6 +17,11 @@ type PackageShape = {
 };
 
 const typedPackage = packageJson as PackageShape;
+const allowedTauriPrototypeDevDependency = "@tauri-apps/cli";
+const allowedTauriPrototypeScripts = new Map([
+  ["tauri:dev:prototype", "tauri dev"],
+  ["tauri:verify:prototype", "tsx scripts/verify-tauri-prototype.ts"],
+]);
 
 const forbiddenDependencyPatterns = {
   tauri: [/tauri/i],
@@ -45,6 +50,21 @@ function dependencyNames(): string[] {
 
 function packageScripts(): Record<string, string> {
   return typedPackage.scripts ?? {};
+}
+
+function hasOnlyAllowedTauriPrototypeDependency(): boolean {
+  const productionTauriDependencies = Object.keys(typedPackage.dependencies ?? {}).filter((name) => /tauri/i.test(name));
+  const developmentTauriDependencies = Object.keys(typedPackage.devDependencies ?? {}).filter((name) => /tauri/i.test(name));
+
+  return productionTauriDependencies.length === 0 &&
+    developmentTauriDependencies.length > 0 &&
+    developmentTauriDependencies.every((name) => name === allowedTauriPrototypeDevDependency);
+}
+
+function hasOnlyAllowedTauriPrototypeScripts(scripts: Record<string, string>): boolean {
+  const tauriScripts = Object.entries(scripts).filter(([name, command]) => /tauri/i.test(name) || /tauri/i.test(command));
+
+  return tauriScripts.every(([name, command]) => allowedTauriPrototypeScripts.get(name) === command);
 }
 
 function hasDependencyMatch(patterns: RegExp[]): boolean {
@@ -97,8 +117,9 @@ export async function getLocalShellStatus(): Promise<LocalShellStatus> {
   const settingMap = new Map(settings.map((setting) => [setting.key, setting]));
   const localMode = readRecord(settingMap.get("app.localMode")?.value);
   const scripts = packageScripts();
+  const tauriPrototypeConfigured = hasOnlyAllowedTauriPrototypeDependency() && hasOnlyAllowedTauriPrototypeScripts(scripts);
   const forbiddenCapabilities = {
-    tauri: hasDependencyMatch(forbiddenDependencyPatterns.tauri),
+    tauri: hasDependencyMatch(forbiddenDependencyPatterns.tauri) && !tauriPrototypeConfigured,
     electron: hasDependencyMatch(forbiddenDependencyPatterns.electron),
     autoUpdater: hasDependencyMatch(forbiddenDependencyPatterns.autoUpdater),
     backgroundDaemon: hasScriptMatch(forbiddenScriptPatterns.backgroundDaemon),
@@ -130,7 +151,7 @@ export async function getLocalShellStatus(): Promise<LocalShellStatus> {
     codexCliStatusLabel: codexStatus.installed ? `${codexStatus.version ?? "installed"} / ${codexStatus.authStatus}` : "not detected",
     qualityGatesConfigured,
     localLaunchScriptsAvailable,
-    desktopPackagingStatus: "future_evaluation",
+    desktopPackagingStatus: tauriPrototypeConfigured ? "tauri_prototype_configured" : "future_evaluation",
     shellReadiness: calculateReadiness({
       localDatabaseConfigured,
       settingsCenterReady,

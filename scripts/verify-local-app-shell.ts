@@ -34,12 +34,12 @@ async function main(): Promise<void> {
   assert(status.backupRestoreReady === true, "Backup / Restore should be summarized");
   assert(status.archiveRoomReady === true, "Archive Room should be summarized");
   assert(status.qualityGatesConfigured === true, "Quality gate config should be summarized");
-  assert(status.desktopPackagingStatus === "future_evaluation", "Desktop packaging must remain future evaluation only");
+  assert(status.desktopPackagingStatus === "tauri_prototype_configured", "Desktop packaging status should reflect the Phase 7D Tauri prototype");
   assert(status.localLaunchScriptsAvailable.includes("dev"), "npm run dev should be listed");
   assert(status.localLaunchScriptsAvailable.includes("local:shell:status"), "local:shell:status should be listed");
   assert(status.localLaunchScriptsAvailable.includes("local:shell:verify"), "local:shell:verify should be listed");
   assert(status.shellReadiness !== "blocked", "Local shell readiness should not be blocked");
-  assert(status.forbiddenCapabilities.tauri === false, "Tauri must not be added");
+  assert(status.forbiddenCapabilities.tauri === false, "Only the Phase 7D Tauri prototype allowance may be present");
   assert(status.forbiddenCapabilities.electron === false, "Electron must not be added");
   assert(status.forbiddenCapabilities.autoUpdater === false, "Auto updater must not be added");
   assert(status.forbiddenCapabilities.backgroundDaemon === false, "Background daemon/cron/startup service must not be added");
