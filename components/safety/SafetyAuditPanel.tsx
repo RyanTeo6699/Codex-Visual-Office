@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { CleanupDryRunPreview } from "@/lib/archive/archive-types";
 import type { RunnerPolicy } from "@/lib/codex-cli/runner-types";
+import type { DesktopBetaStatus } from "@/lib/desktop/desktop-beta-types";
 import type { LocalLauncherReport } from "@/lib/local-launcher/local-launcher-types";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
 import type { SafetySummary } from "@/lib/safety/safety-types";
@@ -33,6 +34,7 @@ export function SafetyAuditPanel({
   cleanupPreview,
   launcherReport,
   safetySummary,
+  desktopBetaStatus,
 }: {
   localShellStatus: LocalShellStatus;
   runnerPolicy: RunnerPolicy;
@@ -42,13 +44,15 @@ export function SafetyAuditPanel({
   cleanupPreview: CleanupDryRunPreview;
   launcherReport: LocalLauncherReport;
   safetySummary: SafetySummary;
+  desktopBetaStatus: DesktopBetaStatus;
 }) {
   const forbiddenEntries = Object.entries(localShellStatus.forbiddenCapabilities);
   const detectedForbidden = forbiddenEntries.filter(([, detected]) => detected);
   const executionAttempted = Object.values(localShellStatus.executionAttempted).some(Boolean) || Object.values(launcherReport.executionAttempted).some(Boolean);
   const approvedPathCount = approvedPaths.filter((path) => path.approved).length;
   const enabledRetentionPolicies = retentionPolicies.filter((policy) => policy.enabled).length;
-  const overallLevel: SafetyLevel = detectedForbidden.length || executionAttempted ? "blocked" : localShellStatus.shellReadiness === "ready_for_local_dev" ? "pass" : "watch";
+  const desktopBetaLevel = desktopBetaStatus.safetyStatus === "blocked" ? "blocked" : desktopBetaStatus.desktopBetaCandidateConfigured ? "pass" : "watch";
+  const overallLevel: SafetyLevel = detectedForbidden.length || executionAttempted || desktopBetaLevel === "blocked" ? "blocked" : localShellStatus.shellReadiness === "ready_for_local_dev" && desktopBetaLevel === "pass" ? "pass" : "watch";
   const warnings = buildWarnings({
     approvedPathCount,
     detectedForbidden,
@@ -66,7 +70,7 @@ export function SafetyAuditPanel({
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-md border border-emerald-200/16 bg-emerald-200/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-100/80">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Phase 12 / Safety and Permission Hardening
+              Phase 13 / Desktop Beta Safety
             </div>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Safety Audit Room</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
@@ -149,12 +153,20 @@ export function SafetyAuditPanel({
         <AuditCard
           icon={<PackageX className="h-4 w-4 text-amber-100/80" />}
           title="Tauri Prototype Safety"
-          level={localShellStatus.desktopPackagingStatus === "tauri_prototype_configured" ? "pass" : "watch"}
-          badge={localShellStatus.desktopPackagingStatus}
+          level={desktopBetaLevel}
+          badge={desktopBetaStatus.safetyStatus}
           rows={[
-            ["Prototype status", localShellStatus.desktopPackagingStatus],
-            ["Production packaging", "Not implemented"],
-            ["Self update", "Not implemented"],
+            ["Desktop beta candidate", desktopBetaStatus.desktopBetaCandidateConfigured ? "Configured" : "Needs review"],
+            ["App", `${desktopBetaStatus.appName} ${desktopBetaStatus.appVersion}`],
+            ["Mac-first", desktopBetaStatus.macFirst ? "Yes" : "No"],
+            ["Tauri prototype", desktopBetaStatus.tauriPrototypeConfigured ? "Configured" : localShellStatus.desktopPackagingStatus],
+            ["Browser fallback", desktopBetaStatus.browserLauncherFallbackAvailable ? "Available" : "Needs review"],
+            ["Production packaging", desktopBetaStatus.productionReleaseImplemented ? "Implemented" : "Not implemented"],
+            ["Code signing", desktopBetaStatus.codeSigningImplemented ? "Implemented" : "Not implemented"],
+            ["Notarization", desktopBetaStatus.notarizationImplemented ? "Implemented" : "Not implemented"],
+            ["Auto updater", desktopBetaStatus.autoUpdaterImplemented ? "Implemented" : "Not implemented"],
+            ["Electron", desktopBetaStatus.electronImplemented ? "Implemented" : "Not implemented"],
+            ["Cloud sync", desktopBetaStatus.cloudSyncImplemented ? "Implemented" : "Not implemented"],
             ["Desktop runtime attempted", launcherReport.executionAttempted.desktopRuntime ? "Yes" : "No"],
           ]}
         />
@@ -208,6 +220,10 @@ export function SafetyAuditPanel({
             "no token/auth/env read",
             "no cloud sync",
             "no production desktop packaging",
+            "no code signing",
+            "no notarization",
+            "no auto updater",
+            "no Electron",
             "no destructive cleanup",
           ].map((item) => (
             <BoundaryItem key={item} label={item} />
@@ -384,8 +400,8 @@ function recommendedNextAction(level: SafetyLevel, warnings: string[], approvedP
   }
 
   if (warnings.length && warnings[0] !== "No safety warnings are currently active.") {
-    return "Review the warning list, then re-run typecheck before marking Phase 12 safety UI complete.";
+    return "Review the warning list, then re-run desktop beta verification before marking Phase 13 desktop beta candidate review complete.";
   }
 
-  return "Keep Safety Audit visible in navigation and continue Phase 12 review with no new execution controls.";
+  return "Keep Safety Audit visible in navigation and continue Phase 13 desktop beta review with no new execution controls.";
 }

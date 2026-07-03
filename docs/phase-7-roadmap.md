@@ -23,6 +23,8 @@ Phase 8 - Codex Runtime Reliability
 Phase 9 - Future Sync / Cloud Planning
 Phase 10 - Team Workspace
 Phase 11 - ChatGPT App / MCP
+Phase 12 - Safety / Permission Hardening
+Phase 13 - Desktop Beta / Distribution Candidate
 ```
 
 ## Dependency Order
@@ -30,7 +32,7 @@ Phase 11 - ChatGPT App / MCP
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
 ```
 
 No later phase should start without explicit GM approval.
@@ -307,3 +309,28 @@ Make local permission state, sensitive path protections, approved path boundarie
 ### Boundaries
 
 Phase 12 must not add automatic Codex/Git/Quality execution, arbitrary shell, command text box, terminal emulator, `node-pty`, source reads, package auto-detection, folder picker, file browser, source viewer, credential reads, token storage, cloud sync, external integrations, auth, payment, team permissions, MCP, ChatGPT App, production packaging, Electron, auto updater, destructive cleanup, backup deletion, or Phase 13 implementation.
+
+## Phase 13 - Desktop Beta / Distribution Candidate
+
+### 2026-07-03 Status Note
+
+Current GM direction tracks Phase 13 as "Desktop Beta / Distribution Candidate". Phase 13 is Mac-first, local-first, and not a production release.
+
+### Goal
+
+Document and verify the desktop beta candidate posture without changing app behavior or advancing to production release.
+
+### Allowed
+
+- Desktop beta candidate documentation.
+- Tauri beta configuration review.
+- App metadata hardening review.
+- Desktop beta verification notes.
+- Cold start readiness documentation.
+- Local data preservation boundaries.
+- Browser launcher fallback documentation.
+- Documentation and verification.
+
+### Boundaries
+
+Phase 13 must not add production release, signing, notarization, auto updater, production installer distribution, Electron, cloud sync, GitHub, Vercel, Supabase, auth, payment, team permissions, MCP, OpenAI API, arbitrary shell, command text box, terminal, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token reads, or Phase 14 implementation.

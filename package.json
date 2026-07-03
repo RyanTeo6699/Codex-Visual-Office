@@ -36,6 +36,8 @@
     "local:launcher": "tsx scripts/local-launcher.ts",
     "local:launcher:open": "tsx scripts/local-launcher.ts --open",
     "local:launcher:verify": "tsx scripts/verify-local-launcher.ts",
+    "desktop:verify:beta": "tsx scripts/verify-desktop-beta.ts",
+    "desktop:check:beta": "npm run desktop:verify:beta",
     "tauri:verify:prototype": "tsx scripts/verify-tauri-prototype.ts",
     "agent:verify:workflow": "tsx scripts/verify-agent-workflow.ts",
     "safety:verify:permissions": "tsx scripts/verify-safety-permissions.ts",

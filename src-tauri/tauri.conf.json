@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Codex Visual Office Prototype",
+  "productName": "Codex Visual Office Beta Candidate",
   "version": "0.1.0",
   "identifier": "local.codex.visual-office.prototype",
   "build": {
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Codex Visual Office Prototype",
+        "title": "Codex Visual Office Beta Candidate",
         "width": 1440,
         "height": 960,
         "minWidth": 1024,

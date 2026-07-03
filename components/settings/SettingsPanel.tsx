@@ -7,6 +7,7 @@ import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
 import { CodexRuntimeReliabilityCard } from "./CodexRuntimeReliabilityCard";
 import { LocalAppShellCard } from "./LocalAppShellCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
+import type { DesktopBetaStatus } from "@/lib/desktop/desktop-beta-types";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
 import type { ApprovedProjectPath, BackupRecord, LocalSetting, RetentionPolicy } from "@/lib/types";
 
@@ -20,6 +21,7 @@ export function SettingsPanel({
   backupRecords,
   retentionPolicies,
   localShellStatus,
+  desktopBetaStatus,
   saveApprovedProjectPathAction,
   createBackupNowAction,
   restoreDryRunAction,
@@ -34,6 +36,7 @@ export function SettingsPanel({
   backupRecords: BackupRecord[];
   retentionPolicies: RetentionPolicy[];
   localShellStatus: LocalShellStatus;
+  desktopBetaStatus: DesktopBetaStatus;
   saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
   createBackupNowAction: BackupFormAction;
   restoreDryRunAction: BackupFormAction;
@@ -75,7 +78,7 @@ export function SettingsPanel({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <LocalAppShellCard status={localShellStatus} />
+        <LocalAppShellCard status={localShellStatus} desktopBetaStatus={desktopBetaStatus} />
 
         <section className="rounded-[18px] border border-emerald-200/12 bg-emerald-200/[0.04] p-4 xl:col-span-2">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -157,13 +160,21 @@ export function SettingsPanel({
         <SettingsCard
           icon={<Laptop className="h-4 w-4 text-slate-100/80" />}
           title="Desktop Packaging"
-          badge="Future evaluation"
+          badge={desktopBetaStatus.safetyStatus}
           rows={[
-            ["Status", readString(desktopPackaging?.status) || "planned"],
-            ["Note", readString(desktopPackaging?.note) || "Desktop packaging is planning-only in Phase 6"],
-            ["Tauri", "Not installed"],
-            ["Electron", "Not installed"],
+            ["Status", desktopBetaStatus.desktopBetaCandidateConfigured ? "Desktop beta candidate configured" : readString(desktopPackaging?.status) || "Needs review"],
+            ["App", `${desktopBetaStatus.appName} ${desktopBetaStatus.appVersion}`],
+            ["Mac-first", desktopBetaStatus.macFirst ? "Yes" : "No"],
+            ["Tauri prototype", desktopBetaStatus.tauriPrototypeConfigured ? "Configured" : "Needs review"],
+            ["Browser fallback", desktopBetaStatus.browserLauncherFallbackAvailable ? "Available" : "Needs review"],
+            ["Production release", desktopBetaStatus.productionReleaseImplemented ? "Implemented" : "Not implemented"],
+            ["Code signing", desktopBetaStatus.codeSigningImplemented ? "Implemented" : "Not implemented"],
+            ["Notarization", desktopBetaStatus.notarizationImplemented ? "Implemented" : "Not implemented"],
+            ["Auto updater", desktopBetaStatus.autoUpdaterImplemented ? "Implemented" : "Not implemented"],
+            ["Electron", desktopBetaStatus.electronImplemented ? "Implemented" : "Not implemented"],
+            ["Cloud sync", desktopBetaStatus.cloudSyncImplemented ? "Implemented" : "Not implemented"],
           ]}
+          note={desktopBetaStatus.warnings[0] ?? "Desktop beta is local-only and not a signed or notarized production release."}
         />
       </div>
 

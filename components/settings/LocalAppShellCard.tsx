@@ -1,8 +1,9 @@
 import { LaptopMinimal, ShieldCheck } from "lucide-react";
+import type { DesktopBetaStatus } from "@/lib/desktop/desktop-beta-types";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
 import { DEFAULT_LOCAL_APP_URL, LOCAL_APP_URL_ENV } from "@/lib/local-launcher/local-launcher-config";
 
-export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
+export function LocalAppShellCard({ status, desktopBetaStatus }: { status: LocalShellStatus; desktopBetaStatus: DesktopBetaStatus }) {
   const rows = [
     ["Local-first mode", status.localModeEnabled ? "Ready" : "Needs setup"],
     ["Local database status", status.localDatabaseConfigured ? status.localDatabasePath : "Not configured"],
@@ -14,10 +15,16 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
     ["Codex CLI", status.codexCliDetected ? status.codexCliStatusLabel : "Not detected"],
     ["Local Launcher URL", DEFAULT_LOCAL_APP_URL],
     ["Desktop shell prototype", "Tauri prototype configured"],
-    ["Browser launcher fallback", "Available"],
-    ["Production desktop packaging", "Not implemented"],
-    ["Self-update service", "Not implemented"],
-    ["Code signing / notarization", "Not implemented"],
+    ["Desktop beta candidate", desktopBetaStatus.desktopBetaCandidateConfigured ? desktopBetaStatus.safetyStatus : "Needs review"],
+    ["Desktop beta app", `${desktopBetaStatus.appName} ${desktopBetaStatus.appVersion}`],
+    ["Mac-first beta", desktopBetaStatus.macFirst ? "Yes" : "No"],
+    ["Browser launcher fallback", desktopBetaStatus.browserLauncherFallbackAvailable ? "Available" : "Needs review"],
+    ["Production desktop packaging", desktopBetaStatus.productionReleaseImplemented ? "Detected" : "Not implemented"],
+    ["Code signing", desktopBetaStatus.codeSigningImplemented ? "Detected" : "Not implemented"],
+    ["Notarization", desktopBetaStatus.notarizationImplemented ? "Detected" : "Not implemented"],
+    ["Auto updater", desktopBetaStatus.autoUpdaterImplemented ? "Detected" : "Not implemented"],
+    ["Electron runtime", desktopBetaStatus.electronImplemented ? "Detected" : "Not implemented"],
+    ["Cloud sync", desktopBetaStatus.cloudSyncImplemented ? "Detected" : "Not implemented"],
   ] as const;
 
   return (
@@ -66,11 +73,13 @@ export function LocalAppShellCard({ status }: { status: LocalShellStatus }) {
         <div className="rounded-[14px] border border-amber-200/12 bg-amber-200/[0.04] p-3">
           <h3 className="text-xs font-bold text-amber-100">Runtime boundary</h3>
           <div className="mt-2 grid gap-1 text-xs font-semibold text-slate-300 md:grid-cols-2">
-            <p>Tauri prototype configured.</p>
-            <p>Browser fallback available.</p>
-            <p>Production packaging not implemented.</p>
-            <p>No self-update service.</p>
-            <p>Code signing / notarization not implemented.</p>
+            <p>{desktopBetaStatus.tauriPrototypeConfigured ? "Tauri prototype configured." : "Tauri prototype needs review."}</p>
+            <p>{desktopBetaStatus.desktopBetaCandidateConfigured ? "Desktop beta candidate configured." : "Desktop beta candidate needs review."}</p>
+            <p>{desktopBetaStatus.browserLauncherFallbackAvailable ? "Browser fallback available." : "Browser fallback needs review."}</p>
+            <p>{desktopBetaStatus.productionReleaseImplemented ? "Production packaging detected: review required." : "Production packaging not implemented."}</p>
+            <p>{desktopBetaStatus.autoUpdaterImplemented ? "Auto updater detected: review required." : "Auto updater not implemented."}</p>
+            <p>{desktopBetaStatus.codeSigningImplemented || desktopBetaStatus.notarizationImplemented ? "Signing or notarization detected: review required." : "Code signing / notarization not implemented."}</p>
+            <p>{desktopBetaStatus.electronImplemented ? "Electron detected: review required." : "Electron not implemented."}</p>
             <p>Local-only runtime.</p>
             <p>No background daemon.</p>
             <p>No remote account sync.</p>

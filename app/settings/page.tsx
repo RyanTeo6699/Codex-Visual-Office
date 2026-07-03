@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
 import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
+import { getDesktopBetaStatus } from "@/lib/desktop/desktop-beta-status";
 import { getLocalShellStatus } from "@/lib/local-shell/local-shell-status";
 import { LOCAL_BACKUP_DIR } from "@/lib/local-backup/backup-paths";
 import { initializeLocalDb } from "@/lib/local-db/init";
@@ -26,6 +27,7 @@ export default async function SettingsPage() {
     listRetentionPolicies(),
     getLocalShellStatus(),
   ]);
+  const desktopBetaStatus = getDesktopBetaStatus();
 
   return (
     <AppShell>
@@ -39,6 +41,7 @@ export default async function SettingsPage() {
         backupRecords={backupRecords}
         retentionPolicies={retentionPolicies}
         localShellStatus={localShellStatus}
+        desktopBetaStatus={desktopBetaStatus}
         saveApprovedProjectPathAction={saveApprovedProjectPathAction}
         createBackupNowAction={createBackupNowAction}
         restoreDryRunAction={restoreDryRunAction}

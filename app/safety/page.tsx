@@ -1,6 +1,7 @@
 import { buildCleanupDryRunPreview } from "@/lib/archive/archive-retention-preview";
 import { buildArchiveSummary } from "@/lib/archive/archive-summary";
 import { createScopedCodexRunnerPolicy } from "@/lib/codex-cli/runner-policy";
+import { getDesktopBetaStatus } from "@/lib/desktop/desktop-beta-status";
 import { initializeLocalDb } from "@/lib/local-db/init";
 import { LOCAL_DB_PATH } from "@/lib/local-db/paths";
 import { listApprovedProjectPaths } from "@/lib/local-db/operations/approved-project-paths";
@@ -31,6 +32,7 @@ export default async function SafetyPage() {
     buildCleanupDryRunPreview(),
   ]);
   const safetySummary = getLocalFirstSafetySummary();
+  const desktopBetaStatus = getDesktopBetaStatus();
   const approvedProjectPathsReady = approvedPaths.some((path) => path.approved);
   const qualityGatesConfigured = qualityGateConfigs.length > 0;
   const archiveRoomReady = retentionPolicies.length > 0;
@@ -112,6 +114,7 @@ export default async function SafetyPage() {
         cleanupPreview={cleanupPreview}
         launcherReport={launcherReport}
         safetySummary={safetySummary}
+        desktopBetaStatus={desktopBetaStatus}
       />
     </AppShell>
   );
