@@ -22,6 +22,10 @@ export function TopBar() {
             <Archive className="h-3.5 w-3.5" />
             Archive
           </Link>
+          <Link href="/safety" className="inline-flex items-center gap-1.5 rounded-md border border-white/8 bg-white/[0.04] px-2 py-1 font-semibold text-slate-300 hover:text-white">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Safety
+          </Link>
           <Link href="/settings" className="inline-flex items-center gap-1.5 rounded-md border border-white/8 bg-white/[0.04] px-2 py-1 font-semibold text-slate-300 hover:text-white">
             <Settings className="h-3.5 w-3.5" />
             Settings

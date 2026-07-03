@@ -22,6 +22,7 @@ const requiredFiles = [
   "app/review/[taskId]/page.tsx",
   "app/settings/page.tsx",
   "app/archive/page.tsx",
+  "app/safety/page.tsx",
   "components/office/OfficeMap.tsx",
   "components/office/ProjectRoomCard.tsx",
   "components/office/AgentSeat.tsx",
@@ -52,6 +53,7 @@ const requiredFiles = [
   "components/settings/BackupRestoreCard.tsx",
   "components/settings/CodexRuntimeReliabilityCard.tsx",
   "components/settings/LocalAppShellCard.tsx",
+  "components/safety/SafetyAuditPanel.tsx",
   "components/archive/ArchiveRoomPanel.tsx",
   "components/archive/ArchiveSummaryCard.tsx",
   "components/archive/CleanupDryRunPreviewCard.tsx",
@@ -105,8 +107,15 @@ const forbiddenUiPatterns = [
   /\brun automatically\b/i,
   /\bauto codex\b/i,
   /\bauto fix\b/i,
+  /\benable shell\b/i,
+  /\bopen terminal\b/i,
   /\bcommand input\b/i,
   /\btoken input\b/i,
+  /\bdelete logs\b/i,
+  /\bcleanup now\b/i,
+  /\bdelete backups\b/i,
+  /\bbuild\s+(?:dmg|exe)\b/i,
+  /\benable auto update\b/i,
   /\bterminal\s+(emulator|runner|console|panel|input)\b/i,
   /\bcloud sync\b/i,
   /\bteam workspace\b/i,
@@ -132,6 +141,32 @@ function readJson<T>(relativePath: string): T {
 
 function fileExists(relativePath: string): boolean {
   return fs.existsSync(path.join(projectRoot, relativePath));
+}
+
+function walkFiles(relativeRoot: string): string[] {
+  const absoluteRoot = path.join(projectRoot, relativeRoot);
+  if (!fs.existsSync(absoluteRoot)) {
+    return [];
+  }
+
+  const results: string[] = [];
+  const entries = fs.readdirSync(absoluteRoot, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const absolutePath = path.join(absoluteRoot, entry.name);
+    const relativePath = path.relative(projectRoot, absolutePath);
+
+    if (entry.isDirectory()) {
+      results.push(...walkFiles(relativePath));
+      continue;
+    }
+
+    if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
+      results.push(relativePath);
+    }
+  }
+
+  return results;
 }
 
 function dependencyNames(packageJson: PackageShape): string[] {
@@ -240,6 +275,14 @@ function main(): void {
     forbiddenUiMatches.length ? forbiddenUiMatches.join(", ") : `${uiFiles.length} UI files scanned`,
   );
 
+  const safetyFiles = [...walkFiles("app/safety"), ...walkFiles("components/safety")];
+  addCheck(
+    checks,
+    "safety page files are present if safety UI is implemented",
+    safetyFiles.length === 0 || fileExists("app/safety/page.tsx"),
+    safetyFiles.length === 0 ? "no safety UI files implemented" : `Safety UI files: ${safetyFiles.join(", ")}`,
+  );
+
   const archiveCleanupControls = findArchiveCleanupControls(uiFiles);
   addCheck(
     checks,
@@ -300,6 +343,7 @@ function main(): void {
     scannedDesignFiles: scanFiles.length - uiFiles.length,
     riskyDependencies: riskyDeps,
     forbiddenUiMatches,
+    safetyFiles,
     archiveCleanupControls,
     codexExecutionAttempted: false,
     gitMutationAttempted: false,

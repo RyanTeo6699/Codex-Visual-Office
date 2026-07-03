@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, Radar, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import Link from "next/link";
+import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, Radar, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
 import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
@@ -75,6 +76,24 @@ export function SettingsPanel({
 
       <div className="grid gap-4 xl:grid-cols-2">
         <LocalAppShellCard status={localShellStatus} />
+
+        <section className="rounded-[18px] border border-emerald-200/12 bg-emerald-200/[0.04] p-4 xl:col-span-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-emerald-100/80" />
+              <h2 className="text-sm font-bold tracking-tight text-slate-100">Safety Audit</h2>
+            </div>
+            <span className="rounded-md border border-emerald-200/14 bg-emerald-200/8 px-2 py-1 text-[10px] font-semibold text-emerald-100">
+              read-only
+            </span>
+          </div>
+          <p className="mt-3 max-w-3xl text-xs font-semibold leading-relaxed text-slate-400">
+            Review local-only safety status, runner permission, backup and retention boundaries, credential safety, and forbidden capability signals. The audit room has no execution controls.
+          </p>
+          <Link href="/safety" className="mt-4 inline-flex rounded-[12px] border border-emerald-200/16 bg-emerald-200/8 px-3 py-2 text-xs font-bold text-emerald-100 hover:bg-emerald-200/12">
+            Open Safety Audit
+          </Link>
+        </section>
 
         <SettingsCard
           icon={<ShieldCheck className="h-4 w-4 text-emerald-100/80" />}

@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 11.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 12.
 
-It is a planning document only. It does not claim any Phase 7B, 7C, 7D, Phase 8, Phase 9, Phase 10, or Phase 11 work has been implemented.
+It is a planning document only. It does not claim any Phase 7B, 7C, 7D, Phase 8, Phase 9, Phase 10, Phase 11, or Phase 12 work has been implemented.
 
 ## Local-First Principle
 
@@ -281,3 +281,29 @@ This phase must preserve local-first boundaries and only expose capabilities tha
 - MCP / ChatGPT App plan and/or implementation after approval.
 - Security boundary document.
 - Integration verification.
+
+## Phase 12 - Safety / Permission Hardening
+
+### 2026-07-03 Status Note
+
+Current GM direction tracks Phase 12 as "Safety / Permission Hardening". Phase 12 consolidates existing local-first safety boundaries into a visible, verifiable, and auditable safety/permission layer without adding dangerous execution capabilities.
+
+### Goal
+
+Make local permission state, sensitive path protections, approved path boundaries, runner safety, backup/restore safety, archive/retention safety, launcher/Tauri safety, and credential safety easier to inspect and verify.
+
+### Allowed
+
+- Local permission model.
+- Sensitive path guard consolidation.
+- Approved path permission summary.
+- Runner safety summary.
+- Backup/restore safety summary.
+- Archive/retention safety summary.
+- Launcher/Tauri safety summary.
+- `/safety` UI.
+- Documentation and verification.
+
+### Boundaries
+
+Phase 12 must not add automatic Codex/Git/Quality execution, arbitrary shell, command text box, terminal emulator, `node-pty`, source reads, package auto-detection, folder picker, file browser, source viewer, credential reads, token storage, cloud sync, external integrations, auth, payment, team permissions, MCP, ChatGPT App, production packaging, Electron, auto updater, destructive cleanup, backup deletion, or Phase 13 implementation.
