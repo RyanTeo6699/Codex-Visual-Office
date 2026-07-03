@@ -2,14 +2,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { AgentSeat } from "@/components/office/AgentSeat";
+import { AgentWorkflowStatus } from "@/components/office/AgentWorkflowStatus";
+import type { AgentWorkflowSummary } from "@/components/office/AgentWorkflowStatus";
 import { ApprovedProjectPathStatus } from "@/components/office/ApprovedProjectPathStatus";
 import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
+import { ProjectWorkflowSummary } from "@/components/office/ProjectWorkflowSummary";
+import type { ProjectRunHistoryItem, ProjectTaskLifecycleItem } from "@/components/office/ProjectWorkflowSummary";
 import { QualityGateConfigStatus } from "@/components/office/QualityGateConfigStatus";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
 import { listBackupRecords } from "@/lib/local-db/operations/backup-records";
 import { listRetentionPolicies } from "@/lib/local-db/operations/retention-policies";
-import { readSelectedProjectRoom } from "@/lib/local-db/selected-reads";
+import * as selectedReads from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
 import { projectStatusLabel, taskStatusLabel } from "@/lib/status";
 import type { AgentSeat as AgentSeatType, BackupRecord, BuildCheck, Project, RetentionPolicy, Task, TaskEvent } from "@/lib/types";
@@ -17,11 +21,11 @@ import { ArrowLeft, ArrowUpRight, Archive, Bot, ClipboardCheck, DoorOpen, Folder
 
 export default async function ProjectRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  let localRead: Awaited<ReturnType<typeof readSelectedProjectRoom>> | undefined;
+  let localRead: Awaited<ReturnType<typeof selectedReads.readSelectedProjectRoom>> | undefined;
   const localRecordsSummary = await readLocalRecordsSummary();
 
   try {
-    localRead = await readSelectedProjectRoom(id);
+    localRead = await selectedReads.readSelectedProjectRoom(id);
   } catch (error) {
     console.error("Project Room selected local read failed", error);
   }
@@ -49,6 +53,16 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
     hasApprovedPath: Boolean(localRead?.primaryApprovedProjectPath),
     failedChecks,
   });
+  const agentWorkflowSummary = await readProjectAgentWorkflowSummary({
+    project,
+    tasks: projectTasks,
+    agents: projectAgents,
+    checks: projectChecks,
+    events: projectEvents,
+  });
+  const taskLifecycle = await readProjectTaskLifecycle(projectTasks);
+  const runHistory = await readProjectRunHistory(projectTasks, projectEvents);
+  const promptReadiness = getProjectPromptReadiness(projectTasks);
 
   return (
     <AppShell>
@@ -129,6 +143,14 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
             </div>
           </Link>
         </section>
+        <AgentWorkflowStatus title="Agent Workflow Status" eyebrow="Project room workflow" summaries={[agentWorkflowSummary]} />
+        <ProjectWorkflowSummary
+          taskLifecycle={taskLifecycle}
+          runHistory={runHistory}
+          promptReadiness={promptReadiness}
+          recommendedAction={recommendedAction.label}
+          recommendedActionDetail={recommendedAction.detail}
+        />
         <section className="grid gap-4 lg:grid-cols-3">
           {projectAgents.length ? (
             projectAgents.map((agent) => (
@@ -157,6 +179,278 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
       </div>
     </AppShell>
   );
+}
+
+type OptionalPhase11SelectedReads = {
+  getAgentWorkflowSummaryForProject?: (projectId: string) => Promise<unknown> | unknown;
+  getTaskLifecycleSummary?: (taskId: string) => Promise<unknown> | unknown;
+  getWorkflowTimelineForTask?: (taskId: string) => Promise<unknown> | unknown;
+};
+
+const phase11SelectedReads = selectedReads as typeof selectedReads & OptionalPhase11SelectedReads;
+
+const taskProgressByStatus: Record<Task["status"], number> = {
+  backlog: 8,
+  ready: 22,
+  running: 58,
+  waiting_review: 82,
+  blocked: 43,
+  done: 100,
+};
+
+async function readProjectAgentWorkflowSummary({
+  project,
+  tasks,
+  agents,
+  checks,
+  events,
+}: {
+  project: Project;
+  tasks: Task[];
+  agents: AgentSeatType[];
+  checks: BuildCheck[];
+  events: TaskEvent[];
+}): Promise<AgentWorkflowSummary> {
+  const fallback = buildProjectAgentWorkflowSummary({ project, tasks, agents, checks, events });
+  const helper = phase11SelectedReads.getAgentWorkflowSummaryForProject;
+
+  if (typeof helper !== "function") {
+    return fallback;
+  }
+
+  try {
+    return normalizeAgentWorkflowSummary(await helper(project.id), fallback);
+  } catch (error) {
+    console.error("Project Room Phase 11 agent workflow summary read failed", error);
+    return fallback;
+  }
+}
+
+function buildProjectAgentWorkflowSummary({
+  project,
+  tasks,
+  agents,
+  checks,
+  events,
+}: {
+  project: Project;
+  tasks: Task[];
+  agents: AgentSeatType[];
+  checks: BuildCheck[];
+  events: TaskEvent[];
+}): AgentWorkflowSummary {
+  const primaryTask = tasks.find((task) => task.status === "waiting_review" || task.status === "blocked" || task.status === "running") ?? tasks[0];
+  const failedCheckCount = checks.filter((check) => check.status === "failed").length;
+  const blockedTaskCount = tasks.filter((task) => task.status === "blocked").length;
+  const waitingReviewCount = tasks.filter((task) => task.status === "waiting_review").length;
+  const runningTaskCount = tasks.filter((task) => task.status === "running").length;
+  const runnerEvent = events.find((event) => typeof event.payload?.lifecycleEvent === "string");
+
+  return {
+    id: project.id,
+    label: project.name,
+    scope: "project",
+    activeSeatCount: agents.filter((agent) => agent.status !== "idle" && agent.status !== "done").length,
+    runningTaskCount,
+    waitingReviewCount,
+    blockedTaskCount,
+    failedCheckCount,
+    promptReadiness: getProjectPromptReadiness(tasks),
+    lastRunStatus: typeof runnerEvent?.payload?.lifecycleEvent === "string" ? runnerEvent.payload.lifecycleEvent : "no codex run recorded",
+    failureCategory: failedCheckCount ? "quality_check_failed" : blockedTaskCount ? "workflow_blocked" : undefined,
+    recommendedAction: getProjectWorkflowAction(tasks, failedCheckCount),
+    recommendedActionDetail: primaryTask?.title ?? "No active task is requesting attention in this room.",
+    primaryTaskStatus: primaryTask?.status,
+    seats: agents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      status: agent.status,
+      taskTitle: tasks.find((task) => task.id === agent.taskId)?.title,
+      visualState: agent.focus,
+    })),
+  };
+}
+
+async function readProjectTaskLifecycle(tasks: Task[]): Promise<ProjectTaskLifecycleItem[]> {
+  const helper = phase11SelectedReads.getTaskLifecycleSummary;
+
+  if (typeof helper !== "function") {
+    return tasks.map(buildProjectTaskLifecycleItem);
+  }
+
+  const lifecycleItems = await Promise.all(
+    tasks.map(async (task) => {
+      try {
+        return normalizeProjectTaskLifecycleItem(await helper(task.id), buildProjectTaskLifecycleItem(task));
+      } catch {
+        return buildProjectTaskLifecycleItem(task);
+      }
+    }),
+  );
+
+  return lifecycleItems;
+}
+
+function buildProjectTaskLifecycleItem(task: Task): ProjectTaskLifecycleItem {
+  return {
+    id: task.id,
+    title: task.title,
+    status: task.status,
+    stage: getTaskLifecycleStage(task.status),
+    progressPercent: taskProgressByStatus[task.status],
+  };
+}
+
+async function readProjectRunHistory(tasks: Task[], events: TaskEvent[]): Promise<ProjectRunHistoryItem[]> {
+  const helper = phase11SelectedReads.getWorkflowTimelineForTask;
+
+  if (typeof helper !== "function") {
+    return buildProjectRunHistory(events);
+  }
+
+  const activeTask = tasks.find((task) => task.status === "running" || task.status === "blocked" || task.status === "waiting_review") ?? tasks[0];
+  if (!activeTask) {
+    return buildProjectRunHistory(events);
+  }
+
+  try {
+    const helperValue = await helper(activeTask.id);
+    const normalized = normalizeProjectRunHistory(helperValue);
+    return normalized.length ? normalized : buildProjectRunHistory(events);
+  } catch (error) {
+    console.error("Project Room Phase 11 workflow timeline read failed", error);
+    return buildProjectRunHistory(events);
+  }
+}
+
+function buildProjectRunHistory(events: TaskEvent[]): ProjectRunHistoryItem[] {
+  return events
+    .filter((event) => typeof event.payload?.lifecycleEvent === "string" || event.message.toLowerCase().includes("runner") || event.message.toLowerCase().includes("codex"))
+    .map((event) => ({
+      id: event.id,
+      time: event.time,
+      title: event.message,
+      detail: typeof event.payload?.lifecycleEvent === "string" ? event.payload.lifecycleEvent : "recorded local event",
+      status: typeof event.payload?.status === "string" ? event.payload.status : event.tone,
+    }));
+}
+
+function getProjectPromptReadiness(tasks: Task[]): string {
+  if (tasks.some((task) => task.status === "waiting_review")) {
+    return "prompt output is waiting for review";
+  }
+
+  if (tasks.some((task) => task.status === "running")) {
+    return "prompt is active with an assigned seat";
+  }
+
+  if (tasks.some((task) => task.status === "blocked")) {
+    return "prompt workflow is blocked";
+  }
+
+  if (tasks.some((task) => task.status === "ready")) {
+    return "task is ready for prompt handoff";
+  }
+
+  return "no prompt handoff is active";
+}
+
+function getTaskLifecycleStage(status: Task["status"]): string {
+  const stageByStatus: Record<Task["status"], string> = {
+    backlog: "Queued before prompt handoff",
+    ready: "Ready for prompt handoff",
+    running: "Codex seat is working",
+    waiting_review: "Human review is required",
+    blocked: "Workflow needs intervention",
+    done: "Final decision accepted",
+  };
+
+  return stageByStatus[status];
+}
+
+function getProjectWorkflowAction(projectTasks: Task[], failedCheckCount: number): string {
+  if (projectTasks.some((task) => task.status === "waiting_review")) {
+    return "review waiting task";
+  }
+
+  if (projectTasks.some((task) => task.status === "blocked") || failedCheckCount) {
+    return "inspect blocked workflow";
+  }
+
+  if (projectTasks.some((task) => task.status === "running")) {
+    return "monitor active seat";
+  }
+
+  return "open task trays";
+}
+
+function normalizeAgentWorkflowSummary(value: unknown, fallback: AgentWorkflowSummary): AgentWorkflowSummary {
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+
+  const record = value as Record<string, unknown>;
+  return {
+    ...fallback,
+    activeSeatCount: readNumber(record.activeSeatCount) ?? fallback.activeSeatCount,
+    runningTaskCount: readNumber(record.runningTaskCount) ?? fallback.runningTaskCount,
+    waitingReviewCount: readNumber(record.waitingReviewCount) ?? readNumber(record.reviewTaskCount) ?? fallback.waitingReviewCount,
+    blockedTaskCount: readNumber(record.blockedTaskCount) ?? fallback.blockedTaskCount,
+    failedCheckCount: readNumber(record.failedCheckCount) ?? readNumber(record.failedBuildCheckCount) ?? fallback.failedCheckCount,
+    promptReadiness: readString(record.promptReadiness) ?? fallback.promptReadiness,
+    lastRunStatus: readString(record.lastRunStatus) ?? fallback.lastRunStatus,
+    failureCategory: readString(record.failureCategory) ?? fallback.failureCategory,
+    recommendedAction: readString(record.recommendedAction) ?? fallback.recommendedAction,
+    recommendedActionDetail: readString(record.recommendedActionDetail) ?? readString(record.summaryMessage) ?? fallback.recommendedActionDetail,
+  };
+}
+
+function normalizeProjectTaskLifecycleItem(value: unknown, fallback: ProjectTaskLifecycleItem): ProjectTaskLifecycleItem {
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+
+  const record = value as Record<string, unknown>;
+  return {
+    ...fallback,
+    stage: readString(record.stage) ?? readString(record.lifecycleStage) ?? readString(record.summaryMessage) ?? readString(record.phase) ?? fallback.stage,
+    progressPercent: readNumber(record.progressPercent) ?? fallback.progressPercent,
+  };
+}
+
+function normalizeProjectRunHistory(value: unknown): ProjectRunHistoryItem[] {
+  const items = Array.isArray(value)
+    ? value
+    : value && typeof value === "object" && Array.isArray((value as Record<string, unknown>).items)
+      ? (value as { items: unknown[] }).items
+      : undefined;
+
+  if (!items) {
+    return [];
+  }
+
+  return items.flatMap((item, index) => {
+    if (!item || typeof item !== "object") {
+      return [];
+    }
+
+    const record = item as Record<string, unknown>;
+    return [{
+      id: readString(record.id) ?? `phase11-run-${index}`,
+      time: readString(record.time) ?? readString(record.createdAt) ?? "--:--",
+      title: readString(record.title) ?? readString(record.message) ?? readString(record.label) ?? "Workflow event",
+      detail: readString(record.detail) ?? readString(record.lifecycleEvent) ?? "recorded local event",
+      status: readString(record.status) ?? "recorded",
+    }];
+  });
+}
+
+function readString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value : undefined;
+}
+
+function readNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 async function readLocalRecordsSummary(): Promise<{ backupRecords: BackupRecord[]; retentionPolicies: RetentionPolicy[] }> {

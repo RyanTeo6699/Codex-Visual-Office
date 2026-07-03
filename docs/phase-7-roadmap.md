@@ -254,6 +254,10 @@ Phase 10 must not start MCP or ChatGPT App integration unless GM explicitly adva
 
 ## Phase 11 - ChatGPT App / MCP
 
+### 2026-07-03 Status Note
+
+Current GM direction tracks Phase 11 as "Codex Agent Workflow 2.0" instead of ChatGPT App / MCP implementation. MCP, ChatGPT App, external APIs, automatic execution, and source-read expansion remain out of scope unless GM explicitly re-approves them in a later phase.
+
 ### Goal
 
 Allow ChatGPT App / MCP integration after the local, packaging, optional sync, and team foundations are settled.

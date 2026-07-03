@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
+import { AgentWorkflowStatus } from "@/components/office/AgentWorkflowStatus";
+import type { AgentWorkflowSummary } from "@/components/office/AgentWorkflowStatus";
 import { BuildWall } from "@/components/office/BuildWall";
 import { EventTicker } from "@/components/office/EventTicker";
 import { OfficeMap } from "@/components/office/OfficeMap";
 import { TaskBoard } from "@/components/tasks/TaskBoard";
 import { listApprovedProjectPaths } from "@/lib/local-db/operations/approved-project-paths";
 import { listBackupRecords } from "@/lib/local-db/operations/backup-records";
+import * as selectedReads from "@/lib/local-db/selected-reads";
 import { agentSeats, buildChecks, projects, taskEvents, tasks } from "@/lib/mock-data";
 import { projectStatusLabel } from "@/lib/status";
 import type { ApprovedProjectPath, BackupRecord, Project, Task } from "@/lib/types";
@@ -15,6 +18,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OfficeHome() {
   const localSummary = await readHomeLocalSummary();
+  const agentWorkflowSummaries = await readOfficeAgentWorkflowSummaries();
   const waiting = tasks.filter((task) => task.status === "waiting_review");
   const blocked = tasks.filter((task) => task.status === "blocked");
   const active = tasks.filter((task) => task.status === "running");
@@ -47,6 +51,7 @@ export default async function OfficeHome() {
           backupRecords={localSummary.backupRecords}
           recommendedAction={recommendedAction}
         />
+        <AgentWorkflowStatus summaries={agentWorkflowSummaries} />
         <OfficeMap projects={projects} tasks={tasks} agentSeats={agentSeats} approvedPaths={approvedPaths} />
         <RecentProjects projects={recentProjects} tasks={tasks} approvedPaths={approvedPaths} />
         <section className="grid gap-3 md:grid-cols-3">
@@ -76,6 +81,118 @@ export default async function OfficeHome() {
       </div>
     </AppShell>
   );
+}
+
+type OptionalPhase11SelectedReads = {
+  getAgentWorkflowSummaryForProject?: (projectId: string) => Promise<unknown> | unknown;
+};
+
+const phase11SelectedReads = selectedReads as typeof selectedReads & OptionalPhase11SelectedReads;
+
+async function readOfficeAgentWorkflowSummaries(): Promise<AgentWorkflowSummary[]> {
+  const fallbackSummaries = projects.slice(0, 5).map((project) => buildProjectAgentWorkflowSummary(project));
+  const helper = phase11SelectedReads.getAgentWorkflowSummaryForProject;
+
+  if (typeof helper !== "function") {
+    return fallbackSummaries;
+  }
+
+  try {
+    const helperSummaries = await Promise.all(projects.slice(0, 5).map((project) => helper(project.id)));
+    return helperSummaries.map((summary, index) => normalizeAgentWorkflowSummary(summary, fallbackSummaries[index]));
+  } catch (error) {
+    console.error("Office Home Phase 11 agent workflow summary read failed", error);
+    return fallbackSummaries;
+  }
+}
+
+function buildProjectAgentWorkflowSummary(project: Project): AgentWorkflowSummary {
+  const projectTasks = tasks.filter((task) => task.projectId === project.id);
+  const projectAgents = agentSeats.filter((agent) => project.agentSeatIds.includes(agent.id));
+  const projectChecks = buildChecks.filter((check) => check.projectId === project.id);
+  const primaryTask = projectTasks.find((task) => task.status === "waiting_review" || task.status === "blocked" || task.status === "running") ?? projectTasks[0];
+  const failedCheckCount = projectChecks.filter((check) => check.status === "failed").length;
+  const blockedTaskCount = projectTasks.filter((task) => task.status === "blocked").length;
+  const waitingReviewCount = projectTasks.filter((task) => task.status === "waiting_review").length;
+  const runningTaskCount = projectTasks.filter((task) => task.status === "running").length;
+
+  return {
+    id: project.id,
+    label: project.name,
+    scope: "project",
+    activeSeatCount: projectAgents.filter((agent) => agent.status !== "idle" && agent.status !== "done").length,
+    runningTaskCount,
+    waitingReviewCount,
+    blockedTaskCount,
+    failedCheckCount,
+    promptReadiness: waitingReviewCount ? "ready for human review" : runningTaskCount ? "active prompt in flight" : "no active prompt",
+    lastRunStatus: getProjectLastRunStatus(project.id),
+    failureCategory: failedCheckCount ? "quality_check_failed" : blockedTaskCount ? "workflow_blocked" : undefined,
+    recommendedAction: getProjectWorkflowAction(projectTasks, failedCheckCount),
+    recommendedActionDetail: primaryTask?.title ?? "Open the project room to inspect queued work.",
+    primaryTaskStatus: primaryTask?.status,
+    seats: projectAgents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      status: agent.status,
+      taskTitle: projectTasks.find((task) => task.id === agent.taskId)?.title,
+      visualState: agent.focus,
+    })),
+  };
+}
+
+function getProjectLastRunStatus(projectId: string): string {
+  const runnerEvent = taskEvents.find((event) => event.projectId === projectId && typeof event.payload?.lifecycleEvent === "string");
+  if (runnerEvent && typeof runnerEvent.payload?.lifecycleEvent === "string") {
+    return runnerEvent.payload.lifecycleEvent;
+  }
+
+  return "no codex run recorded";
+}
+
+function getProjectWorkflowAction(projectTasks: Task[], failedCheckCount: number): string {
+  if (projectTasks.some((task) => task.status === "waiting_review")) {
+    return "review waiting task";
+  }
+
+  if (projectTasks.some((task) => task.status === "blocked") || failedCheckCount) {
+    return "inspect blocked workflow";
+  }
+
+  if (projectTasks.some((task) => task.status === "running")) {
+    return "monitor active seat";
+  }
+
+  return "open project room";
+}
+
+function normalizeAgentWorkflowSummary(value: unknown, fallback: AgentWorkflowSummary): AgentWorkflowSummary {
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+
+  const record = value as Record<string, unknown>;
+  return {
+    ...fallback,
+    activeSeatCount: readNumber(record.activeSeatCount) ?? fallback.activeSeatCount,
+    runningTaskCount: readNumber(record.runningTaskCount) ?? fallback.runningTaskCount,
+    waitingReviewCount: readNumber(record.waitingReviewCount) ?? readNumber(record.reviewTaskCount) ?? fallback.waitingReviewCount,
+    blockedTaskCount: readNumber(record.blockedTaskCount) ?? fallback.blockedTaskCount,
+    failedCheckCount: readNumber(record.failedCheckCount) ?? readNumber(record.failedBuildCheckCount) ?? fallback.failedCheckCount,
+    promptReadiness: readString(record.promptReadiness) ?? fallback.promptReadiness,
+    lastRunStatus: readString(record.lastRunStatus) ?? fallback.lastRunStatus,
+    failureCategory: readString(record.failureCategory) ?? fallback.failureCategory,
+    recommendedAction: readString(record.recommendedAction) ?? fallback.recommendedAction,
+    recommendedActionDetail: readString(record.recommendedActionDetail) ?? readString(record.summaryMessage) ?? fallback.recommendedActionDetail,
+  };
+}
+
+function readString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value : undefined;
+}
+
+function readNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 function OfficeCodexReadiness({ approvedPathCount, activeCodexCount }: { approvedPathCount: number; activeCodexCount: number }) {

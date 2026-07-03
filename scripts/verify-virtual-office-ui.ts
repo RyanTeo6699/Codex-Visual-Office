@@ -102,6 +102,16 @@ const forbiddenScriptPatterns = [
 ];
 
 const forbiddenUiPatterns = [
+  /\brun automatically\b/i,
+  /\bauto codex\b/i,
+  /\bauto fix\b/i,
+  /\bcommand input\b/i,
+  /\btoken input\b/i,
+  /\bterminal\s+(emulator|runner|console|panel|input)\b/i,
+  /\bcloud sync\b/i,
+  /\bteam workspace\b/i,
+  /\b(?:github|vercel|supabase)\s+connect\b/i,
+  /\bconnect\s+(?:github|vercel|supabase)\b/i,
   /\b(connect|sync)\s+(github|vercel|supabase|cloud|openai)\b/i,
   /\b(github|vercel|supabase|cloud|openai)\s+(connect|sync)\b/i,
   /\b(scan project|auto import|folder picker|github connect|cloud sync|team workspace|source file viewer)\b/i,

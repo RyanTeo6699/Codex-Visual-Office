@@ -23,6 +23,11 @@ import type { TaskRow } from "./repositories/tasks";
 import { summarizeProjectHealth } from "@/lib/projects/project-health-summary";
 import { summarizeProjectWorkspace } from "@/lib/projects/project-workspace-summary";
 import type { ProjectHealthSummary, ProjectWorkspaceSummary } from "@/lib/projects/project-health-types";
+import { summarizeAgentWorkflowForProject, summarizeAgentWorkflowForTask } from "@/lib/agents/agent-workflow-summary";
+import type { AgentWorkflowSummary } from "@/lib/agents/agent-workflow-types";
+import { summarizeTaskLifecycle } from "@/lib/workflow/task-lifecycle-summary";
+import type { TaskLifecycleSummary, WorkflowTimeline } from "@/lib/workflow/task-lifecycle-types";
+import { buildWorkflowTimeline } from "@/lib/workflow/workflow-timeline";
 
 export interface SelectedProjectRoomRead {
   project: Project;
@@ -302,4 +307,120 @@ export async function getAllProjectWorkspaceSummaries(): Promise<ProjectWorkspac
 export async function getRecentProjects(limit = 5): Promise<ProjectWorkspaceSummary[]> {
   const summaries = await getAllProjectWorkspaceSummaries();
   return summaries.slice(0, Math.max(0, limit));
+}
+
+export async function getAgentWorkflowSummaryForProject(projectId: string): Promise<AgentWorkflowSummary | undefined> {
+  initializeLocalDb();
+
+  const projectRow = await getProjectById(projectId);
+  if (!projectRow) {
+    return undefined;
+  }
+
+  const [taskRows, agentSeatRows, taskEventRows, buildCheckRows, reviewRows] = await Promise.all([
+    listTasksByProject(projectId),
+    listAgentSeats(),
+    listTaskEventsByProject(projectId),
+    listBuildChecksByProject(projectId),
+    listReviewRecords(),
+  ]);
+  const taskIds = new Set(taskRows.map((task) => task.id));
+
+  return summarizeAgentWorkflowForProject({
+    projectId,
+    tasks: taskRows.map(mapTaskRow),
+    agentSeats: agentSeatRows.map(mapAgentSeatRow),
+    taskEvents: [...taskEventRows].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    buildChecks: buildCheckRows.map(mapBuildCheckRow),
+    reviewRecords: reviewRows.filter((review) => taskIds.has(review.taskId)).map(mapReviewRecordRow),
+  });
+}
+
+export async function getAgentWorkflowSummaryForTask(taskId: string): Promise<AgentWorkflowSummary | undefined> {
+  initializeLocalDb();
+
+  const taskRow = await getTaskById(taskId);
+  if (!taskRow) {
+    return undefined;
+  }
+
+  const [agentSeatRows, taskEventRows, buildCheckRows, reviewRow] = await Promise.all([
+    listAgentSeats(),
+    listTaskEventsByProject(taskRow.projectId),
+    listBuildChecksByProject(taskRow.projectId),
+    getReviewRecordByTaskId(taskId),
+  ]);
+
+  return summarizeAgentWorkflowForTask({
+    task: mapTaskRow(taskRow),
+    agentSeats: agentSeatRows.map(mapAgentSeatRow),
+    taskEvents: [...taskEventRows].filter((event) => event.taskId === taskId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    buildChecks: buildCheckRows.filter((check) => check.taskId === taskId).map(mapBuildCheckRow),
+    reviewRecords: reviewRow ? [mapReviewRecordRow(reviewRow)] : [],
+  });
+}
+
+export async function getTaskLifecycleSummary(taskId: string): Promise<TaskLifecycleSummary | undefined> {
+  initializeLocalDb();
+
+  const taskRow = await getTaskById(taskId);
+  if (!taskRow) {
+    return undefined;
+  }
+
+  const [reviewRow, taskEventRows, buildCheckRows, diffSummary, scopeCheck, qualityGateConfigs, qualityGateRunRows] = await Promise.all([
+    getReviewRecordByTaskId(taskId),
+    listTaskEventsByProject(taskRow.projectId),
+    listBuildChecksByProject(taskRow.projectId),
+    readLatestDiffSummaryForTask(taskId),
+    readLatestScopeCheckForTask(taskId),
+    listQualityGateConfigsForProject(taskRow.projectId),
+    listQualityGateRuns(),
+  ]);
+
+  return summarizeTaskLifecycle({
+    task: mapTaskRow(taskRow),
+    taskEvents: [...taskEventRows].filter((event) => event.taskId === taskId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    buildChecks: buildCheckRows.filter((check) => check.taskId === taskId).map(mapBuildCheckRow),
+    review: reviewRow ? mapReviewRecordRow(reviewRow) : undefined,
+    scopeCheck,
+    diffSummary,
+    qualityGateConfigs,
+    qualityGateRuns: qualityGateRunRows.filter((run) => run.taskId === taskId).map(mapQualityGateRunRow),
+  });
+}
+
+export async function getWorkflowTimelineForTask(taskId: string): Promise<WorkflowTimeline | undefined> {
+  initializeLocalDb();
+
+  const taskRow = await getTaskById(taskId);
+  if (!taskRow) {
+    return undefined;
+  }
+
+  const [reviewRow, taskEventRows, buildCheckRows, qualityGateRunRows, diffSummary, scopeCheck] = await Promise.all([
+    getReviewRecordByTaskId(taskId),
+    listTaskEventsByProject(taskRow.projectId),
+    listBuildChecksByProject(taskRow.projectId),
+    listQualityGateRuns(),
+    readLatestDiffSummaryForTask(taskId),
+    readLatestScopeCheckForTask(taskId),
+  ]);
+
+  return buildWorkflowTimeline({
+    task: mapTaskRow(taskRow),
+    taskEvents: [...taskEventRows].filter((event) => event.taskId === taskId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(mapTaskEventRow),
+    buildChecks: buildCheckRows.filter((check) => check.taskId === taskId).map(mapBuildCheckRow),
+    qualityGateRuns: qualityGateRunRows.filter((run) => run.taskId === taskId).map(mapQualityGateRunRow),
+    review: reviewRow
+      ? {
+          taskId: reviewRow.taskId,
+          projectId: taskRow.projectId,
+          decision: reviewRow.decision,
+          createdAt: reviewRow.createdAt,
+        }
+      : undefined,
+    diffSummary,
+    scopeCheck,
+  });
 }
