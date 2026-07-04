@@ -8,12 +8,13 @@ Required approver: GM / project owner.
 - [ ] Latest baseline includes `a8ef8e5 fix: stabilize release candidate` or later GM-approved commit.
 - [ ] Branch is `main`.
 - [ ] `main` tracks `origin/main`.
-- [ ] No Phase 17 implementation has started.
+- [ ] No Phase 18 implementation has started.
 
 ## Verification Scripts
 
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
+- [ ] `npm run production:verify:freeze`
 - [ ] `npm run production:verify:scope`
 - [ ] `npm run rc:verify:stabilization`
 - [ ] `npm run docs:verify:readiness`

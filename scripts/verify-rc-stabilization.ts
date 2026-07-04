@@ -36,6 +36,13 @@ const requiredDocs = [
   "docs/go-no-go-checklist.md",
   "docs/final-rc-validation-matrix.md",
   "docs/phase-16-production-1-scope-lock-final-rc-validation-result.md",
+  "docs/phase-17-production-1-finalization-release-freeze-scope-lock.md",
+  "docs/release-notes-1.0.md",
+  "docs/final-acceptance-report-1.0.md",
+  "docs/final-verification-manifest-1.0.md",
+  "docs/known-limitations-1.0.md",
+  "docs/phase-17-production-1-finalization-release-freeze.md",
+  "RELEASE_STATUS.md",
 ];
 
 const requiredScripts = [
@@ -44,6 +51,7 @@ const requiredScripts = [
   "docs:verify:readiness",
   "rc:verify:readiness",
   "rc:verify:stabilization",
+  "production:verify:freeze",
   "production:verify:scope",
   "desktop:verify:beta",
   "safety:verify:permissions",

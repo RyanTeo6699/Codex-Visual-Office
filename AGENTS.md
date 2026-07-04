@@ -12,13 +12,13 @@ The product is not OpenClaw, not Star Office, not GitHub Project, not Notion, an
 
 ## Current Phase
 
-Phase 16: Production 1.0 Scope Lock / Final RC Validation.
+Phase 17: Production 1.0 Finalization / Release Freeze.
 
 Current goal:
 
-> Freeze the Production 1.0 candidate boundary and validate the current local-first desktop beta / RC candidate without adding new product capabilities or expanding safety permissions.
+> Freeze the local-first Production 1.0 baseline for Codex Visual Office by finalizing release status, release notes, acceptance report, verification manifest, and known limitations without adding new capabilities or expanding permissions.
 
-This phase is documentation and verification only. It is not a Production 1.0 release, not signing, not notarization, not auto updater, not cloud sync, not auth/payment/team/MCP/ChatGPT App, and not Phase 17.
+This phase is documentation and verification only. It is not a public commercial launch, not signing, not notarization, not auto updater, not cloud sync, not auth/payment/team/MCP/ChatGPT App, and not Phase 18.
 
 ---
 
@@ -26,21 +26,21 @@ This phase is documentation and verification only. It is not a Production 1.0 re
 
 You must follow this scope strictly.
 
-### Allowed in Phase 16
+### Allowed in Phase 17
 
 You may build:
 
-- Production 1.0 scope lock documentation
-- final RC validation matrix
-- product capability inventory
-- release boundary freeze
-- risk register
-- Go / No-Go checklist
+- release freeze documentation
+- release notes
+- final acceptance report
+- final verification manifest
+- known limitations register
+- release status metadata
 - docs consistency fixes
 - verification hardening
 - final report
 
-### Forbidden in Phase 16
+### Forbidden in Phase 17
 
 You must not build or integrate:
 
@@ -74,7 +74,7 @@ You must not build or integrate:
 - token storage
 - reading `~/.codex/auth.json`
 - reading `.env` or `.env.local`
-- Phase 17 implementation
+- Phase 18 implementation
 
 ## Historical Phase 1 Baseline
 

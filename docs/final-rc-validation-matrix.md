@@ -4,6 +4,7 @@
 | --- | --- | --- | --- | --- |
 | TypeScript | Static type check | `npm run typecheck` | Passes with no type errors. | TBD |
 | Build | Next build | `npm run build` | Production build completes. | TBD |
+| Production Freeze | Release freeze verifier | `npm run production:verify:freeze` | Required release docs exist; forbidden release scripts/dependencies absent. | TBD |
 | Production Scope | Scope and boundary verifier | `npm run production:verify:scope` | Required docs exist; forbidden production claims and scripts absent. | TBD |
 | RC Stabilization | RC static verifier | `npm run rc:verify:stabilization` | Routes/docs/scripts/safety boundaries pass. | TBD |
 | Docs | Documentation readiness | `npm run docs:verify:readiness` | Required docs and safety language present. | TBD |

@@ -29,6 +29,7 @@ const requiredScripts = [
   "desktop:verify:beta",
   "ui:verify:virtual-office",
   "docs:verify:readiness",
+  "production:verify:freeze",
   "production:verify:scope",
   "rc:verify:readiness",
   "rc:verify:stabilization",

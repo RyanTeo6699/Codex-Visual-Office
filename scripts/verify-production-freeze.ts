@@ -10,13 +10,6 @@ type Check = {
 const rootDir = process.cwd();
 
 const requiredDocs = [
-  "docs/phase-16-production-1-scope-lock-final-rc-validation.md",
-  "docs/product-capability-inventory.md",
-  "docs/production-1-boundary.md",
-  "docs/risk-register.md",
-  "docs/go-no-go-checklist.md",
-  "docs/final-rc-validation-matrix.md",
-  "docs/phase-16-production-1-scope-lock-final-rc-validation-result.md",
   "docs/phase-17-production-1-finalization-release-freeze-scope-lock.md",
   "docs/release-notes-1.0.md",
   "docs/final-acceptance-report-1.0.md",
@@ -26,19 +19,18 @@ const requiredDocs = [
   "RELEASE_STATUS.md",
 ];
 
-const requiredDocAssertions = [
-  { name: "no cloud sync", patterns: [/no cloud sync/i, /cloud sync.*not implemented/i] },
-  { name: "no production installer yet", patterns: [/no production installer yet/i, /no production installer/i, /production installer.*not implemented/i] },
-  { name: "no code signing", patterns: [/no code signing/i, /code signing.*not/i] },
-  { name: "no notarization", patterns: [/no notarization/i, /notarization.*not/i] },
-  { name: "no auto updater", patterns: [/no auto updater/i, /auto updater.*not implemented/i] },
-  { name: "no auth/payment/team/MCP", patterns: [/no auth\/payment\/team\/MCP/i, /auth\/payment\/team\/MCP/i, /auth, payment, team workspace, MCP/i] },
-  { name: "no token storage", patterns: [/no token storage/i, /token storage.*not/i] },
+const requiredAssertions = [
   { name: "local-first", patterns: [/local-first/i] },
-  { name: "Tauri beta/prototype/candidate only", patterns: [/Tauri.*(?:beta|prototype|candidate)/i, /(?:beta|prototype|candidate).*Tauri/i] },
+  { name: "no cloud sync", patterns: [/no cloud sync/i, /cloud sync.*not/i] },
+  { name: "no auth/payment/team/MCP", patterns: [/no auth\/payment/i, /auth\/payment\/team\/MCP/i, /no MCP/i] },
+  { name: "no signed/notarized installer", patterns: [/no signed\/notarized installer/i, /not signed, notarized/i, /notarized.*not/i] },
+  { name: "no auto updater", patterns: [/no auto updater/i, /not auto-updating/i, /auto updater.*not/i] },
+  { name: "no token storage", patterns: [/no token storage/i, /token storage.*not/i] },
+  { name: "no automatic Codex/Git/Quality execution", patterns: [/no automatic (?:Git\/Codex\/Quality|Codex\/Git\/Quality) execution/i, /automatic Codex execution/i] },
 ];
 
-const unsupportedProductionClaims = [
+const unsupportedClaims = [
+  /public commercial launch completed/i,
   /production installer exists/i,
   /signed production installer/i,
   /notarized production installer/i,
@@ -55,7 +47,7 @@ const unsupportedProductionClaims = [
 ];
 
 const negativeBoundaryContext =
-  /\b(no|not|must not|does not|do not|never|forbidden|absent|blocked|without|doesn't|cannot|can't|excludes|not implemented|not available|not active|not a)\b/i;
+  /\b(no|not|must not|does not|do not|never|forbidden|absent|blocked|without|doesn't|cannot|can't|excludes|not implemented|not included|not available|not active|not a)\b/i;
 
 const forbiddenDependencies = [
   "electron",
@@ -79,11 +71,13 @@ const forbiddenDependencies = [
 ];
 
 const forbiddenScriptPatterns = [
+  /production.?release/i,
   /tauri\s+build/i,
   /electron-builder/i,
   /electron-forge/i,
   /notarytool/i,
   /notar/i,
+  /sign(?:ing)?/i,
   /auto.?updat/i,
   /\bdeploy\b/i,
   /vercel/i,
@@ -96,13 +90,32 @@ const forbiddenScriptPatterns = [
 ];
 
 const allowedScriptNames = new Set([
-  "production:verify:scope",
   "production:verify:freeze",
+  "production:verify:scope",
   "rc:verify:readiness",
   "rc:verify:stabilization",
   "desktop:check:beta",
   "tauri:dev:prototype",
 ]);
+
+const requiredScripts = [
+  "typecheck",
+  "build",
+  "production:verify:freeze",
+  "production:verify:scope",
+  "rc:verify:stabilization",
+  "docs:verify:readiness",
+  "rc:verify:readiness",
+  "desktop:verify:beta",
+  "safety:verify:permissions",
+  "agent:verify:workflow",
+  "project:verify:workspace",
+  "ui:verify:virtual-office",
+  "codex:verify:runtime-reliability",
+  "local:launcher:verify",
+  "local:shell:verify",
+  "tauri:verify:prototype",
+];
 
 const checks: Check[] = [];
 
@@ -113,6 +126,7 @@ function readText(relativePath: string): string {
 
 const packageJson = JSON.parse(readText("package.json")) as {
   scripts?: Record<string, string>;
+  version?: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 };
@@ -120,33 +134,41 @@ const packageJson = JSON.parse(readText("package.json")) as {
 for (const doc of requiredDocs) {
   const exists = existsSync(path.join(rootDir, doc));
   checks.push({
-    name: `required Phase 16 doc: ${doc}`,
+    name: `required Phase 17 doc: ${doc}`,
     passed: exists,
     detail: exists ? "present" : "missing",
   });
 }
 
+for (const script of requiredScripts) {
+  checks.push({
+    name: `required verification script: ${script}`,
+    passed: Boolean(packageJson.scripts?.[script]),
+    detail: packageJson.scripts?.[script] ?? "missing",
+  });
+}
+
 const combinedDocs = requiredDocs.map(readText).join("\n\n");
 
-for (const assertion of requiredDocAssertions) {
+for (const assertion of requiredAssertions) {
   const passed = assertion.patterns.some((pattern) => pattern.test(combinedDocs));
   checks.push({
-    name: `docs state ${assertion.name}`,
+    name: `release docs state ${assertion.name}`,
     passed,
-    detail: passed ? "covered" : "missing required boundary assertion",
+    detail: passed ? "covered" : "missing required release freeze boundary",
   });
 }
 
 const unsupportedDocClaims = combinedDocs
   .split(/\r?\n/)
   .flatMap((line, index) =>
-    unsupportedProductionClaims
+    unsupportedClaims
       .filter((pattern) => pattern.test(line) && !negativeBoundaryContext.test(line))
       .map((pattern) => `line ${index + 1}: ${pattern.toString()}`),
   );
 
 checks.push({
-  name: "docs do not claim unsupported production capabilities",
+  name: "release docs do not claim unsupported production capabilities",
   passed: unsupportedDocClaims.length === 0,
   detail: unsupportedDocClaims.length === 0 ? "no unsupported claims found" : unsupportedDocClaims.join(", "),
 });
@@ -160,7 +182,7 @@ const forbiddenDependencyMatches = dependencyNames.filter((name) =>
 );
 
 checks.push({
-  name: "forbidden production/cloud/auth/payment dependencies absent",
+  name: "forbidden release/cloud/auth/payment dependencies absent",
   passed: forbiddenDependencyMatches.length === 0,
   detail: forbiddenDependencyMatches.length === 0 ? "none found" : forbiddenDependencyMatches.join(", "),
 });
@@ -174,7 +196,7 @@ const forbiddenScriptMatches = Object.entries(packageJson.scripts ?? {}).flatMap
 });
 
 checks.push({
-  name: "production release/signing/notarization/auto-updater scripts absent",
+  name: "production release/signing/notarization/deploy/auto-updater scripts absent",
   passed: forbiddenScriptMatches.length === 0,
   detail: forbiddenScriptMatches.length === 0 ? "none found" : forbiddenScriptMatches.join(", "),
 });
@@ -186,16 +208,16 @@ const schemaOrMigrationMarkers = [
   text
     .split(/\r?\n/)
     .flatMap((line, index) =>
-      /phase 16|production 1\.0 scope|final rc validation/i.test(line)
+      /phase 17|release freeze|production 1\.0 finalization/i.test(line)
         ? [`${file}:${index + 1}`]
         : [],
     ),
 );
 
 checks.push({
-  name: "no Phase 16 DB schema or migration markers",
+  name: "no Phase 17 DB schema or migration markers",
   passed: schemaOrMigrationMarkers.length === 0,
-  detail: schemaOrMigrationMarkers.length === 0 ? "no Phase 16 schema/migration markers found" : schemaOrMigrationMarkers.join(", "),
+  detail: schemaOrMigrationMarkers.length === 0 ? "no Phase 17 schema/migration markers found" : schemaOrMigrationMarkers.join(", "),
 });
 
 const prohibitedExecutionAttempted = {
@@ -209,7 +231,7 @@ const prohibitedExecutionAttempted = {
 };
 
 checks.push({
-  name: "production scope verifier is static and non-executing",
+  name: "production freeze verifier is static and non-executing",
   passed: Object.values(prohibitedExecutionAttempted).every((value) => value === false),
   detail: JSON.stringify(prohibitedExecutionAttempted),
 });
@@ -218,6 +240,8 @@ const failedChecks = checks.filter((check) => !check.passed);
 
 const result = {
   status: failedChecks.length === 0 ? "passed" : "failed",
+  packageVersion: packageJson.version,
+  releaseVersion: readText("VERSION").trim(),
   requiredDocs,
   forbiddenDependencyMatches,
   forbiddenScriptMatches,

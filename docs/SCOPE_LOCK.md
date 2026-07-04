@@ -2,9 +2,9 @@
 
 版本：v1.0  
 项目：Codex Visual Office  
-阶段：Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+阶段：Phase 17 - Production 1.0 Finalization / Release Freeze
 状态：Locked  
-当前目标：冻结 Production 1.0 candidate 边界并执行 Final RC Validation
+当前目标：冻结 local-first Production 1.0 baseline 并完成 release freeze
 运行形态：Local-first Web App  
 日期：2026-05-30  
 
@@ -12,20 +12,22 @@
 
 ## 0. Current Scope Notice
 
-This file began as the Phase 1 scope lock. The current active scope is Phase 16:
+This file began as the Phase 1 scope lock. The current active scope is Phase 17:
 
 ```txt
-Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+Phase 17 - Production 1.0 Finalization / Release Freeze
 ```
 
 Current active scope documents:
 
-- `docs/phase-16-production-1-scope-lock-final-rc-validation.md`
-- `docs/production-1-boundary.md`
-- `docs/product-capability-inventory.md`
-- `docs/final-rc-validation-matrix.md`
+- `docs/phase-17-production-1-finalization-release-freeze-scope-lock.md`
+- `docs/release-notes-1.0.md`
+- `docs/final-acceptance-report-1.0.md`
+- `docs/final-verification-manifest-1.0.md`
+- `docs/known-limitations-1.0.md`
+- `RELEASE_STATUS.md`
 
-Phase 16 is documentation and verification only. It does not start a production release, code signing, notarization, auto updater, cloud sync, auth/payment/team/MCP/ChatGPT App, OpenAI API, DB schema work, dependency changes, destructive cleanup, or Phase 17.
+Phase 17 is documentation and verification only. It does not start public commercial launch, code signing, notarization, auto updater, cloud sync, auth/payment/team/MCP/ChatGPT App, OpenAI API, DB schema work, dependency changes, destructive cleanup, or Phase 18.
 
 ## 1. Scope Lock 结论
 

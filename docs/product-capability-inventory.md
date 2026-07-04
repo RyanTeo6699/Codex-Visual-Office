@@ -1,6 +1,6 @@
 # Product Capability Inventory
 
-This inventory freezes the current Codex Visual Office RC candidate capability set for Phase 16. Status values are stable, beta, prototype, planned, or not implemented.
+This inventory supports the Codex Visual Office 1.0 local-first baseline capability set. Status values are stable, beta, prototype, planned, or not implemented.
 
 | Area | Capability | Current status | Evidence / source | Notes / limitations |
 | --- | --- | --- | --- | --- |
@@ -25,12 +25,12 @@ This inventory freezes the current Codex Visual Office RC candidate capability s
 | Local Launcher | Browser-only local launcher | beta | `scripts/local-launcher.ts`, `scripts/verify-local-launcher.ts` | Requires app runtime; no installer. |
 | Desktop Shell | Tauri Desktop Beta Candidate | prototype | `src-tauri/*`, `scripts/verify-tauri-prototype.ts` | Prototype/candidate only; not signed, notarized, or production packaged. |
 | Documentation | User/developer/QA docs | stable | `docs/user-manual.md`, `docs/developer-manual.md`, `docs/release-candidate-qa-checklist.md` | Production release docs remain scope-lock only. |
-| Cloud | Cloud sync | not implemented | Phase 16 boundary | Explicitly out of scope. |
-| Collaboration | Team workspace | not implemented | Phase 16 boundary | No team permissions or shared workspace model. |
-| Platform | MCP / ChatGPT App | not implemented | Phase 16 boundary | No MCP server or ChatGPT App integration. |
-| Accounts | Auth/payment | not implemented | Phase 16 boundary | No login, billing, or payment. |
-| Distribution | Production signed installer | not implemented | Phase 16 boundary | No signed installer, notarization, auto updater, or production release. |
-| Distribution | Auto updater | not implemented | Phase 16 boundary | Explicitly out of scope. |
+| Cloud | Cloud sync | not implemented | Phase 17 release freeze boundary | Explicitly out of scope. |
+| Collaboration | Team workspace | not implemented | Phase 17 release freeze boundary | No team permissions or shared workspace model. |
+| Platform | MCP / ChatGPT App | not implemented | Phase 17 release freeze boundary | No MCP server or ChatGPT App integration. |
+| Accounts | Auth/payment | not implemented | Phase 17 release freeze boundary | No login, billing, or payment. |
+| Distribution | Production signed installer | not implemented | Phase 17 release freeze boundary | No signed installer, notarization, auto updater, or public production release. |
+| Distribution | Auto updater | not implemented | Phase 17 release freeze boundary | Explicitly out of scope. |
 
 ## Explicit Non-Capabilities
 

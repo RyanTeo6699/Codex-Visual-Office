@@ -28,6 +28,7 @@ Phase 13 - Desktop Beta / Distribution Candidate
 Phase 14 - Release Candidate QA / Documentation Hardening
 Phase 15 - Release Candidate Stabilization / Bug Bash
 Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+Phase 17 - Production 1.0 Finalization / Release Freeze
 ```
 
 ## Dependency Order
@@ -35,7 +36,7 @@ Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 ```
 
 No later phase should start without explicit GM approval.
@@ -444,3 +445,40 @@ Phase 16 must not add new features, DB schema changes, migrations, dependencies,
 - Final RC validation matrix.
 - Production scope verifier.
 - Phase 16 result summary.
+
+## Phase 17 - Production 1.0 Finalization / Release Freeze
+
+### 2026-07-04 Status Note
+
+Current GM direction tracks Phase 17 as "Production 1.0 Finalization / Release Freeze". Phase 17 freezes the local-first Production 1.0 baseline through release notes, final acceptance, final verification manifest, known limitations, and release status metadata.
+
+### Goal
+
+Freeze the local-first Production 1.0 baseline without adding product capability, production packaging, cloud behavior, account systems, or expanded execution permissions.
+
+### Allowed
+
+- Release freeze docs.
+- Release notes.
+- Final acceptance report.
+- Final verification manifest.
+- Known limitations register.
+- Release status metadata.
+- Documentation consistency updates.
+- Static verification hardening.
+- Final browser/manual QA.
+
+### Boundaries
+
+Phase 17 must not add new features, DB schema changes, migrations, dependencies, lockfile changes, production signed installer, code signing, notarization, auto updater, Electron, cloud sync, GitHub API, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, OpenAI API, arbitrary shell, command text box, terminal emulator, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token storage, or Phase 18 implementation.
+
+### Output
+
+- Phase 17 scope lock.
+- Release notes 1.0.
+- Final acceptance report 1.0.
+- Final verification manifest 1.0.
+- Known limitations 1.0.
+- Release status file.
+- Production freeze verifier.
+- Phase 17 implementation summary.

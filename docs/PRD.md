@@ -5,13 +5,13 @@
 中文名：ChatGPT + Codex 可视化办公室  
 内部简称：CVO  
 PRD 1.0 原始阶段：Phase 1 - Visual Prototype / 视觉原型
-当前路线位置：Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+当前路线位置：Phase 17 - Production 1.0 Finalization / Release Freeze
 运行形态：本地 Web App / Local-first Web App  
 目标交付：可运行、可点击、可演示的前端视觉原型  
 PRD 1.0 原始日期：2026-05-30
 当前路线修订日期：2026-07-04
 
-> Current status note: this PRD preserves historical planning text. The active release boundary is documented in `docs/phase-16-production-1-scope-lock-final-rc-validation.md` and `docs/production-1-boundary.md`. Production release, signing, notarization, auto updater, cloud sync, team workspace, auth/payment, MCP/ChatGPT App, OpenAI API, and external integrations are not active capabilities.
+> Current status note: this PRD preserves historical planning text. The active release freeze is documented in `docs/phase-17-production-1-finalization-release-freeze-scope-lock.md`, `docs/release-notes-1.0.md`, and `RELEASE_STATUS.md`. Public commercial launch, signed installer release, notarization, auto updater, cloud sync, team workspace, auth/payment, MCP/ChatGPT App, OpenAI API, and external integrations are not active capabilities.
 
 ---
 
@@ -1478,7 +1478,7 @@ Codex Visual Office is a local-first visual office for ChatGPT + Codex workflows
 
 Historical PRD 1.0 scope: Phase 1 visual prototype with mock data only.
 
-Current repository roadmap position: Phase 16 Production 1.0 Scope Lock / Final RC Validation. Phase 17 has not started and requires GM approval.
+Current repository roadmap position: Phase 17 Production 1.0 Finalization / Release Freeze. Phase 18 has not started and requires GM approval.
 
 ## Hard Rules
 
