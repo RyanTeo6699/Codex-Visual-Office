@@ -19,8 +19,8 @@ Use one of these outcomes:
 - Confirm working tree is clean before QA begins.
 - Confirm current branch is `main`.
 - Confirm `main` tracks `origin/main`.
-- Confirm latest baseline includes `45b06ab feat: prepare desktop beta candidate`.
-- Confirm no Phase 15 work has started.
+- Confirm the latest GM-approved RC baseline is present in recent history.
+- If Phase 15 has started, confirm the Phase 15 scope lock and stabilization notes are present.
 
 Suggested commands:
 

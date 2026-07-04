@@ -30,6 +30,7 @@ const requiredScripts = [
   "ui:verify:virtual-office",
   "docs:verify:readiness",
   "rc:verify:readiness",
+  "rc:verify:stabilization",
 ];
 
 const forbiddenDependencies = [
@@ -128,6 +129,7 @@ const scriptMatches = Object.entries(packageJson.scripts ?? {}).flatMap(([name, 
   if (name === "tauri:dev:prototype") return [];
   if (name === "desktop:check:beta") return [];
   if (name === "rc:verify:readiness") return [];
+  if (name === "rc:verify:stabilization") return [];
   const text = `${name} ${command}`;
   return forbiddenScriptPatterns
     .filter((pattern) => pattern.test(text))

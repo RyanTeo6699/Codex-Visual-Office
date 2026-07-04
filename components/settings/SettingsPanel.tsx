@@ -55,7 +55,7 @@ export function SettingsPanel({
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-md border border-cyan-200/14 bg-cyan-200/[0.055] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-100/80">
               <SlidersHorizontal className="h-3.5 w-3.5" />
-              Phase 10 / Workspace Hardening
+              Settings / Local Control
             </div>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Settings Center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">

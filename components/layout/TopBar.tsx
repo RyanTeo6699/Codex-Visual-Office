@@ -11,10 +11,10 @@ export function TopBar() {
         </Link>
         <div className="hidden items-center gap-2 lg:flex">
           <Circle className="h-2.5 w-2.5 fill-emerald-300/80 text-emerald-300/80" />
-          <span className="text-xs font-medium text-slate-400">Phase 6 local product shell</span>
+          <span className="text-xs font-medium text-slate-400">RC candidate / local-first shell</span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-400">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-slate-400 sm:gap-3">
+          <div className="hidden items-center gap-2 sm:flex">
             <ShieldCheck className="h-4 w-4 text-sky-200/80" />
             <span>Codex control room / local-first</span>
           </div>

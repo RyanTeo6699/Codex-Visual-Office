@@ -17,7 +17,7 @@ export function ArchiveRoomPanel({
       <section className="overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_85%_10%,rgba(251,191,36,0.14),transparent_28%),linear-gradient(135deg,rgba(17,26,37,0.92),rgba(7,12,20,0.96))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/60">Phase 9 / Records Room Polish</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/60">Archive / Local Records</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Archive Room</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
               A local records room for historical task, review, Git, quality, scope, and backup evidence. This view explains retention impact without adding cleanup execution.
@@ -42,7 +42,7 @@ export function ArchiveRoomPanel({
           </div>
         </div>
         <div className="mt-3 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
-          Cleanup preview is dry-run only. No data is deleted in this step. Backup files are never deleted by Phase 6 Step 4.
+          Cleanup preview is dry-run only. No data is deleted in this RC candidate. Backup files are never deleted by this room.
         </div>
       </section>
 

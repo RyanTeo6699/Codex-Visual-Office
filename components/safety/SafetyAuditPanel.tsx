@@ -70,7 +70,7 @@ export function SafetyAuditPanel({
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-md border border-emerald-200/16 bg-emerald-200/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-100/80">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Phase 13 / Desktop Beta Safety
+              Safety / Permission Audit
             </div>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Safety Audit Room</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">

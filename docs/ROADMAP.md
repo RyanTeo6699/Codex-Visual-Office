@@ -2,14 +2,30 @@
 
 版本：v1.0  
 项目：Codex Visual Office  
-路线类型：Local-first → Real Codex Integration → Desktop Shell → Optional Cloud Sync → Team / ChatGPT App
+路线类型：Local-first → Real Codex Integration → Desktop Shell → RC Stabilization → Future GM-approved Expansion
 日期：2026-05-30  
+
+---
+
+## 0. Current Status
+
+This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
+
+Current GM-approved status as of Phase 15:
+
+```txt
+Phase 14：Release Candidate QA / Documentation Hardening completed
+Phase 15：Release Candidate Stabilization / Bug Bash in progress / candidate
+Next recommendation：Phase 16 Final RC Validation or Production 1.0 Scope Lock by GM decision
+```
+
+The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
 
 ---
 
 ## 1. 总路线
 
-Codex Visual Office 的完整路线从 Phase 0 到 Phase 11：
+Historical route from early planning:
 
 ```txt
 Phase 0：项目总控基线 / Scope Lock
@@ -23,10 +39,14 @@ Phase 7A：Scope Lock / Roadmap Reconciliation
 Phase 7B：Desktop Shell Evaluation
 Phase 7C：Local Launcher
 Phase 7D：Packaging Prototype
-Phase 8：Cloud Sync Planning
-Phase 9：Cloud Sync Implementation
-Phase 10：Team Workspace
-Phase 11：ChatGPT App / MCP
+Phase 8：Codex Runtime Reliability
+Phase 9：Virtual Office UI Redesign
+Phase 10：Real Project Workspace Hardening
+Phase 11：Codex Agent Workflow 2.0
+Phase 12：Safety / Permission Hardening
+Phase 13：Desktop Beta / Distribution Candidate
+Phase 14：Release Candidate QA / Documentation Hardening
+Phase 15：Release Candidate Stabilization / Bug Bash
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -35,11 +55,11 @@ Phase 11：ChatGPT App / MCP
 Phase 1：视觉原型 / Mock Data Demo
 ```
 
-当前路线位置：
+Current route position:
 
 ```txt
-Phase 7A：Scope Lock / Roadmap Reconciliation
-下一阶段：Phase 7B Desktop Shell Evaluation，需要 GM 明确批准后开始
+Phase 15：Release Candidate Stabilization / Bug Bash
+下一阶段：Phase 16 Final RC Validation 或 Production 1.0 Scope Lock，需要 GM 明确批准后开始
 ```
 
 ---

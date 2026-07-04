@@ -26,6 +26,7 @@ Phase 11 - ChatGPT App / MCP
 Phase 12 - Safety / Permission Hardening
 Phase 13 - Desktop Beta / Distribution Candidate
 Phase 14 - Release Candidate QA / Documentation Hardening
+Phase 15 - Release Candidate Stabilization / Bug Bash
 ```
 
 ## Dependency Order
@@ -33,7 +34,7 @@ Phase 14 - Release Candidate QA / Documentation Hardening
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 ```
 
 No later phase should start without explicit GM approval.
@@ -372,3 +373,36 @@ Phase 14 must not add new business features, DB schema changes, runner behavior 
 - Documentation readiness verifier.
 - Release Candidate readiness verifier.
 - Phase 14 implementation summary.
+
+## Phase 15 - Release Candidate Stabilization / Bug Bash
+
+### 2026-07-04 Status Note
+
+Current GM direction tracks Phase 15 as "Release Candidate Stabilization / Bug Bash". Phase 15 stabilizes the current local-first desktop beta / RC candidate with route QA, responsive checks, copy/docs consistency, and static verification hardening.
+
+### Goal
+
+Stabilize the current RC candidate without adding product capability, dependencies, schema changes, production packaging, cloud behavior, account systems, or expanded execution permissions.
+
+### Allowed
+
+- Route QA fixes.
+- Browser console and hydration cleanup.
+- Responsive layout fixes.
+- Empty/error state fixes.
+- Copy consistency fixes.
+- Documentation consistency fixes.
+- Accessibility basics.
+- Static verification hardening.
+- RC stabilization documentation.
+
+### Boundaries
+
+Phase 15 must not add new features, DB schema changes, migrations, dependencies, production release, code signing, notarization, auto updater, Electron, cloud sync, GitHub API, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, OpenAI API, arbitrary shell, command text box, terminal emulator, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token storage, or Phase 16 implementation.
+
+### Output
+
+- Phase 15 scope lock.
+- RC stabilization verifier.
+- Route/responsive/manual QA record.
+- Phase 15 stabilization summary.
