@@ -96,7 +96,7 @@ npm run desktop:verify:beta
 npm run tauri:verify:prototype
 ```
 
-The Tauri prototype remains a candidate shell. Phase 14 documentation does not approve signing, notarization, auto updater, Electron, installer release, or production desktop distribution.
+The Tauri prototype remains a candidate shell. Current RC documentation does not approve signing, notarization, auto updater, Electron, installer release, or production desktop distribution.
 
 ## Codex CLI Detection Note
 
@@ -172,7 +172,7 @@ npm run ui:verify:virtual-office
 
 - Product overview: `docs/PRD.md`
 - Roadmap: `docs/ROADMAP.md`
-- Current scope lock: `docs/phase-14-release-candidate-qa-docs-scope-lock.md`
+- Current scope lock: `docs/phase-16-production-1-scope-lock-final-rc-validation.md`
 - User manual: `docs/user-manual.md`
 - Safety and data boundaries: `docs/safety-data-boundaries.md`
 - Desktop beta candidate notes: `docs/phase-13-desktop-beta-distribution-candidate.md`
@@ -192,4 +192,4 @@ If launcher verification fails, use `npm run dev` and open the localhost URL man
 
 If Codex CLI detection fails, treat it as a status issue. Do not paste tokens into the app or ask the app to read credential files.
 
-If desktop beta checks fail, use the browser launcher fallback. Do not attempt signing, notarization, auto updater setup, Electron migration, or production packaging as a troubleshooting step in Phase 14.
+If desktop beta checks fail, use the browser launcher fallback. Do not attempt signing, notarization, auto updater setup, Electron migration, or production packaging as a troubleshooting step in the current RC candidate.

@@ -2,17 +2,34 @@
 
 版本：v1.0  
 项目：Codex Visual Office  
-阶段：Phase 1 - Visual Prototype / 视觉原型  
+阶段：Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 状态：Locked  
-当前目标：只开发本地可运行的前端视觉原型  
+当前目标：冻结 Production 1.0 candidate 边界并执行 Final RC Validation
 运行形态：Local-first Web App  
 日期：2026-05-30  
 
 ---
 
+## 0. Current Scope Notice
+
+This file began as the Phase 1 scope lock. The current active scope is Phase 16:
+
+```txt
+Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+```
+
+Current active scope documents:
+
+- `docs/phase-16-production-1-scope-lock-final-rc-validation.md`
+- `docs/production-1-boundary.md`
+- `docs/product-capability-inventory.md`
+- `docs/final-rc-validation-matrix.md`
+
+Phase 16 is documentation and verification only. It does not start a production release, code signing, notarization, auto updater, cloud sync, auth/payment/team/MCP/ChatGPT App, OpenAI API, DB schema work, dependency changes, destructive cleanup, or Phase 17.
+
 ## 1. Scope Lock 结论
 
-当前阶段只允许开发：
+Historical Phase 1 baseline allowed:
 
 > **Codex Visual Office Phase 1：基于 mock data 的本地前端视觉原型。**
 

@@ -12,19 +12,73 @@ The product is not OpenClaw, not Star Office, not GitHub Project, not Notion, an
 
 ## Current Phase
 
-Phase 1: Visual Prototype with mock data only.
+Phase 16: Production 1.0 Scope Lock / Final RC Validation.
 
 Current goal:
 
-> Build a local-first visual office prototype for ChatGPT + Codex workflows.
+> Freeze the Production 1.0 candidate boundary and validate the current local-first desktop beta / RC candidate without adding new product capabilities or expanding safety permissions.
 
-This phase must only prove the visual product shape.
+This phase is documentation and verification only. It is not a Production 1.0 release, not signing, not notarization, not auto updater, not cloud sync, not auth/payment/team/MCP/ChatGPT App, and not Phase 17.
 
 ---
 
 ## Hard Scope Lock
 
 You must follow this scope strictly.
+
+### Allowed in Phase 16
+
+You may build:
+
+- Production 1.0 scope lock documentation
+- final RC validation matrix
+- product capability inventory
+- release boundary freeze
+- risk register
+- Go / No-Go checklist
+- docs consistency fixes
+- verification hardening
+- final report
+
+### Forbidden in Phase 16
+
+You must not build or integrate:
+
+- new product features
+- DB schema or migration changes
+- new dependencies
+- production release
+- code signing
+- notarization
+- auto updater
+- Electron
+- cloud sync
+- GitHub API
+- Vercel
+- Supabase
+- auth
+- payment
+- team workspace
+- MCP server
+- ChatGPT App
+- OpenAI API
+- arbitrary shell runner
+- command text box
+- terminal emulator
+- node-pty
+- automatic Codex execution
+- automatic Git mutation
+- automatic Quality Gate execution
+- destructive cleanup
+- backup deletion
+- token storage
+- reading `~/.codex/auth.json`
+- reading `.env` or `.env.local`
+- Phase 17 implementation
+
+## Historical Phase 1 Baseline
+
+The original Phase 1 instructions below are retained as historical prototype baseline, not the current implementation scope.
 
 ### Allowed in Phase 1
 

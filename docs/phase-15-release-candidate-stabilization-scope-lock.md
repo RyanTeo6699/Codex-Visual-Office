@@ -100,6 +100,6 @@ It is still:
 
 ## Phase 16 Gate
 
-Phase 16 has not started.
+Phase 16 is separate from this Phase 15 scope lock and is documented in `docs/phase-16-production-1-scope-lock-final-rc-validation.md`.
 
 Production 1.0 scope lock, final RC validation, production packaging, signing, notarization, updater, cloud, team, auth, payment, MCP, ChatGPT App, or external API work requires separate GM approval.

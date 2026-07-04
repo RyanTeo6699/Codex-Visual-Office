@@ -62,7 +62,7 @@ The launcher is local-only. It should not add cloud sync, login, external integr
 
 The desktop beta candidate is a local desktop shell posture for evaluation.
 
-It is not a production release. It is not signed, notarized, auto-updating, or production-distributed by Phase 14 documentation.
+It is not a production release. It is not signed, notarized, auto-updating, or production-distributed in the current RC candidate.
 
 Check the beta posture:
 

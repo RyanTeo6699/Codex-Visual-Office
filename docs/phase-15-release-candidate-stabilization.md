@@ -142,4 +142,4 @@ Either path must keep production release, signing, notarization, updater, cloud,
 
 ## Phase 16 Statement
 
-Phase 16 has not started.
+Phase 16 is separate from this Phase 15 stabilization record and is documented in `docs/phase-16-production-1-scope-lock-final-rc-validation.md`.

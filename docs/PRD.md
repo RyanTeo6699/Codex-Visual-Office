@@ -4,12 +4,14 @@
 项目名称：Codex Visual Office  
 中文名：ChatGPT + Codex 可视化办公室  
 内部简称：CVO  
-PRD 1.0 阶段：Phase 1 - Visual Prototype / 视觉原型
-当前路线位置：Phase 7A - Scope Lock / Roadmap Reconciliation；Phase 7B 尚未开始
+PRD 1.0 原始阶段：Phase 1 - Visual Prototype / 视觉原型
+当前路线位置：Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 运行形态：本地 Web App / Local-first Web App  
 目标交付：可运行、可点击、可演示的前端视觉原型  
 PRD 1.0 原始日期：2026-05-30
-当前路线修订日期：2026-06-29
+当前路线修订日期：2026-07-04
+
+> Current status note: this PRD preserves historical planning text. The active release boundary is documented in `docs/phase-16-production-1-scope-lock-final-rc-validation.md` and `docs/production-1-boundary.md`. Production release, signing, notarization, auto updater, cloud sync, team workspace, auth/payment, MCP/ChatGPT App, OpenAI API, and external integrations are not active capabilities.
 
 ---
 
@@ -1174,7 +1176,7 @@ PRD 1.0 做完后，用户会得到：
 
 历史 PRD 1.0 首轮执行阶段。
 
-当前仓库状态已经完成 Phase 6 closeout，并进入 Phase 7A docs-only roadmap reconciliation。Phase 7B Desktop Shell Evaluation 尚未开始，必须等待 GM 明确批准。
+Historical note: this section was written when the repository had completed Phase 6 closeout and entered Phase 7A docs-only roadmap reconciliation. The current active route is Phase 16 Production 1.0 Scope Lock / Final RC Validation.
 
 目标：
 
@@ -1321,7 +1323,7 @@ PRD 1.0 做完后，用户会得到：
 - local desktop shell proof
 - packaging verification notes
 
-### Phase 8：Cloud Sync Planning
+### Historical Future Phase：Cloud Sync Planning
 
 目标：
 
@@ -1336,7 +1338,7 @@ PRD 1.0 做完后，用户会得到：
 - offline / conflict behavior
 - privacy and security boundaries
 
-### Phase 9：Cloud Sync Implementation
+### Historical Future Phase：Cloud Sync Implementation
 
 目标：
 
@@ -1351,7 +1353,7 @@ PRD 1.0 做完后，用户会得到：
 - conflict handling
 - approved provider integration
 
-### Phase 10：Team Workspace
+### Historical Future Phase：Team Workspace
 
 目标：
 
@@ -1367,7 +1369,7 @@ PRD 1.0 做完后，用户会得到：
 - Permissions
 - Audit log
 
-### Phase 11：ChatGPT App / MCP
+### Historical Future Phase：ChatGPT App / MCP
 
 目标：
 
@@ -1476,7 +1478,7 @@ Codex Visual Office is a local-first visual office for ChatGPT + Codex workflows
 
 Historical PRD 1.0 scope: Phase 1 visual prototype with mock data only.
 
-Current repository roadmap position: Phase 7A docs-only roadmap reconciliation. Phase 7B Desktop Shell Evaluation has not started and requires GM approval.
+Current repository roadmap position: Phase 16 Production 1.0 Scope Lock / Final RC Validation. Phase 17 has not started and requires GM approval.
 
 ## Hard Rules
 

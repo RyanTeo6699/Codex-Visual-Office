@@ -29,6 +29,13 @@ const requiredDocs = [
   "docs/phase-14-release-candidate-qa-docs.md",
   "docs/phase-15-release-candidate-stabilization-scope-lock.md",
   "docs/phase-15-release-candidate-stabilization.md",
+  "docs/phase-16-production-1-scope-lock-final-rc-validation.md",
+  "docs/product-capability-inventory.md",
+  "docs/production-1-boundary.md",
+  "docs/risk-register.md",
+  "docs/go-no-go-checklist.md",
+  "docs/final-rc-validation-matrix.md",
+  "docs/phase-16-production-1-scope-lock-final-rc-validation-result.md",
 ];
 
 const requiredScripts = [
@@ -37,6 +44,7 @@ const requiredScripts = [
   "docs:verify:readiness",
   "rc:verify:readiness",
   "rc:verify:stabilization",
+  "production:verify:scope",
   "desktop:verify:beta",
   "safety:verify:permissions",
   "agent:verify:workflow",
@@ -91,6 +99,7 @@ const allowedScriptNames = new Set([
   "desktop:check:beta",
   "rc:verify:readiness",
   "rc:verify:stabilization",
+  "production:verify:scope",
 ]);
 
 const keyUiFiles = [

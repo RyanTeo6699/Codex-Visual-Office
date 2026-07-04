@@ -43,6 +43,7 @@
     "safety:verify:permissions": "tsx scripts/verify-safety-permissions.ts",
     "ui:verify:virtual-office": "tsx scripts/verify-virtual-office-ui.ts",
     "docs:verify:readiness": "tsx scripts/verify-docs-readiness.ts",
+    "production:verify:scope": "tsx scripts/verify-production-scope.ts",
     "rc:verify:readiness": "tsx scripts/verify-release-candidate-readiness.ts",
     "rc:verify:stabilization": "tsx scripts/verify-rc-stabilization.ts",
     "tauri:dev:prototype": "tauri dev"

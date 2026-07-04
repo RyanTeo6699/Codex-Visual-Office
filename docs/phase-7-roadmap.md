@@ -27,6 +27,7 @@ Phase 12 - Safety / Permission Hardening
 Phase 13 - Desktop Beta / Distribution Candidate
 Phase 14 - Release Candidate QA / Documentation Hardening
 Phase 15 - Release Candidate Stabilization / Bug Bash
+Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 ```
 
 ## Dependency Order
@@ -34,7 +35,7 @@ Phase 15 - Release Candidate Stabilization / Bug Bash
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16
 ```
 
 No later phase should start without explicit GM approval.
@@ -406,3 +407,40 @@ Phase 15 must not add new features, DB schema changes, migrations, dependencies,
 - RC stabilization verifier.
 - Route/responsive/manual QA record.
 - Phase 15 stabilization summary.
+
+## Phase 16 - Production 1.0 Scope Lock / Final RC Validation
+
+### 2026-07-04 Status Note
+
+Current GM direction tracks Phase 16 as "Production 1.0 Scope Lock / Final RC Validation". Phase 16 freezes the Production 1.0 candidate boundary and validates the current local-first desktop beta / RC candidate without adding product capability.
+
+### Goal
+
+Freeze the Production 1.0 candidate scope, release boundary, known limitations, risk register, Go / No-Go checklist, and final RC validation matrix.
+
+### Allowed
+
+- Production 1.0 candidate scope lock.
+- Final RC validation matrix.
+- Product capability inventory.
+- Release boundary freeze.
+- Known limitations freeze.
+- Risk register.
+- Go / No-Go checklist.
+- Documentation consistency fixes.
+- Static verification hardening.
+
+### Boundaries
+
+Phase 16 must not add new features, DB schema changes, migrations, dependencies, production release, code signing, notarization, auto updater, Electron, cloud sync, GitHub API, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, OpenAI API, arbitrary shell, command text box, terminal emulator, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token storage, or Phase 17 implementation.
+
+### Output
+
+- Phase 16 scope lock.
+- Production 1.0 boundary document.
+- Product capability inventory.
+- Risk register.
+- Go / No-Go checklist.
+- Final RC validation matrix.
+- Production scope verifier.
+- Phase 16 result summary.

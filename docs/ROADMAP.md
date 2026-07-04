@@ -11,12 +11,13 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 15:
+Current GM-approved status as of Phase 16:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
-Phase 15：Release Candidate Stabilization / Bug Bash in progress / candidate
-Next recommendation：Phase 16 Final RC Validation or Production 1.0 Scope Lock by GM decision
+Phase 15：Release Candidate Stabilization / Bug Bash completed
+Phase 16：Production 1.0 Scope Lock / Final RC Validation in progress / candidate
+Next recommendation：Phase 17 Production 1.0 Finalization / Release Freeze or Final Bug Fix Batch by GM decision
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -47,6 +48,7 @@ Phase 12：Safety / Permission Hardening
 Phase 13：Desktop Beta / Distribution Candidate
 Phase 14：Release Candidate QA / Documentation Hardening
 Phase 15：Release Candidate Stabilization / Bug Bash
+Phase 16：Production 1.0 Scope Lock / Final RC Validation
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -58,8 +60,8 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 15：Release Candidate Stabilization / Bug Bash
-下一阶段：Phase 16 Final RC Validation 或 Production 1.0 Scope Lock，需要 GM 明确批准后开始
+Phase 16：Production 1.0 Scope Lock / Final RC Validation
+下一阶段：Phase 17 Production 1.0 Finalization / Release Freeze 或 Final Bug Fix Batch，需要 GM 明确批准后开始
 ```
 
 ---
