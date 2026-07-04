@@ -12,13 +12,19 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 17
+## Latest Baseline Commit Before Phase 18
 
-`ff3ae2f docs: lock production 1 scope`
+`a92cb91 docs: freeze production 1 baseline`
 
 ## Final Phase Status
 
 Phase 17 - Production 1.0 Finalization / Release Freeze.
+
+## Current Planning Status
+
+Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy.
+
+Phase 18 documents the next release and distribution choices. It does not implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, or commercial launch.
 
 ## Local-First Policy
 
@@ -74,6 +80,7 @@ Phase 17 - Production 1.0 Finalization / Release Freeze.
 ```bash
 npm run typecheck
 npm run build
+npm run release:verify:strategy
 npm run production:verify:freeze
 npm run production:verify:scope
 npm run rc:verify:stabilization
@@ -93,8 +100,9 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 18 - Public Release Packaging Scope Lock.
-- Phase 18 - Commercialization Scope Lock.
-- Phase 18 - Cloud/Team/MCP Scope Lock.
+- Phase 19 - Private Local Beta Packaging Validation.
+- Phase 19 - Mac Signing / Notarization Scope Lock.
+- Future Commercialization Scope Lock.
+- Future Cloud/Team/MCP Scope Lock.
 
 These phases have not started.

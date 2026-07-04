@@ -236,6 +236,10 @@ function hasLocalTauriPrototype(tauriConfig: DesktopBetaTauriConfigMetadata): bo
 
 function hasProductionInstallerScript(packageJson: DesktopBetaPackageMetadata): boolean {
   return scriptEntries(packageJson).some(([name, command]) => {
+    if (name === "release:verify:strategy") {
+      return false;
+    }
+
     const releaseName = /(^|:)(bundle|dist|install(er)?|make|package|publish|release)($|:)/i.test(name);
     return releaseName && /tauri\s+build|electron-builder|electron-forge|notarytool|notar|publish|release/i.test(command);
   });

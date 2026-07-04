@@ -279,6 +279,10 @@ async function main(): Promise<void> {
       return false;
     }
 
+    if (name === "release:verify:strategy" && command === "tsx scripts/verify-release-strategy.ts") {
+      return false;
+    }
+
     return /(^|:)install(er)?($|:)|package|bundle|dist|release|make|publish/i.test(name) ||
       /tauri\s+build|electron-builder|electron-forge|notarytool|notar/i.test(command);
   });

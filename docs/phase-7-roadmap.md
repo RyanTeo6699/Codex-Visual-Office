@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 12.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 18.
 
-It is a planning document only. It does not claim any Phase 7B, 7C, 7D, Phase 8, Phase 9, Phase 10, Phase 11, or Phase 12 work has been implemented.
+It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
 ## Local-First Principle
 
@@ -29,6 +29,7 @@ Phase 14 - Release Candidate QA / Documentation Hardening
 Phase 15 - Release Candidate Stabilization / Bug Bash
 Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 Phase 17 - Production 1.0 Finalization / Release Freeze
+Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
 ```
 
 ## Dependency Order
@@ -36,10 +37,41 @@ Phase 17 - Production 1.0 Finalization / Release Freeze
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18
 ```
 
 No later phase should start without explicit GM approval.
+
+## Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
+
+### Goal
+
+Lock the release packaging and distribution strategy after the Production 1.0 local-first baseline.
+
+### Allowed
+
+- Distribution option matrix.
+- Public beta readiness assessment.
+- Packaging risk register.
+- Code signing / notarization planning.
+- Self-hosted delivery planning.
+- Commercialization pre-scope notes.
+- Phase 19 recommendation.
+
+### Boundaries
+
+Phase 18 does not implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, or Phase 19 work.
+
+### Output
+
+- Phase 18 scope lock.
+- Release packaging strategy.
+- Release strategy verifier.
+
+### Status
+
+- Phase 18 completed as planning / scope lock only.
+- Recommended Phase 19 choices: Private Local Beta Packaging Validation or Mac Signing / Notarization Scope Lock.
 
 ## Phase 7A - Scope Lock / Roadmap Reconciliation
 

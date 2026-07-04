@@ -29,6 +29,7 @@ const requiredScripts = [
   "desktop:verify:beta",
   "ui:verify:virtual-office",
   "docs:verify:readiness",
+  "release:verify:strategy",
   "production:verify:freeze",
   "production:verify:scope",
   "rc:verify:readiness",
@@ -130,6 +131,7 @@ checks.push({
 const scriptMatches = Object.entries(packageJson.scripts ?? {}).flatMap(([name, command]) => {
   if (name === "tauri:dev:prototype") return [];
   if (name === "desktop:check:beta") return [];
+  if (name === "release:verify:strategy") return [];
   if (name === "rc:verify:readiness") return [];
   if (name === "rc:verify:stabilization") return [];
   const text = `${name} ${command}`;
