@@ -274,11 +274,22 @@ async function main(): Promise<void> {
     "no updater dependency, plugin, or config detected",
   );
 
+  const productionInstallerScripts = scripts.filter(([name, command]) => {
+    if (name === "rc:verify:readiness" && command === "tsx scripts/verify-release-candidate-readiness.ts") {
+      return false;
+    }
+
+    return /(^|:)install(er)?($|:)|package|bundle|dist|release|make|publish/i.test(name) ||
+      /tauri\s+build|electron-builder|electron-forge|notarytool|notar/i.test(command);
+  });
+
   pushCheck(
     checks,
     "no production installer script",
-    scripts.every(([name, command]) => !/(^|:)install(er)?($|:)|package|bundle|dist|release|make|publish/i.test(name) && !/tauri\s+build|electron-builder|electron-forge|notarytool|notar/i.test(command)),
-    "package scripts do not define installer/package/release commands",
+    productionInstallerScripts.length === 0,
+    productionInstallerScripts.length === 0
+      ? "package scripts do not define installer/package/release commands"
+      : `forbidden scripts: ${productionInstallerScripts.map(([name]) => name).join(", ")}`,
   );
 
   pushCheck(

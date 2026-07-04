@@ -14,6 +14,8 @@ const allowedTauriPrototypeScriptName = "tauri:dev:prototype";
 const allowedTauriPrototypeScriptCommand = "tauri dev";
 const allowedTauriPrototypeVerifyScriptName = "tauri:verify:prototype";
 const allowedTauriPrototypeVerifyScriptCommand = "tsx scripts/verify-tauri-prototype.ts";
+const allowedReleaseCandidateVerifyScriptName = "rc:verify:readiness";
+const allowedReleaseCandidateVerifyScriptCommand = "tsx scripts/verify-release-candidate-readiness.ts";
 const allowedTauriPrototypeDevDependency = "@tauri-apps/cli";
 const forbiddenDesktopRuntimeDependencyPattern = /electron|node-pty/i;
 const forbiddenCloudOrIntegrationDependencyPattern = /github|vercel|supabase|firebase|openai|mcp|auth|payment/i;
@@ -92,6 +94,10 @@ function assertNoForbiddenDependencies(): void {
 function assertNoForbiddenScripts(scripts: Record<string, string>): void {
   const forbiddenScripts = Object.entries(scripts).filter(([name, command]) => {
     if (name === allowedTauriPrototypeScriptName && command === allowedTauriPrototypeScriptCommand) {
+      return false;
+    }
+
+    if (name === allowedReleaseCandidateVerifyScriptName && command === allowedReleaseCandidateVerifyScriptCommand) {
       return false;
     }
 

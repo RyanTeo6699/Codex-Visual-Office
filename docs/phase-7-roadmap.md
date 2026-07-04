@@ -25,6 +25,7 @@ Phase 10 - Team Workspace
 Phase 11 - ChatGPT App / MCP
 Phase 12 - Safety / Permission Hardening
 Phase 13 - Desktop Beta / Distribution Candidate
+Phase 14 - Release Candidate QA / Documentation Hardening
 ```
 
 ## Dependency Order
@@ -32,7 +33,7 @@ Phase 13 - Desktop Beta / Distribution Candidate
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
 ```
 
 No later phase should start without explicit GM approval.
@@ -334,3 +335,40 @@ Document and verify the desktop beta candidate posture without changing app beha
 ### Boundaries
 
 Phase 13 must not add production release, signing, notarization, auto updater, production installer distribution, Electron, cloud sync, GitHub, Vercel, Supabase, auth, payment, team permissions, MCP, OpenAI API, arbitrary shell, command text box, terminal, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token reads, or Phase 14 implementation.
+
+## Phase 14 - Release Candidate QA / Documentation Hardening
+
+### 2026-07-03 Status Note
+
+Current GM direction tracks Phase 14 as "Release Candidate QA / Documentation Hardening". Phase 14 prepares the desktop beta candidate for Release Candidate review by hardening documentation, QA checklists, and static readiness verification without adding product capability.
+
+### Goal
+
+Make the current local-first product easier to verify, operate, recover, and hand off to GM for Release Candidate evaluation.
+
+### Allowed
+
+- User manual.
+- Developer manual.
+- Local setup guide.
+- Troubleshooting guide.
+- Safety and data boundary guide.
+- Backup/restore recovery guide.
+- Desktop beta QA checklist.
+- Release Candidate checklist.
+- Documentation verification.
+- Release Candidate static readiness verification.
+- Minor copy/help text improvements if needed.
+
+### Boundaries
+
+Phase 14 must not add new business features, DB schema changes, runner behavior changes, Quality Gate policy changes, backup/restore behavior changes, archive cleanup behavior changes, production release, code signing, notarization, auto updater, Electron, cloud sync, GitHub API, Vercel, Supabase, auth, payment, team workspace, MCP, ChatGPT App, OpenAI API, arbitrary shell, command text box, terminal emulator, `node-pty`, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, credential reads, token storage, or Phase 15 implementation.
+
+### Output
+
+- Phase 14 scope lock.
+- Release Candidate user and developer documentation set.
+- Release Candidate QA checklist.
+- Documentation readiness verifier.
+- Release Candidate readiness verifier.
+- Phase 14 implementation summary.

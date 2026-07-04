@@ -42,6 +42,8 @@
     "agent:verify:workflow": "tsx scripts/verify-agent-workflow.ts",
     "safety:verify:permissions": "tsx scripts/verify-safety-permissions.ts",
     "ui:verify:virtual-office": "tsx scripts/verify-virtual-office-ui.ts",
+    "docs:verify:readiness": "tsx scripts/verify-docs-readiness.ts",
+    "rc:verify:readiness": "tsx scripts/verify-release-candidate-readiness.ts",
     "tauri:dev:prototype": "tauri dev"
   },
   "dependencies": {
