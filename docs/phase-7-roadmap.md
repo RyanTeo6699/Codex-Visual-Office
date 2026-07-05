@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 24.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 25.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -36,6 +36,7 @@ Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 Phase 22 - Private Beta Fix Batch 1
 Phase 23 - Real Private Beta Round 1 Execution
 Phase 24 - Real Private Beta Feedback Review / Decision Gate
+Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
 ```
 
 ## Dependency Order
@@ -43,7 +44,7 @@ Phase 24 - Real Private Beta Feedback Review / Decision Gate
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25
 ```
 
 No later phase should start without explicit GM approval.
@@ -198,6 +199,50 @@ Phase 24 does not fabricate tester feedback, fake tester counts, fake issue coun
 - Phase 24 feedback review decision gate is complete.
 - Decision conclusion: `AWAITING_TESTER_FEEDBACK`.
 - Recommended next phase: Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback.
+
+## Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
+
+### Goal
+
+Prepare the real private beta feedback collection package, tester invitation materials, submission instructions, data handling policy, GM collection workflow, collection status report, and Phase 26 decision worksheet without fabricating tester feedback.
+
+### Allowed
+
+- Private beta feedback collection scope lock.
+- Tester invitation packet.
+- Tester onboarding message.
+- Feedback submission instructions.
+- Real feedback intake checklist.
+- Tester data handling policy.
+- GM feedback collection checklist.
+- Feedback import/review procedure.
+- Beta collection status report.
+- Phase 26 decision worksheet.
+- Static feedback collection verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 25 does not fabricate tester feedback, fake tester counts, fake issue counts, fake setup success rates, mark beta complete without tester data, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 26 work.
+
+### Output
+
+- Phase 25 collection scope lock.
+- Tester invitation packet and onboarding message.
+- Feedback submission instructions and intake checklist.
+- Tester data handling policy.
+- GM collection checklist.
+- Feedback import/review procedure.
+- Collection status report.
+- Phase 26 decision worksheet.
+- `beta:verify:feedback-collection`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 25 feedback collection package is ready.
+- Collection conclusion: `REAL_PRIVATE_BETA_FEEDBACK_COLLECTION_READY_AWAITING_SUBMISSIONS`.
+- Recommended next phase: Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

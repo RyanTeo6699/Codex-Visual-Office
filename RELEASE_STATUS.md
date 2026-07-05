@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 24
+## Latest Baseline Commit Before Phase 25
 
-`e5cf3d4 docs: prepare real private beta execution`
+`caf2a44 docs: review private beta feedback gate`
 
 ## Final Phase Status
 
@@ -104,6 +104,24 @@ Recommended next phase:
 Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
 ```
 
+## Real Private Beta Feedback Collection Status
+
+Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback.
+
+Phase 25 prepares the tester invitation packet, onboarding message, feedback submission instructions, real feedback intake checklist, GM collection checklist, tester data handling policy, feedback import/review procedure, collection status report, and Phase 26 decision worksheet. It does not record, fabricate, or infer tester feedback.
+
+Phase 25 collection status:
+
+```txt
+REAL_PRIVATE_BETA_FEEDBACK_COLLECTION_READY_AWAITING_SUBMISSIONS
+```
+
+Recommended next phase:
+
+```txt
+Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate
+```
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -158,6 +176,7 @@ Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:feedback-collection
 npm run beta:verify:feedback-review
 npm run beta:verify:real-execution
 npm run beta:verify:fix-batch
@@ -184,7 +203,7 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback.
+- Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.
 - Future Phase - Blocked Safety/Data Response, if P0/P1 safety or data issues are confirmed.
