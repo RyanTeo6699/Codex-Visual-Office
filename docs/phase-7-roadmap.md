@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 18.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 19.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -30,6 +30,7 @@ Phase 15 - Release Candidate Stabilization / Bug Bash
 Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 Phase 17 - Production 1.0 Finalization / Release Freeze
 Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
+Phase 19 - Private Local Beta Packaging Validation
 ```
 
 ## Dependency Order
@@ -37,10 +38,41 @@ Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19
 ```
 
 No later phase should start without explicit GM approval.
+
+## Phase 19 - Private Local Beta Packaging Validation
+
+### Goal
+
+Validate that the local-first Production 1.0 baseline can be handed to private beta testers through source checkout and browser-only local launcher workflow.
+
+### Allowed
+
+- Private beta scope lock.
+- Private beta package checklist.
+- Tester guide.
+- Feedback and issue templates.
+- Support runbook.
+- Release artifact manifest.
+- Static private beta readiness verification.
+
+### Boundaries
+
+Phase 19 does not implement public release, signed installer, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, or Phase 20 work.
+
+### Output
+
+- Phase 19 private beta docs.
+- `beta:verify:private`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 19 completed as documentation and validation only.
+- Recommended Phase 20 choices: Private Beta Test Round 1 / Feedback Intake or Mac Signing / Notarization Scope Lock.
 
 ## Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
 

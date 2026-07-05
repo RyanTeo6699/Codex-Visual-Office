@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 18:
+Current GM-approved status as of Phase 19:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -19,7 +19,8 @@ Phase 15：Release Candidate Stabilization / Bug Bash completed
 Phase 16：Production 1.0 Scope Lock / Final RC Validation completed
 Phase 17：Production 1.0 Finalization / Release Freeze completed
 Phase 18：Public Release Packaging Scope Lock / Distribution Strategy completed
-Next recommendation：Phase 19 Private Local Beta Packaging Validation or Mac Signing / Notarization Scope Lock by GM decision
+Phase 19：Private Local Beta Packaging Validation completed
+Next recommendation：Phase 20 Private Beta Test Round 1 / Feedback Intake or Mac Signing / Notarization Scope Lock by GM decision
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -53,6 +54,7 @@ Phase 15：Release Candidate Stabilization / Bug Bash
 Phase 16：Production 1.0 Scope Lock / Final RC Validation
 Phase 17：Production 1.0 Finalization / Release Freeze
 Phase 18：Public Release Packaging Scope Lock / Distribution Strategy
+Phase 19：Private Local Beta Packaging Validation
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -64,8 +66,8 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 18：Public Release Packaging Scope Lock / Distribution Strategy
-下一阶段：Phase 19 Private Local Beta Packaging Validation 或 Mac Signing / Notarization Scope Lock，需要 GM 明确批准后开始
+Phase 19：Private Local Beta Packaging Validation
+下一阶段：Phase 20 Private Beta Test Round 1 / Feedback Intake 或 Mac Signing / Notarization Scope Lock，需要 GM 明确批准后开始
 ```
 
 ---
