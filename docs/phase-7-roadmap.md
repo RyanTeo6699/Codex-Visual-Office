@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 23.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 24.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -35,6 +35,7 @@ Phase 20 - Private Beta Test Round 1 / Feedback Intake
 Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 Phase 22 - Private Beta Fix Batch 1
 Phase 23 - Real Private Beta Round 1 Execution
+Phase 24 - Real Private Beta Feedback Review / Decision Gate
 ```
 
 ## Dependency Order
@@ -42,7 +43,7 @@ Phase 23 - Real Private Beta Round 1 Execution
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24
 ```
 
 No later phase should start without explicit GM approval.
@@ -153,7 +154,50 @@ Phase 23 does not fake tester feedback, mark real beta complete without tester d
 
 - Phase 23 execution framework is ready.
 - Readiness conclusion: `REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK`.
-- Recommended next phase: Phase 24 - Real Private Beta Feedback Review after real tester data exists.
+- Phase 24 has now reviewed the empty real-feedback state and preserved `AWAITING_TESTER_FEEDBACK`.
+
+## Phase 24 - Real Private Beta Feedback Review / Decision Gate
+
+### Goal
+
+Review actual private beta feedback evidence and produce a GM decision gate for Fix Batch 2, continued private beta, public technical beta scope, or blocked status without fabricating tester feedback.
+
+### Allowed
+
+- Feedback evidence policy.
+- Feedback ledger review.
+- Issue triage review.
+- Fix Batch 2 candidate list.
+- Known limitations candidate list.
+- Public beta blocker list.
+- GM decision worksheet.
+- Beta readiness decision report.
+- Static feedback review verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 24 does not fabricate tester feedback, fake tester counts, fake issue counts, mark beta complete without tester data, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 25 work.
+
+### Output
+
+- Phase 24 feedback review scope lock.
+- Feedback evidence policy.
+- Feedback ledger review.
+- Issue triage review.
+- Fix Batch 2 candidate list.
+- Known limitations candidate list.
+- Public beta blocker list.
+- GM decision worksheet.
+- Readiness decision report.
+- `beta:verify:feedback-review`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 24 feedback review decision gate is complete.
+- Decision conclusion: `AWAITING_TESTER_FEEDBACK`.
+- Recommended next phase: Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

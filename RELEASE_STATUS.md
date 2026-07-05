@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 23
+## Latest Baseline Commit Before Phase 24
 
-`4756e8a fix: prepare real private beta`
+`e5cf3d4 docs: prepare real private beta execution`
 
 ## Final Phase Status
 
@@ -86,6 +86,24 @@ Real private beta execution status:
 REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK
 ```
 
+## Real Private Beta Feedback Review Status
+
+Phase 24 - Real Private Beta Feedback Review / Decision Gate.
+
+Phase 24 reviewed the Phase 23 real private beta evidence state and created the feedback review decision gate. No real tester feedback has been recorded yet, so the GM decision remains waiting on tester evidence.
+
+Phase 24 decision status:
+
+```txt
+AWAITING_TESTER_FEEDBACK
+```
+
+Recommended next phase:
+
+```txt
+Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
+```
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -140,6 +158,7 @@ REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:feedback-review
 npm run beta:verify:real-execution
 npm run beta:verify:fix-batch
 npm run beta:verify:dry-run
@@ -165,10 +184,11 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 24 - Real Private Beta Feedback Review.
-- Phase 24 - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
-- Phase 24 - Public Beta Scope Lock, if real tester evidence is strong enough.
-- Phase 24 - Mac Signing / Notarization Scope Lock, if GM prioritizes distribution friction.
+- Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback.
+- Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
+- Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.
+- Future Phase - Blocked Safety/Data Response, if P0/P1 safety or data issues are confirmed.
+- Future Phase - Mac Signing / Notarization Scope Lock, if GM prioritizes distribution friction.
 - Future Mac Signing / Notarization Scope Lock.
 - Future Commercialization Scope Lock.
 - Future Cloud/Team/MCP Scope Lock.
