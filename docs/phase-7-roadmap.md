@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 22.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 23.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -34,6 +34,7 @@ Phase 19 - Private Local Beta Packaging Validation
 Phase 20 - Private Beta Test Round 1 / Feedback Intake
 Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 Phase 22 - Private Beta Fix Batch 1
+Phase 23 - Real Private Beta Round 1 Execution
 ```
 
 ## Dependency Order
@@ -41,7 +42,7 @@ Phase 22 - Private Beta Fix Batch 1
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23
 ```
 
 No later phase should start without explicit GM approval.
@@ -112,6 +113,47 @@ Phase 22 does not implement public release, signed installer, notarization, auto
 - Phase 22 completed as a low-risk fix batch.
 - Readiness conclusion: `PRIVATE_BETA_FIX_BATCH_1_READY_FOR_REAL_PRIVATE_BETA`.
 - Recommended next phase: Phase 23 - Real Private Beta Round 1 Execution by GM decision.
+
+## Phase 23 - Real Private Beta Round 1 Execution
+
+### Goal
+
+Establish the real private beta round 1 execution framework, tester roster, feedback ledger, issue triage ledger, and results report shell without fabricating tester feedback or implementing public release capabilities.
+
+### Allowed
+
+- Real private beta execution plan.
+- Tester roster template.
+- Execution log.
+- Feedback intake ledger.
+- Issue triage ledger.
+- Tester environment matrix.
+- Results report shell.
+- Go / No-Go decision worksheet.
+- Static real private beta execution verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 23 does not fake tester feedback, mark real beta complete without tester data, implement public release, signed installer, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 24 work.
+
+### Output
+
+- Phase 23 scope lock.
+- Real beta execution plan.
+- Tester roster and environment matrix.
+- Execution log.
+- Feedback and issue triage ledgers.
+- Go / No-Go worksheet.
+- Results report shell.
+- `beta:verify:real-execution`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 23 execution framework is ready.
+- Readiness conclusion: `REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK`.
+- Recommended next phase: Phase 24 - Real Private Beta Feedback Review after real tester data exists.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

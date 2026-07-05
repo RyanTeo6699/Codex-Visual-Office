@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 22
+## Latest Baseline Commit Before Phase 23
 
-`59724a4 docs: simulate private beta dry run`
+`4756e8a fix: prepare real private beta`
 
 ## Final Phase Status
 
@@ -74,6 +74,18 @@ Private beta fix batch status:
 PRIVATE_BETA_FIX_BATCH_1_READY_FOR_REAL_PRIVATE_BETA
 ```
 
+## Real Private Beta Round 1 Execution Status
+
+Phase 23 - Real Private Beta Round 1 Execution.
+
+Phase 23 prepares the real private beta execution framework, tester roster, environment matrix, execution log, feedback ledger, issue triage ledger, go/no-go worksheet, and results report shell. It does not fabricate tester feedback and does not mark real private beta complete without real tester data.
+
+Real private beta execution status:
+
+```txt
+REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK
+```
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -128,6 +140,7 @@ PRIVATE_BETA_FIX_BATCH_1_READY_FOR_REAL_PRIVATE_BETA
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:real-execution
 npm run beta:verify:fix-batch
 npm run beta:verify:dry-run
 npm run beta:verify:intake
@@ -152,8 +165,10 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 23 - Real Private Beta Round 1 Execution.
-- Phase 23 - Private Beta Fix Batch 2, if GM wants another low-risk fix cycle before real testers.
+- Phase 24 - Real Private Beta Feedback Review.
+- Phase 24 - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
+- Phase 24 - Public Beta Scope Lock, if real tester evidence is strong enough.
+- Phase 24 - Mac Signing / Notarization Scope Lock, if GM prioritizes distribution friction.
 - Future Mac Signing / Notarization Scope Lock.
 - Future Commercialization Scope Lock.
 - Future Cloud/Team/MCP Scope Lock.

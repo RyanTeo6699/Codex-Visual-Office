@@ -47,6 +47,7 @@
     "beta:verify:intake": "tsx scripts/verify-private-beta-intake.ts",
     "beta:verify:dry-run": "tsx scripts/verify-private-beta-dry-run.ts",
     "beta:verify:fix-batch": "tsx scripts/verify-private-beta-fix-batch.ts",
+    "beta:verify:real-execution": "tsx scripts/verify-real-private-beta-execution.ts",
     "release:verify:strategy": "tsx scripts/verify-release-strategy.ts",
     "production:verify:freeze": "tsx scripts/verify-production-freeze.ts",
     "production:verify:scope": "tsx scripts/verify-production-scope.ts",

@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 22:
+Current GM-approved status as of Phase 23:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -23,7 +23,8 @@ Phase 19：Private Local Beta Packaging Validation completed
 Phase 20：Private Beta Test Round 1 / Feedback Intake completed
 Phase 21：Private Beta Round 1 Execution Dry Run / Feedback Simulation completed
 Phase 22：Private Beta Fix Batch 1 completed
-Next recommendation：Phase 23 Real Private Beta Round 1 Execution by GM decision
+Phase 23：Real Private Beta Round 1 Execution framework ready, awaiting tester feedback
+Next recommendation：Phase 24 Real Private Beta Feedback Review after real tester data exists
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -61,6 +62,7 @@ Phase 19：Private Local Beta Packaging Validation
 Phase 20：Private Beta Test Round 1 / Feedback Intake
 Phase 21：Private Beta Round 1 Execution Dry Run / Feedback Simulation
 Phase 22：Private Beta Fix Batch 1
+Phase 23：Real Private Beta Round 1 Execution
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -72,8 +74,9 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 22：Private Beta Fix Batch 1
-下一阶段：Phase 23 Real Private Beta Round 1 Execution，需要 GM 批准后开始
+Phase 23：Real Private Beta Round 1 Execution
+当前状态：REAL_PRIVATE_BETA_EXECUTION_READY_AWAITING_TESTER_FEEDBACK
+下一阶段：Phase 24 Real Private Beta Feedback Review / Private Beta Fix Batch 2 / Public Beta Scope Lock，由 GM 根据真实反馈决策
 ```
 
 ---
