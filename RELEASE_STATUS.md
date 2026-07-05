@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 26
+## Latest Baseline Commit Before Phase 27
 
-`f4e3762 docs: prepare private beta feedback collection`
+`60d97cf docs: manage private beta collection window`
 
 ## Final Phase Status
 
@@ -150,6 +150,34 @@ Continue Real Private Beta Round 1 collection until real submissions exist.
 
 Phase 27 review readiness should not begin until real tester submissions are recorded or GM explicitly chooses to review the absence of submissions.
 
+## Real Tester Outreach Packet Status
+
+Phase 27 - Continue Collection / Real Tester Outreach Execution Packet.
+
+Phase 27 prepares the real tester outreach execution packet for private beta round 1: invitee shortlist template, outbound messages, follow-up schedule, submission packet, GM manual collection playbook, first-response support script, tester privacy/safety notice, and Phase 28 readiness gate.
+
+No real private beta tester submissions have been recorded yet. No tester count, invitation count, submission count, issue count, or setup success rate is claimed.
+
+Phase 27 outreach status:
+
+```txt
+REAL_TESTER_OUTREACH_PACKET_READY_AWAITING_INVITATIONS_OR_SUBMISSIONS
+```
+
+Current decision:
+
+```txt
+CONTINUE_COLLECTION
+```
+
+Recommended next step:
+
+```txt
+GM may manually send real tester invitations using the outreach packet, then continue collection until real submissions exist.
+```
+
+Phase 28 feedback review should not begin until at least one real tester submission is recorded and GM confirms evidence source and sensitive-data handling, unless GM explicitly chooses a no-submission review.
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -204,6 +232,7 @@ Phase 27 review readiness should not begin until real tester submissions are rec
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:outreach
 npm run beta:verify:collection-window
 npm run beta:verify:feedback-collection
 npm run beta:verify:feedback-review
@@ -232,8 +261,8 @@ git diff --check
 
 ## Next Possible Phases
 
-- Continue Real Private Beta Round 1 collection while submissions remain absent.
-- Phase 27 - Private Beta Review Readiness / Evidence Review, only after real tester submissions exist or GM explicitly chooses a no-submission review.
+- Continue Real Private Beta Round 1 outreach and collection while submissions remain absent.
+- Phase 28 - Private Beta Feedback Review / Evidence Review, only after real tester submissions exist or GM explicitly chooses a no-submission review.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.
 - Future Phase - Blocked Safety/Data Response, if P0/P1 safety or data issues are confirmed.

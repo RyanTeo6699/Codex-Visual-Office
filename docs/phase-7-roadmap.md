@@ -287,6 +287,51 @@ Phase 26 does not fabricate tester feedback, fake tester counts, fake submission
 - Current decision: `CONTINUE_COLLECTION`.
 - Recommended next step: continue Real Private Beta Round 1 collection until real submissions exist.
 
+## Phase 27 - Continue Collection / Real Tester Outreach Execution Packet
+
+### Goal
+
+Prepare the real tester outreach execution packet for private beta round 1, including invitee templates, outbound messages, follow-up schedule, submission packet, GM collection playbook, first-response support script, tester privacy/safety notice, and Phase 28 readiness gate without fabricating tester feedback.
+
+### Allowed
+
+- Outreach scope lock.
+- Invitee shortlist template.
+- Outbound invitation messages.
+- Follow-up schedule.
+- Tester feedback submission packet.
+- GM manual collection playbook.
+- First-response support script.
+- Tester privacy and safety notice.
+- Phase 28 feedback review readiness gate.
+- Static outreach verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 27 does not fabricate tester feedback, fake tester counts, fake invitation counts, fake submission counts, fake issue counts, fake setup success rates, mark beta complete without tester submissions, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 28 work.
+
+### Output
+
+- Phase 27 outreach scope lock.
+- Invitee shortlist template.
+- Outbound invitation message set.
+- Follow-up schedule.
+- Tester feedback submission packet.
+- GM manual collection playbook.
+- First-response support script.
+- Tester privacy and safety notice.
+- Phase 28 readiness gate.
+- `beta:verify:outreach`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 27 real tester outreach execution packet is ready.
+- Outreach conclusion: `REAL_TESTER_OUTREACH_PACKET_READY_AWAITING_INVITATIONS_OR_SUBMISSIONS`.
+- Current decision: `CONTINUE_COLLECTION`.
+- Recommended next step: GM may manually send real tester invitations using the outreach packet and continue collection until real submissions exist.
+
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 
 ### Goal
