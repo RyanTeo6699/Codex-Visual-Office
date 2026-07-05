@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 19
+## Latest Baseline Commit Before Phase 20
 
-`e3a7fa9 docs: plan public release packaging`
+`551a9ff docs: validate private local beta packaging`
 
 ## Final Phase Status
 
@@ -36,6 +36,18 @@ Private beta status:
 
 ```txt
 PRIVATE_LOCAL_BETA_READY_WITH_NOTED_LIMITATIONS
+```
+
+## Private Beta Feedback Intake Status
+
+Phase 20 - Private Beta Test Round 1 / Feedback Intake.
+
+Phase 20 prepares tester cohort planning, feedback intake, issue triage, regression decisions, tracker templates, and results reporting for the first private beta round. It does not implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, commercial launch, or Phase 21 work.
+
+Private beta intake status:
+
+```txt
+PRIVATE_BETA_ROUND_1_FEEDBACK_INTAKE_READY_WITH_NOTED_LIMITATIONS
 ```
 
 ## Local-First Policy
@@ -92,6 +104,7 @@ PRIVATE_LOCAL_BETA_READY_WITH_NOTED_LIMITATIONS
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:intake
 npm run beta:verify:private
 npm run release:verify:strategy
 npm run production:verify:freeze
@@ -113,8 +126,9 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 19 - Private Local Beta Packaging Validation.
-- Phase 19 - Mac Signing / Notarization Scope Lock.
+- Phase 21 - Private Beta Fix Batch 1.
+- Phase 21 - Public Beta Scope Lock.
+- Future Mac Signing / Notarization Scope Lock.
 - Future Commercialization Scope Lock.
 - Future Cloud/Team/MCP Scope Lock.
 

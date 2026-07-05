@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 19.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 20.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -31,6 +31,7 @@ Phase 16 - Production 1.0 Scope Lock / Final RC Validation
 Phase 17 - Production 1.0 Finalization / Release Freeze
 Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
 Phase 19 - Private Local Beta Packaging Validation
+Phase 20 - Private Beta Test Round 1 / Feedback Intake
 ```
 
 ## Dependency Order
@@ -38,10 +39,42 @@ Phase 19 - Private Local Beta Packaging Validation
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20
 ```
 
 No later phase should start without explicit GM approval.
+
+## Phase 20 - Private Beta Test Round 1 / Feedback Intake
+
+### Goal
+
+Prepare the first private beta test round, feedback intake workflow, issue triage model, regression decision process, tracker templates, and results reporting.
+
+### Allowed
+
+- Private beta test plan.
+- Tester cohort plan.
+- Feedback intake workflow.
+- Severity / priority matrix.
+- Regression decision matrix.
+- Feedback tracker template.
+- Results report template.
+- Static beta intake readiness verifier.
+
+### Boundaries
+
+Phase 20 does not implement public release, signed installer, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, or Phase 21 work.
+
+### Output
+
+- Phase 20 private beta intake docs.
+- `beta:verify:intake`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 20 completed as documentation and verification only.
+- Recommended Phase 21 choices: Private Beta Fix Batch 1 or Public Beta Scope Lock based on real beta results.
 
 ## Phase 19 - Private Local Beta Packaging Validation
 
