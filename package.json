@@ -45,6 +45,7 @@
     "docs:verify:readiness": "tsx scripts/verify-docs-readiness.ts",
     "beta:verify:private": "tsx scripts/verify-private-beta-readiness.ts",
     "beta:verify:intake": "tsx scripts/verify-private-beta-intake.ts",
+    "beta:verify:dry-run": "tsx scripts/verify-private-beta-dry-run.ts",
     "release:verify:strategy": "tsx scripts/verify-release-strategy.ts",
     "production:verify:freeze": "tsx scripts/verify-production-freeze.ts",
     "production:verify:scope": "tsx scripts/verify-production-scope.ts",

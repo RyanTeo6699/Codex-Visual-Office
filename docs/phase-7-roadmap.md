@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 20.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 21.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -32,6 +32,7 @@ Phase 17 - Production 1.0 Finalization / Release Freeze
 Phase 18 - Public Release Packaging Scope Lock / Distribution Strategy
 Phase 19 - Private Local Beta Packaging Validation
 Phase 20 - Private Beta Test Round 1 / Feedback Intake
+Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 ```
 
 ## Dependency Order
@@ -39,10 +40,42 @@ Phase 20 - Private Beta Test Round 1 / Feedback Intake
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21
 ```
 
 No later phase should start without explicit GM approval.
+
+## Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
+
+### Goal
+
+Validate the private beta execution process, feedback intake workflow, triage model, regression decisions, and support runbook through simulated tester scenarios before inviting real private beta testers.
+
+### Allowed
+
+- Simulated tester scenarios.
+- Dry-run execution checklist.
+- Sample feedback entries.
+- Sample issue reports.
+- Sample triage and regression output.
+- Dry-run results report.
+- Static beta dry-run readiness verifier.
+
+### Boundaries
+
+Phase 21 does not implement public release, signed installer, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, real beta execution, or Phase 22 work.
+
+### Output
+
+- Phase 21 private beta dry-run docs.
+- `beta:verify:dry-run`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 21 completed as documentation and verification only.
+- Readiness conclusion: `READY_WITH_CAUTION`.
+- Recommended Phase 22 choices: Private Beta Fix Batch 1 or Real Private Beta Round 1 Execution.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 
