@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 25.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 26.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -37,6 +37,7 @@ Phase 22 - Private Beta Fix Batch 1
 Phase 23 - Real Private Beta Round 1 Execution
 Phase 24 - Real Private Beta Feedback Review / Decision Gate
 Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
+Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window
 ```
 
 ## Dependency Order
@@ -44,7 +45,7 @@ Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26
 ```
 
 No later phase should start without explicit GM approval.
@@ -242,7 +243,49 @@ Phase 25 does not fabricate tester feedback, fake tester counts, fake issue coun
 
 - Phase 25 feedback collection package is ready.
 - Collection conclusion: `REAL_PRIVATE_BETA_FEEDBACK_COLLECTION_READY_AWAITING_SUBMISSIONS`.
-- Recommended next phase: Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate.
+- Phase 26 now manages the real private beta submission collection window.
+
+## Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window
+
+### Goal
+
+Establish the real private beta submission collection window management layer, including invitation status, onboarding status, submission status, non-response tracking, evidence requirements, and decision criteria without fabricating tester feedback.
+
+### Allowed
+
+- Collection window scope lock.
+- Invitation status tracker.
+- Onboarding status tracker.
+- Submission status tracker.
+- Non-response tracker.
+- Follow-up checklist.
+- Submission evidence requirements.
+- Collection window decision report.
+- Phase 27 review readiness worksheet.
+- Static collection window verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 26 does not fabricate tester feedback, fake tester counts, fake submission counts, fake issue counts, fake setup success rates, mark beta complete without tester submissions, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 27 work.
+
+### Output
+
+- Phase 26 collection window scope lock.
+- Invitation, onboarding, submission, and non-response trackers.
+- Follow-up checklist.
+- Submission evidence requirements.
+- Collection window decision report.
+- Phase 27 review readiness worksheet.
+- `beta:verify:collection-window`.
+- Roadmap and release status updates.
+
+### Status
+
+- Phase 26 submission collection window management layer is ready.
+- Collection-window conclusion: `REAL_PRIVATE_BETA_COLLECTION_WINDOW_READY_AWAITING_SUBMISSIONS`.
+- Current decision: `CONTINUE_COLLECTION`.
+- Recommended next step: continue Real Private Beta Round 1 collection until real submissions exist.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

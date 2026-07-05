@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 25
+## Latest Baseline Commit Before Phase 26
 
-`caf2a44 docs: review private beta feedback gate`
+`f4e3762 docs: prepare private beta feedback collection`
 
 ## Final Phase Status
 
@@ -122,6 +122,34 @@ Recommended next phase:
 Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate
 ```
 
+## Real Private Beta Collection Window Status
+
+Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window.
+
+Phase 26 creates the submission collection window management layer: invitation status, onboarding status, submission status, non-response tracking, follow-up checklist, submission evidence requirements, collection window decision report, and Phase 27 review readiness worksheet.
+
+No real private beta tester submissions have been recorded yet, so the current decision is to continue collection.
+
+Phase 26 collection-window status:
+
+```txt
+REAL_PRIVATE_BETA_COLLECTION_WINDOW_READY_AWAITING_SUBMISSIONS
+```
+
+Current decision:
+
+```txt
+CONTINUE_COLLECTION
+```
+
+Recommended next step:
+
+```txt
+Continue Real Private Beta Round 1 collection until real submissions exist.
+```
+
+Phase 27 review readiness should not begin until real tester submissions are recorded or GM explicitly chooses to review the absence of submissions.
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -176,6 +204,7 @@ Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:collection-window
 npm run beta:verify:feedback-collection
 npm run beta:verify:feedback-review
 npm run beta:verify:real-execution
@@ -203,7 +232,8 @@ git diff --check
 
 ## Next Possible Phases
 
-- Phase 26 - Real Private Beta Feedback Collection Review / Decision Gate.
+- Continue Real Private Beta Round 1 collection while submissions remain absent.
+- Phase 27 - Private Beta Review Readiness / Evidence Review, only after real tester submissions exist or GM explicitly chooses a no-submission review.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.
 - Future Phase - Blocked Safety/Data Response, if P0/P1 safety or data issues are confirmed.

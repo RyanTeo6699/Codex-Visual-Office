@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 25:
+Current GM-approved status as of Phase 26:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -26,7 +26,9 @@ Phase 22：Private Beta Fix Batch 1 completed
 Phase 23：Real Private Beta Round 1 Execution framework ready, awaiting tester feedback
 Phase 24：Real Private Beta Feedback Review / Decision Gate completed with AWAITING_TESTER_FEEDBACK
 Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback package ready, awaiting submissions
-Next recommendation：Phase 26 Real Private Beta Feedback Collection Review / Decision Gate
+Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window completed with CONTINUE_COLLECTION
+Current status：REAL_PRIVATE_BETA_COLLECTION_WINDOW_READY_AWAITING_SUBMISSIONS
+Next recommendation：Continue Real Private Beta Round 1 collection; Phase 27 review readiness only after real submissions exist
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -67,7 +69,8 @@ Phase 22：Private Beta Fix Batch 1
 Phase 23：Real Private Beta Round 1 Execution
 Phase 24：Real Private Beta Feedback Review / Decision Gate
 Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback
-Phase 26：Real Private Beta Feedback Collection Review / Decision Gate
+Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window
+Phase 27：Private Beta Review Readiness / Evidence Review, only after real tester submissions exist
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -79,9 +82,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback
-当前状态：REAL_PRIVATE_BETA_FEEDBACK_COLLECTION_READY_AWAITING_SUBMISSIONS
-下一阶段建议：Phase 26 Real Private Beta Feedback Collection Review / Decision Gate
+Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window
+当前状态：REAL_PRIVATE_BETA_COLLECTION_WINDOW_READY_AWAITING_SUBMISSIONS
+当前决策：CONTINUE_COLLECTION
+下一阶段建议：Continue Real Private Beta Round 1 collection; Phase 27 review readiness only after real tester submissions exist
 ```
 
 ---
