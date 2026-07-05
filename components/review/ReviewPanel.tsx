@@ -189,8 +189,8 @@ export function ReviewPanel({
       <ReviewStageHeader
         index="01"
         icon={<Route className="h-4 w-4" />}
-        title="Prompt Handoff And Scoped Runner"
-        description="Review the generated prompt first, then run only the scoped Codex path after the unchanged confirmations are checked."
+        title="Prompt Handoff / Optional Scoped Runner"
+        description="Review the generated prompt first. Optional local Codex execution is available only after the unchanged confirmations are checked."
       />
       <section className="grid gap-4 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
         <div className="space-y-4">

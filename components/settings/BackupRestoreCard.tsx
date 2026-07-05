@@ -75,7 +75,7 @@ export function BackupRestoreCard({
                 <form action={restoreDryRunAction}>
                   <input type="hidden" name="backupRecordId" value={record.id} />
                   <button className="rounded-[12px] border border-sky-200/16 bg-sky-200/8 px-3 py-2 text-xs font-bold text-sky-100 hover:bg-sky-200/12">
-                    Dry Run Restore: check only
+                    Dry Run Restore: validate only
                   </button>
                 </form>
                 <form action={confirmRestoreAction}>
@@ -88,6 +88,9 @@ export function BackupRestoreCard({
                   </button>
                 </form>
               </div>
+              <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                Confirm restore stays disabled until a dry run passes. Confirm restore creates a safety backup before replacing the app SQLite database.
+              </p>
             </div>
           ))
         ) : (

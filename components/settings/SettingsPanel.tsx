@@ -125,13 +125,13 @@ export function SettingsPanel({
         <SettingsCard
           icon={<Github className="h-4 w-4 text-slate-100/80" />}
           title="GitHub remote status"
-          badge="Remote configured"
+          badge="Static remote display"
           rows={[
             ["Remote", "https://github.com/RyanTeo6699/Codex-Visual-Office.git"],
             ["GitHub API", "Not connected"],
             ["Remote account sync", "Not implemented"],
           ]}
-          note="Static project remote display only. No GitHub API call is made."
+          note="Static project remote display only. No GitHub API call is made and no remote sync is attempted."
         />
 
         <SettingsCard

@@ -134,7 +134,7 @@ export default async function ProjectRoom({ params }: { params: Promise<{ id: st
           />
           <Link href={recommendedAction.href} className="group flex min-h-32 flex-col justify-between border border-cyan-200/14 bg-cyan-200/[0.045] p-4 transition hover:border-cyan-100/30 hover:bg-cyan-200/[0.07]">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Recommended next action</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Suggested manual next step</p>
               <ArrowUpRight className="h-4 w-4 text-cyan-100/70 transition group-hover:text-white" />
             </div>
             <div>

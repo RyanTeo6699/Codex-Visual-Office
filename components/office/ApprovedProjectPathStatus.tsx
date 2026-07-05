@@ -15,7 +15,7 @@ export function ApprovedProjectPathStatus({
           <h2 className="text-sm font-bold tracking-tight text-slate-100">Local Project Path</h2>
         </div>
         <span className={primaryPath ? "border border-emerald-200/16 bg-emerald-200/8 px-2 py-1 text-[10px] font-semibold text-emerald-100" : "border border-amber-200/14 bg-amber-200/8 px-2 py-1 text-[10px] font-semibold text-amber-100"}>
-          {primaryPath ? "approved path exists" : "not configured"}
+          {primaryPath ? "typed approved path saved" : "not configured"}
         </span>
       </div>
 
@@ -33,7 +33,7 @@ export function ApprovedProjectPathStatus({
         </div>
       ) : (
         <p className="mt-4 border border-white/[0.04] bg-white/[0.025] px-3 py-2.5 text-xs leading-relaxed text-slate-500">
-          No approved local path is saved for this project yet.
+          No approved local path is saved for this project yet. Add one manually in Settings; the app does not scan folders or read source files to find it.
         </p>
       )}
 

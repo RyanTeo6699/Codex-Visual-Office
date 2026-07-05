@@ -14,7 +14,7 @@ export function CleanupDryRunPreviewCard({ preview }: { preview: CleanupDryRunPr
         </span>
       </div>
       <p className="mt-3 text-xs leading-relaxed text-amber-100">
-        Cleanup preview is dry-run only. No data is deleted in Phase 6 Step 4. Backup files are never deleted by this step.
+        Cleanup preview is dry-run only for the private beta. No data or backup files are deleted by this room.
       </p>
       <div className="mt-4 grid gap-3 md:grid-cols-[0.8fr_1.2fr]">
         <div className="rounded-[14px] border border-amber-200/14 bg-black/18 px-3 py-3">

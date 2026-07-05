@@ -2,9 +2,9 @@
 
 | Issue type | Required fix phase | Blocks private beta? | Blocks public beta? | Blocks commercial release? | Can be known limitation? | Recommended action |
 | --- | --- | --- | --- | --- | --- | --- |
-| data loss | Phase 21 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Stop expansion, reproduce, fix, verify, document. |
-| safety boundary breach | Phase 21 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Escalate immediately; verify no token/env/destructive exposure. |
-| auto execution bug | Phase 21 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Fix before continuing beta if Codex/Git/Quality runs without explicit user action. |
+| data loss | Phase 22 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Stop expansion, reproduce, fix, verify, document. |
+| safety boundary breach | Phase 22 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Escalate immediately; verify no token/env/destructive exposure. |
+| auto execution bug | Phase 22 - Private Beta Fix Batch 1 | Yes | Yes | Yes | No | Fix before continuing beta if Codex/Git/Quality runs without explicit user action. |
 | route crash | Phase 21 unless isolated | Usually | Yes if common | Yes if common | Sometimes | Fix common core-route crashes; document isolated environment issues. |
 | setup failure | Phase 21 or docs patch | If broad | Yes if broad | Yes | Sometimes | Identify environment pattern; fix docs or setup path. |
 | Codex runtime confusion | Phase 21 or documentation fix | No unless blocking | Possibly | Possibly | Yes | Clarify status/auth unknown/execution boundaries. |

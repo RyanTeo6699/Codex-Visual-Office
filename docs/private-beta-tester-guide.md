@@ -4,6 +4,8 @@
 
 This is a private local beta for Codex Visual Office. It validates the local-first workflow through source checkout, local npm scripts, local SQLite, and browser-based launcher flow.
 
+`http://localhost:3000` is served from your own machine. It is not a hosted preview, cloud tenant, or remote workspace.
+
 ## What This Beta Is Not
 
 - Not a public commercial release.
@@ -25,6 +27,13 @@ This is a private local beta for Codex Visual Office. It validates the local-fir
 6. Run `npm run dev`.
 7. Open `http://localhost:3000`.
 
+Expected local DB verification markers:
+
+- `npm run db:init` completes without a migration/schema error.
+- `npm run db:seed` completes without duplicating required seed records.
+- `npm run db:verify` prints counts for local records and exits successfully.
+- Counts can differ from examples if an existing `.local` database already contains verification records.
+
 ## How To Open Browser Launcher
 
 - Run `npm run local:launcher:verify` to verify launcher readiness.
@@ -38,6 +47,13 @@ This is a private local beta for Codex Visual Office. It validates the local-fir
 3. Add an explicit local project path manually.
 4. Do not add token files, `.env`, `.env.local`, or `~/.codex/auth.json`.
 5. Do not expect folder picker or full-disk scan behavior.
+6. If Review Room says the approved path is missing, return to `/settings` and add the path manually. Saving a path does not scan folders, read source files, or run Codex/Git/Quality Gates.
+
+## How To Interpret Codex Runtime Status
+
+- Codex CLI is optional for setup, but required to evaluate scoped Codex runner workflows.
+- `Auth unknown` does not mean the app read `~/.codex/auth.json`; it means the app did not verify login state.
+- Manage Codex login outside this app.
 
 ## How To Inspect Office Home
 
@@ -64,12 +80,15 @@ This is a private local beta for Codex Visual Office. It validates the local-fir
 
 - Open `/settings`.
 - Review Backup / Restore status.
-- Use dry-run before confirm restore.
+- Use Dry Run Restore before Confirm Restore. Dry-run validates the selected app SQLite backup record and does not overwrite the current DB.
+- Confirm Restore should only become available after dry-run passes and should create a pre-restore safety backup first.
 - Confirm backup is only for the app SQLite DB, not source projects or credentials.
 
 ## How To Report Issues
 
 Use `docs/private-beta-issue-report-template.md` for bugs and `docs/private-beta-feedback-template.md` for general beta feedback.
+
+Do not attach or paste secrets, tokens, `.env`, `.env.local`, `~/.codex/auth.json`, full source archives, or full database files.
 
 ## What Not To Test
 

@@ -120,7 +120,7 @@ export function ScopedCodexRunnerPanel({
 
       <div className="mt-4 border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
         {hasApprovedProjectPath
-          ? "This will run Codex CLI locally for this task only. It will not auto commit, push, or deploy."
+          ? "This will run Codex CLI locally for this task only. It will not auto commit, push, or deploy. Codex auth is not inspected here; auth unknown may still require user login outside this app."
           : "Missing approved project path. Add a manual approved path in Settings before running this task."}
       </div>
 

@@ -42,7 +42,7 @@ export function ArchiveRoomPanel({
           </div>
         </div>
         <div className="mt-3 rounded-[14px] border border-amber-200/14 bg-amber-200/[0.045] p-3 text-xs leading-relaxed text-amber-100">
-          Cleanup preview is dry-run only. No data is deleted in this RC candidate. Backup files are never deleted by this room.
+          Cleanup preview is dry-run only for the private beta. No data is deleted. Backup files are never deleted by this room.
         </div>
       </section>
 

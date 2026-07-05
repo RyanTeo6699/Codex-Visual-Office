@@ -1,5 +1,9 @@
 # Private Beta Feedback Template
 
+## Safety Warning
+
+Do not include tokens, passwords, private keys, credential-bearing logs, `.env`, `.env.local`, `~/.codex/auth.json`, full SQLite databases, or full source archives in this feedback.
+
 ## Tester
 
 - Tester name (optional):

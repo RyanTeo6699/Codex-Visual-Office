@@ -66,7 +66,7 @@ export function ReviewDecisionPanel({
         <DecisionButton
           icon={<RotateCcw className="h-4 w-4" />}
           title="Ask Revision"
-          description="Request another implementation pass."
+          description="Record that revision is needed."
           disabled={isPending}
           className="border-amber-200/24 bg-amber-200/10 text-amber-100 hover:bg-amber-200/16"
           onClick={() => onDecision("revision_requested")}

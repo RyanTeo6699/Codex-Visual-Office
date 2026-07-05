@@ -69,7 +69,7 @@ export function CodexRuntimeReliabilityCard({
 
       <div className="mt-3 flex gap-2 rounded-[14px] border border-emerald-200/12 bg-emerald-200/[0.04] p-3 text-xs leading-relaxed text-emerald-100">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
-        <p>Safety note: no token, auth file, ~/.codex/auth.json, .env, or .env.local content is read.</p>
+        <p>Safety note: no token, auth file, ~/.codex/auth.json, .env, or .env.local content is read. Auth unknown means the app did not verify login state.</p>
       </div>
 
       <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">

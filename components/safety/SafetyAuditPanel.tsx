@@ -74,7 +74,7 @@ export function SafetyAuditPanel({
             </div>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-white">Safety Audit Room</h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
-              Read-only safety review for the local visual office. This room checks permissions, launch boundaries, storage behavior, and forbidden capability signals without adding execution controls.
+              Read-only private beta safety review for the local visual office. This room checks permissions, launch boundaries, storage behavior, and forbidden capability signals without adding execution controls.
             </p>
           </div>
           <div className="grid min-w-[240px] gap-2 text-xs font-semibold text-slate-300">
@@ -132,8 +132,8 @@ export function SafetyAuditPanel({
           rows={[
             ["Retention policies", `${enabledRetentionPolicies} enabled / ${retentionPolicies.length} configured`],
             ["Cleanup preview", `${cleanupPreview.totalWouldDeleteCount} records marked would-delete`],
-            ["Data deletion", cleanupPreview.dataDeleted ? "Detected" : "Not implemented"],
-            ["Backup deletion", cleanupPreview.backupFilesDeleted ? "Detected" : "Not implemented"],
+            ["Data deletion", cleanupPreview.dataDeleted ? "Detected" : "No delete action available"],
+            ["Backup deletion", cleanupPreview.backupFilesDeleted ? "Detected" : "No delete action available"],
           ]}
         />
 

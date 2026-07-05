@@ -34,9 +34,18 @@ Manual tester setup should follow project docs:
 8. Verify launcher with `npm run local:launcher:verify`.
 9. Use `npm run local:launcher -- --json` for status-only launcher output.
 
+Expected setup success markers:
+
+- `npm run db:init` completes without schema or migration errors.
+- `npm run db:seed` completes without duplicating required seed data.
+- `npm run db:verify` exits successfully and prints local record counts.
+- Existing `.local` databases can produce counts that differ from a fresh checkout; treat successful verifier exit as the primary marker.
+- `http://localhost:3000` is served from the tester's own machine, not a hosted cloud preview.
+
 ## Required Checks Before Tester Handoff
 
 - `npm run beta:verify:private`
+- `npm run beta:verify:fix-batch`
 - `npm run release:verify:strategy`
 - `npm run production:verify:freeze`
 - `npm run rc:verify:readiness`

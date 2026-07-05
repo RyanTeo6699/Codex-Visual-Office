@@ -68,16 +68,16 @@ NO_GO_BLOCKED
 - No signing, notarization, or auto updater was added.
 - No cloud, auth, payment, team, MCP, OpenAI API, GitHub API, Vercel, or Supabase integration was added.
 
-## Recommended Phase 21
+## Recommended Next Phase
 
 GM should choose one of:
 
 ```txt
-Phase 21 - Private Beta Fix Batch 1
-Phase 21 - Public Beta Scope Lock
+Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
+Future fix batch after dry-run or real beta findings
 ```
 
-Recommended default: `Phase 21 - Private Beta Fix Batch 1` if real beta feedback produces P0/P1/P2 items. If feedback is clean and setup success is high, GM may choose `Phase 21 - Public Beta Scope Lock`.
+Historical note: Phase 21 was completed as a dry-run / feedback simulation. Phase 22 is now the private beta fix batch that addresses low-risk dry-run findings before real beta execution.
 
 ## Explicit Phase Status
 

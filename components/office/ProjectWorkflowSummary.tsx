@@ -86,7 +86,7 @@ export function ProjectWorkflowSummary({
         <div className="border border-emerald-200/12 bg-[#0d1724]/72 p-4">
           <div className="flex items-center gap-2">
             <History className="h-4 w-4 text-emerald-100/80" />
-            <h2 className="text-sm font-bold tracking-tight text-slate-100">Codex Run History</h2>
+            <h2 className="text-sm font-bold tracking-tight text-slate-100">Recorded Codex Run History</h2>
           </div>
           <div className="mt-4 space-y-2">
             {runHistory.length ? runHistory.slice(0, 4).map((item) => (

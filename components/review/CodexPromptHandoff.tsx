@@ -77,7 +77,7 @@ export function CodexPromptHandoff({
         </button>
         <button disabled={isPending} onClick={() => recordHandoff("mark_ready")} className="inline-flex items-center gap-2 border border-sky-200/18 bg-sky-200/10 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:bg-sky-200/14 disabled:cursor-not-allowed disabled:opacity-50">
           <ShieldCheck className="h-4 w-4" />
-          Mark Ready for Codex
+          Record Prompt Ready
         </button>
         <button disabled={isPending} onClick={() => recordHandoff("dry_run_dispatch")} className="inline-flex items-center gap-2 border border-emerald-200/20 bg-emerald-200/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-200/14 disabled:cursor-not-allowed disabled:opacity-50">
           <SendHorizontal className="h-4 w-4" />

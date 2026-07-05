@@ -116,7 +116,7 @@ export function ApprovedProjectPathsCard({
             </button>
           </div>
           <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
-            String validation only. Saving this record does not inspect the path, read package.json, import projects, run Git, start Codex, or trigger Quality Gates.
+            String validation only. Saving marks this typed string as approved; it does not verify the folder exists, inspect files, parse project manifests, register projects automatically, run Git, start Codex, or trigger Quality Gates.
           </p>
         </form>
       </div>
