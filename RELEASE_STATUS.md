@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 27
+## Latest Baseline Commit Before Phase 28
 
-`60d97cf docs: manage private beta collection window`
+`572564b docs: prepare real tester outreach packet`
 
 ## Final Phase Status
 
@@ -178,6 +178,33 @@ GM may manually send real tester invitations using the outreach packet, then con
 
 Phase 28 feedback review should not begin until at least one real tester submission is recorded and GM confirms evidence source and sensitive-data handling, unless GM explicitly chooses a no-submission review.
 
+## Real Private Beta Feedback Decision Status
+
+Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision.
+
+Phase 28 records one GM / local validation sample. The sample passed local install/init/build/start/page checks and found no confirmed issues in that single-machine validation.
+
+No external tester feedback has been recorded yet. This does not mark private beta round 1 complete and does not make public beta or public release ready.
+
+Phase 28 local validation status:
+
+```txt
+LOCAL_VALIDATION_SAMPLE_PASS
+```
+
+Fix Batch 2 decision:
+
+```txt
+NO_FIX_BATCH_2_REQUIRED_FROM_THIS_SAMPLE
+CONTINUE_PRIVATE_BETA_COLLECTION
+```
+
+Recommended next phase:
+
+```txt
+Phase 29 - Continue Real Private Beta Collection / External Tester Intake
+```
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -232,6 +259,7 @@ Phase 28 feedback review should not begin until at least one real tester submiss
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:feedback-decision
 npm run beta:verify:outreach
 npm run beta:verify:collection-window
 npm run beta:verify:feedback-collection
@@ -261,8 +289,9 @@ git diff --check
 
 ## Next Possible Phases
 
-- Continue Real Private Beta Round 1 outreach and collection while submissions remain absent.
-- Phase 28 - Private Beta Feedback Review / Evidence Review, only after real tester submissions exist or GM explicitly chooses a no-submission review.
+- Continue Real Private Beta Round 1 collection with external tester intake.
+- Phase 29 - Continue Real Private Beta Collection / External Tester Intake.
+- Future external tester feedback review after real external tester submissions exist.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.
 - Future Phase - Blocked Safety/Data Response, if P0/P1 safety or data issues are confirmed.

@@ -332,6 +332,45 @@ Phase 27 does not fabricate tester feedback, fake tester counts, fake invitation
 - Current decision: `CONTINUE_COLLECTION`.
 - Recommended next step: GM may manually send real tester invitations using the outreach packet and continue collection until real submissions exist.
 
+## Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision
+
+### Goal
+
+Review the available real private beta evidence, record the GM / local validation sample, assess confirmed issues, decide whether Fix Batch 2 is required from this sample, and recommend the next private beta step without fabricating tester feedback.
+
+### Allowed
+
+- Phase 28 scope lock.
+- Local validation feedback record.
+- Feedback ledger review update.
+- Issue triage review update.
+- Fix Batch 2 decision report.
+- Phase 29 recommendation.
+- Static feedback decision verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 28 does not fabricate tester feedback, fake tester counts, fake issue counts, fake setup success rates, mark beta complete, mark public beta ready, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, or Phase 29 work.
+
+### Output
+
+- Phase 28 feedback decision scope lock.
+- GM local validation feedback record.
+- Feedback ledger review update.
+- Issue triage review update.
+- Fix Batch 2 decision report.
+- Phase 29 recommendation.
+- `beta:verify:feedback-decision`.
+- Roadmap and release status updates.
+
+### Status
+
+- Local validation conclusion: `LOCAL_VALIDATION_SAMPLE_PASS`.
+- Fix Batch 2 decision: `NO_FIX_BATCH_2_REQUIRED_FROM_THIS_SAMPLE`.
+- Current decision: `CONTINUE_PRIVATE_BETA_COLLECTION`.
+- Recommended next step: `Phase 29 - Continue Real Private Beta Collection / External Tester Intake`.
+
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 
 ### Goal

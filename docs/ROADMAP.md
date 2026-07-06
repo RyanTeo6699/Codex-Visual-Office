@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 27:
+Current GM-approved status as of Phase 28:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -28,8 +28,9 @@ Phase 24：Real Private Beta Feedback Review / Decision Gate completed with AWAI
 Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback package ready, awaiting submissions
 Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window completed with CONTINUE_COLLECTION
 Phase 27：Continue Collection / Real Tester Outreach Execution Packet completed with CONTINUE_COLLECTION
-Current status：REAL_TESTER_OUTREACH_PACKET_READY_AWAITING_INVITATIONS_OR_SUBMISSIONS
-Next recommendation：GM may manually send real tester invitations using the outreach packet; Phase 28 feedback review only after real submissions exist
+Phase 28：Real Private Beta Feedback Review / Fix Batch Decision completed from one GM local validation sample
+Current status：LOCAL_VALIDATION_SAMPLE_PASS / CONTINUE_PRIVATE_BETA_COLLECTION
+Next recommendation：Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -73,6 +74,7 @@ Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback
 Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window
 Phase 27：Continue Collection / Real Tester Outreach Execution Packet
 Phase 28：Private Beta Feedback Review / Evidence Review, only after real tester submissions exist
+Phase 29：Continue Real Private Beta Collection / External Tester Intake
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -84,10 +86,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 27：Continue Collection / Real Tester Outreach Execution Packet
-当前状态：REAL_TESTER_OUTREACH_PACKET_READY_AWAITING_INVITATIONS_OR_SUBMISSIONS
+Phase 28：Real Private Beta Feedback Review / Fix Batch Decision
+当前状态：LOCAL_VALIDATION_SAMPLE_PASS / CONTINUE_PRIVATE_BETA_COLLECTION
 当前决策：CONTINUE_COLLECTION
-下一阶段建议：GM may manually send real tester invitations; Phase 28 feedback review only after real tester submissions exist
+下一阶段建议：Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 ```
 
 ---
