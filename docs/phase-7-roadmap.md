@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 30.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 31.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -42,6 +42,7 @@ Phase 27 - Continue Collection / Real Tester Outreach Execution Packet
 Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 Phase 30 - Private Beta Ops Automation / Internal Execution Pack
+Phase 31 - Local Beta Feedback Intake / Ledger UI
 ```
 
 ## Dependency Order
@@ -49,10 +50,43 @@ Phase 30 - Private Beta Ops Automation / Internal Execution Pack
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30 -> 31
 ```
 
 No later phase should start without explicit GM approval.
+
+## Phase 31 - Local Beta Feedback Intake / Ledger UI
+
+### Goal
+
+Add a local-only manual feedback intake desk to the Beta Ops Room so real external tester records, redacted feedback, and redacted issue triage can be entered into SQLite without external integrations or fake evidence.
+
+### Allowed
+
+- `beta_tester_records`, `beta_feedback_records`, and `beta_issue_records`.
+- Manual `/beta` tester, feedback, and issue forms.
+- Local intake summary and ledgers.
+- String-level sensitive input guard.
+- Local bounded report export helper.
+- `beta:verify:intake-ui`.
+
+### Boundaries
+
+Phase 31 must not send invitations, connect to email or messaging providers, upload feedback, call external APIs, seed fake tester submissions, store contact details, store tokens or credentials, read `~/.codex/auth.json`, read `.env` or `.env.local`, add command execution, perform automatic Codex/Git/Quality Gate execution, claim beta completion, or start Phase 32.
+
+### Output
+
+- Phase 31 scope lock.
+- Local beta intake data model.
+- Beta Ops Room intake UI.
+- Local intake export helper.
+- Phase 31 implementation summary.
+
+### Status
+
+- Phase 31 provides local intake infrastructure.
+- Current status: `LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS`.
+- Recommended next action: manually record real, redacted external tester feedback before any Phase 32 decision.
 
 ## Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 

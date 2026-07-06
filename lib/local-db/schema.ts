@@ -5,6 +5,18 @@ import type {
   ApprovedProjectPathApprovalSource,
   BackupKind,
   BackupRecordStatus,
+  BetaConsentStatus,
+  BetaEvidenceType,
+  BetaFeedbackSourceType,
+  BetaFeedbackStatus,
+  BetaInvitationStatus,
+  BetaIssueDecision,
+  BetaOnboardingStatus,
+  BetaPriority,
+  BetaRecordStatus,
+  BetaReproStatus,
+  BetaSeverity,
+  BetaTesterType,
   BuildStatus,
   EventTone,
   FileChangeStatus,
@@ -68,6 +80,18 @@ export const retentionTargets = [
   "verify_target",
 ] as const satisfies readonly RetentionTarget[];
 export const retentionModes = ["dry_run_only"] as const satisfies readonly RetentionMode[];
+export const betaTesterTypes = ["external_real_tester", "gm_local_validation", "support_observation"] as const satisfies readonly BetaTesterType[];
+export const betaConsentStatuses = ["not_sent", "pending", "acknowledged", "declined"] as const satisfies readonly BetaConsentStatus[];
+export const betaInvitationStatuses = ["not_invited", "invited", "declined", "accepted", "no_response"] as const satisfies readonly BetaInvitationStatus[];
+export const betaOnboardingStatuses = ["not_started", "attempted", "passed", "failed", "blocked"] as const satisfies readonly BetaOnboardingStatus[];
+export const betaFeedbackStatuses = ["not_requested", "pending", "submitted", "triaged", "closed"] as const satisfies readonly BetaFeedbackStatus[];
+export const betaFeedbackSourceTypes = ["external_real_tester", "gm_local_validation", "support_observation", "simulated_reference", "placeholder"] as const satisfies readonly BetaFeedbackSourceType[];
+export const betaEvidenceTypes = ["redacted_screenshot", "redacted_log_note", "environment_summary", "repro_steps", "route_page", "observed_error", "none"] as const satisfies readonly BetaEvidenceType[];
+export const betaSeverities = ["p0", "p1", "p2", "p3", "pending"] as const satisfies readonly BetaSeverity[];
+export const betaPriorities = ["critical", "high", "medium", "low", "pending"] as const satisfies readonly BetaPriority[];
+export const betaRecordStatuses = ["pending", "submitted", "triaged", "closed", "blocked"] as const satisfies readonly BetaRecordStatus[];
+export const betaReproStatuses = ["not_attempted", "reproduced", "not_reproduced", "needs_more_info", "not_applicable"] as const satisfies readonly BetaReproStatus[];
+export const betaIssueDecisions = ["fix_batch_candidate", "known_limitation", "needs_more_evidence", "no_action", "defer"] as const satisfies readonly BetaIssueDecision[];
 export const projectAccents = ["cyan", "teal", "amber", "red", "violet"] as const;
 
 export const projects = sqliteTable("projects", {
@@ -294,6 +318,53 @@ export const qualityGateEvents = sqliteTable("quality_gate_events", {
   createdAt: text("created_at").notNull(),
 });
 
+export const betaTesterRecords = sqliteTable("beta_tester_records", {
+  id: text("id").primaryKey(),
+  testerLabel: text("tester_label").notNull(),
+  testerType: text("tester_type", { enum: betaTesterTypes }).notNull(),
+  environmentJson: text("environment_json").notNull().default("{}"),
+  consentStatus: text("consent_status", { enum: betaConsentStatuses }).notNull(),
+  invitationStatus: text("invitation_status", { enum: betaInvitationStatuses }).notNull(),
+  onboardingStatus: text("onboarding_status", { enum: betaOnboardingStatuses }).notNull(),
+  feedbackStatus: text("feedback_status", { enum: betaFeedbackStatuses }).notNull(),
+  notes: text("notes").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const betaFeedbackRecords = sqliteTable("beta_feedback_records", {
+  id: text("id").primaryKey(),
+  testerId: text("tester_id").notNull().references(() => betaTesterRecords.id),
+  sourceType: text("source_type", { enum: betaFeedbackSourceTypes }).notNull(),
+  area: text("area").notNull(),
+  summary: text("summary").notNull(),
+  evidenceType: text("evidence_type", { enum: betaEvidenceTypes }).notNull(),
+  severity: text("severity", { enum: betaSeverities }).notNull(),
+  priority: text("priority", { enum: betaPriorities }).notNull(),
+  status: text("status", { enum: betaRecordStatuses }).notNull(),
+  sensitiveDataChecked: integer("sensitive_data_checked", { mode: "boolean" }).notNull(),
+  notes: text("notes").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const betaIssueRecords = sqliteTable("beta_issue_records", {
+  id: text("id").primaryKey(),
+  feedbackId: text("feedback_id").notNull().references(() => betaFeedbackRecords.id),
+  area: text("area").notNull(),
+  summary: text("summary").notNull(),
+  severity: text("severity", { enum: betaSeverities }).notNull(),
+  priority: text("priority", { enum: betaPriorities }).notNull(),
+  reproStatus: text("repro_status", { enum: betaReproStatuses }).notNull(),
+  safetyDataImpact: text("safety_data_impact").notNull().default(""),
+  decision: text("decision", { enum: betaIssueDecisions }).notNull(),
+  targetPhase: text("target_phase").notNull().default(""),
+  status: text("status", { enum: betaRecordStatuses }).notNull(),
+  notes: text("notes").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
 export const projectsRelations = relations(projects, ({ many }) => ({
   agentSeats: many(agentSeats),
   tasks: many(tasks),
@@ -303,6 +374,25 @@ export const projectsRelations = relations(projects, ({ many }) => ({
   qualityGateConfigs: many(qualityGateConfigs),
   qualityGateRuns: many(qualityGateRuns),
   qualityGateEvents: many(qualityGateEvents),
+}));
+
+export const betaTesterRecordsRelations = relations(betaTesterRecords, ({ many }) => ({
+  feedbackRecords: many(betaFeedbackRecords),
+}));
+
+export const betaFeedbackRecordsRelations = relations(betaFeedbackRecords, ({ one, many }) => ({
+  tester: one(betaTesterRecords, {
+    fields: [betaFeedbackRecords.testerId],
+    references: [betaTesterRecords.id],
+  }),
+  issueRecords: many(betaIssueRecords),
+}));
+
+export const betaIssueRecordsRelations = relations(betaIssueRecords, ({ one }) => ({
+  feedback: one(betaFeedbackRecords, {
+    fields: [betaIssueRecords.feedbackId],
+    references: [betaFeedbackRecords.id],
+  }),
 }));
 
 export const agentSeatsRelations = relations(agentSeats, ({ one, many }) => ({

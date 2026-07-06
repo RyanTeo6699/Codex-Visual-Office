@@ -42,6 +42,18 @@ export type RetentionTarget =
   | "backup_records"
   | "verify_target";
 export type RetentionMode = "dry_run_only";
+export type BetaTesterType = "external_real_tester" | "gm_local_validation" | "support_observation";
+export type BetaConsentStatus = "not_sent" | "pending" | "acknowledged" | "declined";
+export type BetaInvitationStatus = "not_invited" | "invited" | "declined" | "accepted" | "no_response";
+export type BetaOnboardingStatus = "not_started" | "attempted" | "passed" | "failed" | "blocked";
+export type BetaFeedbackStatus = "not_requested" | "pending" | "submitted" | "triaged" | "closed";
+export type BetaFeedbackSourceType = "external_real_tester" | "gm_local_validation" | "support_observation" | "simulated_reference" | "placeholder";
+export type BetaEvidenceType = "redacted_screenshot" | "redacted_log_note" | "environment_summary" | "repro_steps" | "route_page" | "observed_error" | "none";
+export type BetaSeverity = "p0" | "p1" | "p2" | "p3" | "pending";
+export type BetaPriority = "critical" | "high" | "medium" | "low" | "pending";
+export type BetaRecordStatus = "pending" | "submitted" | "triaged" | "closed" | "blocked";
+export type BetaReproStatus = "not_attempted" | "reproduced" | "not_reproduced" | "needs_more_info" | "not_applicable";
+export type BetaIssueDecision = "fix_batch_candidate" | "known_limitation" | "needs_more_evidence" | "no_action" | "defer";
 
 export interface Project {
   id: string;
@@ -217,6 +229,53 @@ export interface QualityGateEvent {
   eventType: QualityGateEventType;
   payload: Record<string, unknown>;
   createdAt: string;
+}
+
+export interface BetaTesterRecord {
+  id: string;
+  testerLabel: string;
+  testerType: BetaTesterType;
+  environment: Record<string, unknown>;
+  consentStatus: BetaConsentStatus;
+  invitationStatus: BetaInvitationStatus;
+  onboardingStatus: BetaOnboardingStatus;
+  feedbackStatus: BetaFeedbackStatus;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BetaFeedbackRecord {
+  id: string;
+  testerId: string;
+  sourceType: BetaFeedbackSourceType;
+  area: string;
+  summary: string;
+  evidenceType: BetaEvidenceType;
+  severity: BetaSeverity;
+  priority: BetaPriority;
+  status: BetaRecordStatus;
+  sensitiveDataChecked: boolean;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BetaIssueRecord {
+  id: string;
+  feedbackId: string;
+  area: string;
+  summary: string;
+  severity: BetaSeverity;
+  priority: BetaPriority;
+  reproStatus: BetaReproStatus;
+  safetyDataImpact: string;
+  decision: BetaIssueDecision;
+  targetPhase: string;
+  status: BetaRecordStatus;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LocalSetting {

@@ -178,6 +178,30 @@ GM may manually send real tester invitations using the outreach packet, then con
 
 Phase 28 feedback review should not begin until at least one real tester submission is recorded and GM confirms evidence source and sensitive-data handling, unless GM explicitly chooses a no-submission review.
 
+## Local Beta Feedback Intake Status
+
+Phase 31 - Local Beta Feedback Intake / Ledger UI.
+
+Phase 31 adds a local-only manual intake desk to the Beta Ops Room. It records anonymized tester records, redacted feedback records, and redacted issue records in local SQLite only. It does not send invitations, call external APIs, upload feedback, connect to messaging services, fabricate tester submissions, or claim beta completion.
+
+Phase 31 local intake status:
+
+```txt
+LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS
+```
+
+Current decision:
+
+```txt
+CONTINUE_MANUAL_EXTERNAL_TESTER_COLLECTION
+```
+
+Recommended next step:
+
+```txt
+Manually collect real tester feedback, record redacted local intake entries in /beta, then review the real evidence before Phase 32.
+```
+
 ## Real Private Beta Feedback Decision Status
 
 Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision.

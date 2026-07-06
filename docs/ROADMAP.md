@@ -31,8 +31,9 @@ Phase 27：Continue Collection / Real Tester Outreach Execution Packet completed
 Phase 28：Real Private Beta Feedback Review / Fix Batch Decision completed from one GM local validation sample
 Phase 29：Continue Real Private Beta Collection / External Tester Intake ready, awaiting external submissions
 Phase 30：Private Beta Ops Automation / Internal Execution Pack ready, awaiting external submissions
-Current status：BETA_OPS_READY_AWAITING_EXTERNAL_TESTER_SUBMISSIONS
-Next recommendation：Use the local Beta Ops execution pack to collect real external tester submissions
+Phase 31：Local Beta Feedback Intake / Ledger UI ready, awaiting real external records
+Current status：LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS
+Next recommendation：Manually record real, redacted external tester intake in /beta before any Phase 32 review
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -78,6 +79,7 @@ Phase 27：Continue Collection / Real Tester Outreach Execution Packet
 Phase 28：Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29：Continue Real Private Beta Collection / External Tester Intake
 Phase 30：Private Beta Ops Automation / Internal Execution Pack
+Phase 31：Local Beta Feedback Intake / Ledger UI
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -89,10 +91,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 30：Private Beta Ops Automation / Internal Execution Pack
-当前状态：BETA_OPS_READY_AWAITING_EXTERNAL_TESTER_SUBMISSIONS
+Phase 31：Local Beta Feedback Intake / Ledger UI
+当前状态：LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS
 当前决策：CONTINUE_EXTERNAL_TESTER_INTAKE
-下一阶段建议：使用本地 Beta Ops execution pack，直到存在真实 external tester submissions
+下一阶段建议：继续手动收集真实 external tester submissions，并在 /beta 录入已脱敏本地记录
 ```
 
 ---

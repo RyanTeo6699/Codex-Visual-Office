@@ -229,5 +229,52 @@ export function initializeLocalDb(): void {
       payload_json TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS beta_tester_records (
+      id TEXT PRIMARY KEY,
+      tester_label TEXT NOT NULL,
+      tester_type TEXT NOT NULL,
+      environment_json TEXT NOT NULL DEFAULT '{}',
+      consent_status TEXT NOT NULL,
+      invitation_status TEXT NOT NULL,
+      onboarding_status TEXT NOT NULL,
+      feedback_status TEXT NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS beta_feedback_records (
+      id TEXT PRIMARY KEY,
+      tester_id TEXT NOT NULL REFERENCES beta_tester_records(id),
+      source_type TEXT NOT NULL,
+      area TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      evidence_type TEXT NOT NULL,
+      severity TEXT NOT NULL,
+      priority TEXT NOT NULL,
+      status TEXT NOT NULL,
+      sensitive_data_checked INTEGER NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS beta_issue_records (
+      id TEXT PRIMARY KEY,
+      feedback_id TEXT NOT NULL REFERENCES beta_feedback_records(id),
+      area TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      severity TEXT NOT NULL,
+      priority TEXT NOT NULL,
+      repro_status TEXT NOT NULL,
+      safety_data_impact TEXT NOT NULL DEFAULT '',
+      decision TEXT NOT NULL,
+      target_phase TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
 }

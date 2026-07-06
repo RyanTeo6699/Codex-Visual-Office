@@ -1,11 +1,40 @@
 import Link from "next/link";
+import type { BetaIntakeActionState } from "@/app/beta/actions";
 import { BetaNextActionCard } from "./BetaNextActionCard";
+import { BetaFeedbackLedger } from "./BetaFeedbackLedger";
+import { BetaIntakeExportCard } from "./BetaIntakeExportCard";
+import { BetaIntakeForm } from "./BetaIntakeForm";
+import { BetaIntakeSummaryCard } from "./BetaIntakeSummaryCard";
+import { BetaIssueLedger } from "./BetaIssueLedger";
 import { BetaOpsSummaryCard } from "./BetaOpsSummaryCard";
 import { BetaOutreachPacketCard } from "./BetaOutreachPacketCard";
+import { BetaTesterLedger } from "./BetaTesterLedger";
 import { BetaTrackerStatusCard } from "./BetaTrackerStatusCard";
+import type { BetaIntakeSummary } from "@/lib/beta-ops/beta-intake-types";
 import type { BetaOpsSummary } from "@/lib/beta-ops/beta-ops-types";
+import type { BetaFeedbackRecord, BetaIssueRecord, BetaTesterRecord } from "@/lib/types";
 
-export function BetaOpsPanel({ summary }: { summary: BetaOpsSummary }) {
+type Action = (state: BetaIntakeActionState, formData: FormData) => Promise<BetaIntakeActionState>;
+
+export function BetaOpsPanel({
+  summary,
+  intakeSummary,
+  testers,
+  feedback,
+  issues,
+  createTesterAction,
+  createFeedbackAction,
+  createIssueAction,
+}: {
+  summary: BetaOpsSummary;
+  intakeSummary: BetaIntakeSummary;
+  testers: BetaTesterRecord[];
+  feedback: BetaFeedbackRecord[];
+  issues: BetaIssueRecord[];
+  createTesterAction: Action;
+  createFeedbackAction: Action;
+  createIssueAction: Action;
+}) {
   return (
     <div className="space-y-5">
       <section className="overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_82%_12%,rgba(56,189,248,0.14),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(8,13,22,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)]">
@@ -44,6 +73,20 @@ export function BetaOpsPanel({ summary }: { summary: BetaOpsSummary }) {
         <BetaOpsSummaryCard summary={summary} />
         <BetaNextActionCard summary={summary} />
       </div>
+      <BetaIntakeSummaryCard summary={intakeSummary} />
+      <BetaIntakeForm
+        testers={testers}
+        feedback={feedback}
+        createTesterAction={createTesterAction}
+        createFeedbackAction={createFeedbackAction}
+        createIssueAction={createIssueAction}
+      />
+      <div className="grid gap-5 xl:grid-cols-3">
+        <BetaTesterLedger testers={testers} />
+        <BetaFeedbackLedger testers={testers} feedback={feedback} />
+        <BetaIssueLedger feedback={feedback} issues={issues} />
+      </div>
+      <BetaIntakeExportCard />
       <div className="grid gap-5 xl:grid-cols-2">
         <BetaOutreachPacketCard summary={summary} />
         <BetaTrackerStatusCard summary={summary} />
