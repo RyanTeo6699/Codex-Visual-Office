@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 29
+## Latest Baseline Commit Before Phase 30
 
-`a693f92 docs: record private beta local validation`
+`15751e5 docs: prepare external tester intake`
 
 ## Final Phase Status
 
@@ -233,6 +233,34 @@ Continue external tester intake until real external tester submissions exist.
 
 Phase 30 has not started.
 
+## Private Beta Ops Automation / Internal Execution Pack Status
+
+Phase 30 - Private Beta Ops Automation / Internal Execution Pack.
+
+Phase 30 creates a local Beta Ops Room, local beta ops summary helper, tracker/export templates, invitation message pack, feedback and issue templates, GM next action checklist, static verifier, and roadmap/status updates. It does not send messages, contact testers, connect communication APIs, or fabricate tester evidence.
+
+No external tester feedback has been recorded yet. GM / local validation remains separate from external tester feedback.
+
+Phase 30 beta ops status:
+
+```txt
+BETA_OPS_READY_AWAITING_EXTERNAL_TESTER_SUBMISSIONS
+```
+
+Current decision:
+
+```txt
+CONTINUE_EXTERNAL_TESTER_INTAKE
+```
+
+Recommended next step:
+
+```txt
+Use the internal execution pack only when GM has real external tester activity or explicitly chooses a no-submission operational review.
+```
+
+Phase 31 has not started.
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -287,6 +315,7 @@ Phase 30 has not started.
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:ops
 npm run beta:verify:external-intake
 npm run beta:verify:feedback-decision
 npm run beta:verify:outreach
@@ -318,8 +347,8 @@ git diff --check
 
 ## Next Possible Phases
 
-- Continue external tester intake until real external tester submissions exist.
-- Future Phase 30 decision gate after real external tester submissions exist or GM explicitly chooses a no-submission review.
+- Continue external tester intake using the local Beta Ops execution pack until real external tester submissions exist.
+- Future Phase 31 external feedback ingestion after real external tester submissions exist or GM explicitly chooses a no-submission operational review.
 - Future external tester feedback review after real external tester submissions exist.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.

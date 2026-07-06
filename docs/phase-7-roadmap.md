@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 29.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 30.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -41,6 +41,7 @@ Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window
 Phase 27 - Continue Collection / Real Tester Outreach Execution Packet
 Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29 - Continue Real Private Beta Collection / External Tester Intake
+Phase 30 - Private Beta Ops Automation / Internal Execution Pack
 ```
 
 ## Dependency Order
@@ -48,7 +49,7 @@ Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30
 ```
 
 No later phase should start without explicit GM approval.
@@ -418,6 +419,47 @@ Phase 29 does not fabricate external tester feedback, fake tester counts, fake s
 - GM local validation samples recorded separately: `1`.
 - Current decision: `CONTINUE_EXTERNAL_TESTER_INTAKE`.
 - Phase 30 implementation has not started.
+
+## Phase 30 - Private Beta Ops Automation / Internal Execution Pack
+
+### Goal
+
+Convert the manual private beta outreach and feedback collection process into a local Beta Ops Room, tracker templates, exportable message packets, and verification workflow without sending external messages or fabricating tester feedback.
+
+### Allowed
+
+- `/beta` Beta Ops Room.
+- Beta ops summary helper.
+- Local tracker templates.
+- Invitation/export packet.
+- Feedback and issue templates.
+- GM next action checklist.
+- Static beta ops verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 30 does not auto-send messages, connect Gmail, GitHub, Slack, Discord, WeChat, Vercel, Supabase, cloud sync, auth, payment, team workspace, MCP, or OpenAI API; fabricate tester feedback, tester counts, submission counts, issue counts, or setup success rates; mark beta complete; mark public beta or public release ready; implement public release, signing, notarization, auto updater, production package build, Electron, DB schema changes, dependency changes, dangerous shell, command text box, terminal emulator, node-pty, automatic Codex/Git/Quality execution, destructive cleanup, backup deletion, or Phase 31.
+
+### Output
+
+- Phase 30 scope lock.
+- Beta Ops Room.
+- Beta ops summary helper.
+- Local export templates.
+- Beta ops export generator.
+- `beta:verify:ops`.
+- Phase 30 result document.
+- Roadmap and release status updates.
+
+### Status
+
+- Beta ops status: `BETA_OPS_READY_AWAITING_EXTERNAL_TESTER_SUBMISSIONS`.
+- No external tester feedback has been recorded yet.
+- No external tester issue has been recorded yet.
+- GM local validation remains separate from external tester feedback.
+- Current decision: `CONTINUE_EXTERNAL_TESTER_INTAKE`.
+- Phase 31 implementation has not started.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

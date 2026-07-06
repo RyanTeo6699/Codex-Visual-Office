@@ -54,6 +54,8 @@
     "beta:verify:outreach": "tsx scripts/verify-real-tester-outreach.ts",
     "beta:verify:feedback-decision": "tsx scripts/verify-private-beta-feedback-decision.ts",
     "beta:verify:external-intake": "tsx scripts/verify-external-tester-intake.ts",
+    "beta:ops:export": "tsx scripts/generate-private-beta-ops-export.ts",
+    "beta:verify:ops": "tsx scripts/verify-private-beta-ops.ts",
     "release:verify:strategy": "tsx scripts/verify-release-strategy.ts",
     "production:verify:freeze": "tsx scripts/verify-production-freeze.ts",
     "production:verify:scope": "tsx scripts/verify-production-scope.ts",
