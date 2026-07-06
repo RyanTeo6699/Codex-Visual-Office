@@ -40,10 +40,14 @@ export function LocalAppShellCard({ status, desktopBetaStatus }: { status: Local
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <StatusTile label="App-first runtime" value={desktopBetaStatus.desktopBetaCandidateConfigured ? "Strategy configured" : "Needs review"} />
         <StatusTile label="Shell readiness" value={status.shellReadiness} />
-        <StatusTile label="Local records" value={`${status.counts.backupRecords} backups`} />
-        <StatusTile label="Dry-run policies" value={`${status.counts.retentionPolicies} configured`} />
+        <StatusTile label="Browser launcher" value={desktopBetaStatus.browserLauncherFallbackAvailable ? "Fallback available" : "Needs review"} />
       </div>
+
+      <p className="mt-3 rounded-[12px] border border-cyan-200/10 bg-cyan-200/[0.035] px-3 py-2 text-xs font-semibold leading-relaxed text-slate-300">
+        App-first direction: the desktop app should own runtime readiness. Manual localhost/browser launch remains contributor fallback, not the intended end-user path.
+      </p>
 
       <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {rows.map(([label, value]) => (

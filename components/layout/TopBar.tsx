@@ -11,7 +11,7 @@ export function TopBar() {
         </Link>
         <div className="hidden items-center gap-2 lg:flex">
           <Circle className="h-2.5 w-2.5 fill-emerald-300/80 text-emerald-300/80" />
-          <span className="text-xs font-medium text-slate-400">RC candidate / local-first shell</span>
+          <span className="text-xs font-medium text-slate-400">App-first local runtime / status-only</span>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-slate-400 sm:gap-3">
           <div className="hidden items-center gap-2 sm:flex">

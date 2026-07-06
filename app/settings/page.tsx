@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
+import { getAppRuntimeStatus } from "@/lib/app-runtime/app-runtime-status";
 import { detectCodexCliStatus } from "@/lib/codex-cli/detect";
 import { getDesktopBetaStatus } from "@/lib/desktop/desktop-beta-status";
 import { getLocalShellStatus } from "@/lib/local-shell/local-shell-status";
@@ -28,6 +29,7 @@ export default async function SettingsPage() {
     getLocalShellStatus(),
   ]);
   const desktopBetaStatus = getDesktopBetaStatus();
+  const appRuntimeStatus = getAppRuntimeStatus();
 
   return (
     <AppShell>
@@ -42,6 +44,7 @@ export default async function SettingsPage() {
         retentionPolicies={retentionPolicies}
         localShellStatus={localShellStatus}
         desktopBetaStatus={desktopBetaStatus}
+        appRuntimeStatus={appRuntimeStatus}
         saveApprovedProjectPathAction={saveApprovedProjectPathAction}
         createBackupNowAction={createBackupNowAction}
         restoreDryRunAction={restoreDryRunAction}

@@ -202,6 +202,30 @@ Recommended next step:
 Manually collect real tester feedback, record redacted local intake entries in /beta, then review the real evidence before Phase 32.
 ```
 
+## App-first Desktop Runtime Status
+
+Phase 32 - App-first Desktop Runtime Integration.
+
+Phase 32 shifts the desktop direction from a browser-localhost user flow to an App-first local desktop runtime strategy. The desktop app should own runtime readiness and display Codex Visual Office in an independent app window. Manual localhost/browser launcher usage remains available as contributor/support fallback, not the intended end-user path.
+
+Phase 32 runtime status:
+
+```txt
+APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS
+```
+
+Current limitation:
+
+```txt
+Runtime process supervision and app-first failure screen are not implemented yet.
+```
+
+Recommended next step:
+
+```txt
+Phase 33 - App Runtime Health / Failure Screen
+```
+
 ## Real Private Beta Feedback Decision Status
 
 Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision.

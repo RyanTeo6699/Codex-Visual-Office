@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 31.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 32.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -43,6 +43,7 @@ Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 Phase 30 - Private Beta Ops Automation / Internal Execution Pack
 Phase 31 - Local Beta Feedback Intake / Ledger UI
+Phase 32 - App-first Desktop Runtime Integration
 ```
 
 ## Dependency Order
@@ -50,7 +51,7 @@ Phase 31 - Local Beta Feedback Intake / Ledger UI
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30 -> 31
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30 -> 31 -> 32
 ```
 
 No later phase should start without explicit GM approval.
@@ -87,6 +88,42 @@ Phase 31 must not send invitations, connect to email or messaging providers, upl
 - Phase 31 provides local intake infrastructure.
 - Current status: `LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS`.
 - Recommended next action: manually record real, redacted external tester feedback before any Phase 32 decision.
+
+## Phase 32 - App-first Desktop Runtime Integration
+
+### Goal
+
+Shift Codex Visual Office from browser-localhost as the user-facing path to an App-first local desktop runtime strategy where the app owns runtime readiness and localhost is treated as an internal implementation or contributor fallback detail.
+
+### Allowed
+
+- App-first runtime strategy.
+- Controlled local runtime status helper.
+- Tauri runtime strategy.
+- Runtime health status.
+- Settings and Safety runtime visibility.
+- Browser launcher fallback preservation.
+- Runtime diagnostics documentation.
+- Static verifier.
+
+### Boundaries
+
+Phase 32 does not implement production release, signed installer, notarization, auto updater, Electron, cloud sync, auth, payment, team workspace, MCP, external APIs, arbitrary shell, command text box, terminal emulator, `node-pty`, automatic Codex/Git/Quality Gate execution, destructive cleanup, backup deletion, credential reads, token storage, or Phase 33.
+
+### Output
+
+- Phase 32 scope lock.
+- App runtime status helper.
+- Settings/Safety App-first status.
+- Runtime diagnostics doc.
+- `app:verify:runtime`.
+- Phase 32 implementation summary.
+
+### Status
+
+- Phase 32 completed as App-first runtime strategy/status integration.
+- Current status: `APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS`.
+- Recommended next phase: Phase 33 - App Runtime Health / Failure Screen.
 
 ## Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 

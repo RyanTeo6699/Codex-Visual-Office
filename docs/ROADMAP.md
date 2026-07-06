@@ -32,8 +32,9 @@ Phase 28：Real Private Beta Feedback Review / Fix Batch Decision completed from
 Phase 29：Continue Real Private Beta Collection / External Tester Intake ready, awaiting external submissions
 Phase 30：Private Beta Ops Automation / Internal Execution Pack ready, awaiting external submissions
 Phase 31：Local Beta Feedback Intake / Ledger UI ready, awaiting real external records
-Current status：LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS
-Next recommendation：Manually record real, redacted external tester intake in /beta before any Phase 32 review
+Phase 32：App-first Desktop Runtime Integration completed with status strategy, UI visibility, and verification
+Current status：APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS
+Next recommendation：Phase 33 - App Runtime Health / Failure Screen
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -80,6 +81,7 @@ Phase 28：Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29：Continue Real Private Beta Collection / External Tester Intake
 Phase 30：Private Beta Ops Automation / Internal Execution Pack
 Phase 31：Local Beta Feedback Intake / Ledger UI
+Phase 32：App-first Desktop Runtime Integration
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -91,10 +93,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 31：Local Beta Feedback Intake / Ledger UI
-当前状态：LOCAL_BETA_FEEDBACK_INTAKE_READY_AWAITING_REAL_EXTERNAL_RECORDS
-当前决策：CONTINUE_EXTERNAL_TESTER_INTAKE
-下一阶段建议：继续手动收集真实 external tester submissions，并在 /beta 录入已脱敏本地记录
+Phase 32：App-first Desktop Runtime Integration
+当前状态：APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS
+当前决策：APP_FIRST_DESKTOP_RUNTIME_DIRECTION_CONFIRMED
+下一阶段建议：Phase 33 - App Runtime Health / Failure Screen
 ```
 
 ---

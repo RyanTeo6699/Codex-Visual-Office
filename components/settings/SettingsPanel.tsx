@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Boxes, CloudOff, Database, Github, HardDrive, KeyRound, Laptop, ListChecks, Radar, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { ApprovedProjectPathsCard, type SaveApprovedProjectPathAction, type SettingsProjectOption } from "./ApprovedProjectPathsCard";
+import { AppFirstRuntimeCard } from "./AppFirstRuntimeCard";
 import { ArchiveRetentionCard } from "./ArchiveRetentionCard";
 import { BackupRestoreCard, type BackupFormAction } from "./BackupRestoreCard";
 import { CodexRuntimeReliabilityCard } from "./CodexRuntimeReliabilityCard";
 import { LocalAppShellCard } from "./LocalAppShellCard";
 import type { CodexCliStatus } from "@/lib/codex-cli/types";
+import type { AppRuntimeStatus } from "@/lib/app-runtime/app-runtime-types";
 import type { DesktopBetaStatus } from "@/lib/desktop/desktop-beta-types";
 import type { LocalShellStatus } from "@/lib/local-shell/local-shell-types";
 import type { ApprovedProjectPath, BackupRecord, LocalSetting, RetentionPolicy } from "@/lib/types";
@@ -22,6 +24,7 @@ export function SettingsPanel({
   retentionPolicies,
   localShellStatus,
   desktopBetaStatus,
+  appRuntimeStatus,
   saveApprovedProjectPathAction,
   createBackupNowAction,
   restoreDryRunAction,
@@ -37,6 +40,7 @@ export function SettingsPanel({
   retentionPolicies: RetentionPolicy[];
   localShellStatus: LocalShellStatus;
   desktopBetaStatus: DesktopBetaStatus;
+  appRuntimeStatus: AppRuntimeStatus;
   saveApprovedProjectPathAction: SaveApprovedProjectPathAction;
   createBackupNowAction: BackupFormAction;
   restoreDryRunAction: BackupFormAction;
@@ -78,6 +82,7 @@ export function SettingsPanel({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-2">
+        <AppFirstRuntimeCard status={appRuntimeStatus} />
         <LocalAppShellCard status={localShellStatus} desktopBetaStatus={desktopBetaStatus} />
 
         <section className="rounded-[18px] border border-emerald-200/12 bg-emerald-200/[0.04] p-4 xl:col-span-2">

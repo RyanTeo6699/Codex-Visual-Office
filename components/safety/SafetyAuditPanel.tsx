@@ -16,6 +16,7 @@ import {
   Terminal,
 } from "lucide-react";
 import type { CleanupDryRunPreview } from "@/lib/archive/archive-types";
+import type { AppRuntimeStatus } from "@/lib/app-runtime/app-runtime-types";
 import type { RunnerPolicy } from "@/lib/codex-cli/runner-types";
 import type { DesktopBetaStatus } from "@/lib/desktop/desktop-beta-types";
 import type { LocalLauncherReport } from "@/lib/local-launcher/local-launcher-types";
@@ -35,6 +36,7 @@ export function SafetyAuditPanel({
   launcherReport,
   safetySummary,
   desktopBetaStatus,
+  appRuntimeStatus,
 }: {
   localShellStatus: LocalShellStatus;
   runnerPolicy: RunnerPolicy;
@@ -45,6 +47,7 @@ export function SafetyAuditPanel({
   launcherReport: LocalLauncherReport;
   safetySummary: SafetySummary;
   desktopBetaStatus: DesktopBetaStatus;
+  appRuntimeStatus: AppRuntimeStatus;
 }) {
   const forbiddenEntries = Object.entries(localShellStatus.forbiddenCapabilities);
   const detectedForbidden = forbiddenEntries.filter(([, detected]) => detected);
@@ -85,6 +88,21 @@ export function SafetyAuditPanel({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-3">
+        <AuditCard
+          icon={<LaptopMinimal className="h-4 w-4 text-cyan-100/80" />}
+          title="App-first Runtime"
+          level={appRuntimeStatus.appFirstMode && !appRuntimeStatus.manualLocalhostRequiredForEndUser ? "pass" : "watch"}
+          badge={appRuntimeStatus.readiness}
+          rows={[
+            ["Runtime strategy", appRuntimeStatus.internalRuntimeStrategy],
+            ["Manual localhost for end users", appRuntimeStatus.manualLocalhostRequiredForEndUser ? "Required" : "Not required"],
+            ["Browser fallback", appRuntimeStatus.browserFallbackAvailable ? "Available" : "Needs review"],
+            ["Health check mode", appRuntimeStatus.healthCheckMode],
+            ["Production packaging", appRuntimeStatus.productionPackagingImplemented ? "Implemented" : "Not implemented"],
+            ["Auto updater", appRuntimeStatus.autoUpdaterImplemented ? "Implemented" : "Not implemented"],
+          ]}
+        />
+
         <AuditCard
           icon={<FolderLock className="h-4 w-4 text-cyan-100/80" />}
           title="Approved Path Permission"
@@ -345,6 +363,8 @@ function formatOverallStatus(level: SafetyLevel): string {
 }
 
 function formatCapabilityName(name: string): string {
+  if (name === "autoUpdater") return "Updater";
+  if (name === "cloudSync") return "Remote sync";
   return name.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
 }
 
