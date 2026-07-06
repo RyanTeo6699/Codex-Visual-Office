@@ -53,6 +53,7 @@
     "beta:verify:collection-window": "tsx scripts/verify-private-beta-collection-window.ts",
     "beta:verify:outreach": "tsx scripts/verify-real-tester-outreach.ts",
     "beta:verify:feedback-decision": "tsx scripts/verify-private-beta-feedback-decision.ts",
+    "beta:verify:external-intake": "tsx scripts/verify-external-tester-intake.ts",
     "release:verify:strategy": "tsx scripts/verify-release-strategy.ts",
     "production:verify:freeze": "tsx scripts/verify-production-freeze.ts",
     "production:verify:scope": "tsx scripts/verify-production-scope.ts",

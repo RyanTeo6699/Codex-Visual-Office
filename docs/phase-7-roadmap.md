@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 26.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 29.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -38,6 +38,9 @@ Phase 23 - Real Private Beta Round 1 Execution
 Phase 24 - Real Private Beta Feedback Review / Decision Gate
 Phase 25 - Continue Real Private Beta Round 1 / Collect Tester Feedback
 Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window
+Phase 27 - Continue Collection / Real Tester Outreach Execution Packet
+Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision
+Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 ```
 
 ## Dependency Order
@@ -45,7 +48,7 @@ Phase 26 - Continue Real Private Beta Round 1 / Submission Collection Window
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29
 ```
 
 No later phase should start without explicit GM approval.
@@ -370,6 +373,51 @@ Phase 28 does not fabricate tester feedback, fake tester counts, fake issue coun
 - Fix Batch 2 decision: `NO_FIX_BATCH_2_REQUIRED_FROM_THIS_SAMPLE`.
 - Current decision: `CONTINUE_PRIVATE_BETA_COLLECTION`.
 - Recommended next step: `Phase 29 - Continue Real Private Beta Collection / External Tester Intake`.
+
+## Phase 29 - Continue Real Private Beta Collection / External Tester Intake
+
+### Goal
+
+Prepare the external tester intake layer for private beta round 1 without fabricating tester feedback, tester counts, submission counts, or issue counts.
+
+### Allowed
+
+- Phase 29 scope lock.
+- External tester intake plan.
+- Consent / safety acknowledgment template.
+- External tester onboarding tracker.
+- External feedback intake ledger.
+- External issue intake ledger.
+- External tester evidence checklist.
+- Phase 30 decision gate.
+- Static external intake verifier.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 29 does not fabricate external tester feedback, fake tester counts, fake submission counts, fake issue counts, mark beta complete, mark public beta ready, implement public release, signing, notarization, auto updater, cloud sync, team workspace, MCP, auth, payment, production package build, DB schema changes, dependency changes, app UI behavior changes, runner behavior changes, Quality Gate policy changes, backup/archive behavior changes, Tauri production packaging, or Phase 30 implementation.
+
+### Output
+
+- Phase 29 external tester intake scope lock.
+- External tester intake plan.
+- External tester consent / safety acknowledgment.
+- External tester onboarding tracker.
+- External feedback intake ledger.
+- External issue intake ledger.
+- External tester evidence checklist.
+- Phase 30 decision gate.
+- `beta:verify:external-intake`.
+- Roadmap and release status updates.
+
+### Status
+
+- External tester intake status: `EXTERNAL_TESTER_INTAKE_READY_AWAITING_EXTERNAL_SUBMISSIONS`.
+- External tester feedback recorded: `0`.
+- External tester issue recorded: `0`.
+- GM local validation samples recorded separately: `1`.
+- Current decision: `CONTINUE_EXTERNAL_TESTER_INTAKE`.
+- Phase 30 implementation has not started.
 
 ## Phase 20 - Private Beta Test Round 1 / Feedback Intake
 

@@ -12,9 +12,9 @@ PRODUCTION_1_LOCAL_BASELINE_READY_WITH_NOTED_LIMITATIONS
 
 This is a local-first production baseline / desktop beta candidate. It is not a public commercial launch, not a signed installer, not notarized, and not auto-updating.
 
-## Latest Baseline Commit Before Phase 28
+## Latest Baseline Commit Before Phase 29
 
-`572564b docs: prepare real tester outreach packet`
+`a693f92 docs: record private beta local validation`
 
 ## Final Phase Status
 
@@ -205,6 +205,34 @@ Recommended next phase:
 Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 ```
 
+## External Tester Intake Status
+
+Phase 29 - Continue Real Private Beta Collection / External Tester Intake.
+
+Phase 29 prepares the external tester intake layer for private beta round 1: scope lock, external tester intake plan, consent / safety acknowledgment, onboarding tracker, external feedback ledger, external issue ledger, evidence checklist, Phase 30 decision gate, and static verification.
+
+No external tester feedback has been recorded yet. The Phase 28 GM / local validation sample remains a local validation sample and is not counted as external tester feedback.
+
+Phase 29 intake status:
+
+```txt
+EXTERNAL_TESTER_INTAKE_READY_AWAITING_EXTERNAL_SUBMISSIONS
+```
+
+Current decision:
+
+```txt
+CONTINUE_EXTERNAL_TESTER_INTAKE
+```
+
+Recommended next step:
+
+```txt
+Continue external tester intake until real external tester submissions exist.
+```
+
+Phase 30 has not started.
+
 ## Local-First Policy
 
 - Local SQLite remains the app-owned source of truth.
@@ -259,6 +287,7 @@ Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 ```bash
 npm run typecheck
 npm run build
+npm run beta:verify:external-intake
 npm run beta:verify:feedback-decision
 npm run beta:verify:outreach
 npm run beta:verify:collection-window
@@ -289,8 +318,8 @@ git diff --check
 
 ## Next Possible Phases
 
-- Continue Real Private Beta Round 1 collection with external tester intake.
-- Phase 29 - Continue Real Private Beta Collection / External Tester Intake.
+- Continue external tester intake until real external tester submissions exist.
+- Future Phase 30 decision gate after real external tester submissions exist or GM explicitly chooses a no-submission review.
 - Future external tester feedback review after real external tester submissions exist.
 - Future Phase - Private Beta Fix Batch 2, if real tester feedback identifies fix candidates.
 - Future Phase - Public Technical Beta Scope Lock, if real tester evidence is strong enough.

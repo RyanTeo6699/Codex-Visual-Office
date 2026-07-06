@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 28:
+Current GM-approved status as of Phase 29:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -29,8 +29,9 @@ Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback package 
 Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window completed with CONTINUE_COLLECTION
 Phase 27：Continue Collection / Real Tester Outreach Execution Packet completed with CONTINUE_COLLECTION
 Phase 28：Real Private Beta Feedback Review / Fix Batch Decision completed from one GM local validation sample
-Current status：LOCAL_VALIDATION_SAMPLE_PASS / CONTINUE_PRIVATE_BETA_COLLECTION
-Next recommendation：Phase 29 - Continue Real Private Beta Collection / External Tester Intake
+Phase 29：Continue Real Private Beta Collection / External Tester Intake ready, awaiting external submissions
+Current status：EXTERNAL_TESTER_INTAKE_READY_AWAITING_EXTERNAL_SUBMISSIONS
+Next recommendation：Continue external tester intake until real external tester submissions exist
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -73,7 +74,7 @@ Phase 24：Real Private Beta Feedback Review / Decision Gate
 Phase 25：Continue Real Private Beta Round 1 / Collect Tester Feedback
 Phase 26：Continue Real Private Beta Round 1 / Submission Collection Window
 Phase 27：Continue Collection / Real Tester Outreach Execution Packet
-Phase 28：Private Beta Feedback Review / Evidence Review, only after real tester submissions exist
+Phase 28：Real Private Beta Feedback Review / Fix Batch Decision
 Phase 29：Continue Real Private Beta Collection / External Tester Intake
 ```
 
@@ -86,10 +87,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 28：Real Private Beta Feedback Review / Fix Batch Decision
-当前状态：LOCAL_VALIDATION_SAMPLE_PASS / CONTINUE_PRIVATE_BETA_COLLECTION
-当前决策：CONTINUE_COLLECTION
-下一阶段建议：Phase 29 - Continue Real Private Beta Collection / External Tester Intake
+Phase 29：Continue Real Private Beta Collection / External Tester Intake
+当前状态：EXTERNAL_TESTER_INTAKE_READY_AWAITING_EXTERNAL_SUBMISSIONS
+当前决策：CONTINUE_EXTERNAL_TESTER_INTAKE
+下一阶段建议：继续外部 tester intake，直到存在真实 external tester submissions
 ```
 
 ---
