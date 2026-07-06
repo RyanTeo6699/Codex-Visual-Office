@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 32.
+This roadmap reconciles the post-Phase 6 sequence and defines the local-first path from Phase 7A through Phase 33A.
 
 It is a planning and historical status document. Later phase implementation status is recorded only where explicitly marked.
 
@@ -44,6 +44,7 @@ Phase 29 - Continue Real Private Beta Collection / External Tester Intake
 Phase 30 - Private Beta Ops Automation / Internal Execution Pack
 Phase 31 - Local Beta Feedback Intake / Ledger UI
 Phase 32 - App-first Desktop Runtime Integration
+Phase 33A - Desktop Product UX Scope Lock
 ```
 
 ## Dependency Order
@@ -51,7 +52,7 @@ Phase 32 - App-first Desktop Runtime Integration
 The phases must proceed in this order:
 
 ```txt
-7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30 -> 31 -> 32
+7A -> 7B -> 7C -> 7D -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 21 -> 22 -> 23 -> 24 -> 25 -> 26 -> 27 -> 28 -> 29 -> 30 -> 31 -> 32 -> 33A
 ```
 
 No later phase should start without explicit GM approval.
@@ -124,6 +125,39 @@ Phase 32 does not implement production release, signed installer, notarization, 
 - Phase 32 completed as App-first runtime strategy/status integration.
 - Current status: `APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS`.
 - Recommended next phase: Phase 33 - App Runtime Health / Failure Screen.
+
+## Phase 33A - Desktop Product UX Scope Lock
+
+### Goal
+
+Define the desktop product information architecture boundary for a mature local-first open-source app without implementing UI redesign, AppShell changes, runtime changes, dependency changes, or database changes.
+
+### Allowed
+
+- Desktop product UX scope lock.
+- Main App, Settings, Developer Diagnostics, and About / Open Source boundary documents.
+- Static verifier: `desktop:verify:product-ux-scope`.
+- Roadmap and release status updates.
+
+### Boundaries
+
+Phase 33A does not implement AppShell redesign, UI navigation changes, Developer Diagnostics page, About page, runtime supervision, failure screen, DB schema changes, migrations, dependency changes, Tauri permission changes, external integrations, command execution, or Phase 33B/33C work.
+
+### Output
+
+- Phase 33A desktop product UX scope lock.
+- Desktop app information architecture document.
+- User surface versus diagnostics boundary.
+- Settings boundary.
+- Developer diagnostics boundary.
+- Open-source desktop app surface.
+- Phase 33A scope result.
+
+### Status
+
+- Phase 33A completed as documentation and static verification only.
+- Current status: `DESKTOP_PRODUCT_UX_SCOPE_LOCKED`.
+- Recommended next phase: Phase 33B - Desktop IA Redesign Plan.
 
 ## Phase 21 - Private Beta Round 1 Execution Dry Run / Feedback Simulation
 

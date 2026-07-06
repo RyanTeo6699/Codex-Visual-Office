@@ -39,6 +39,8 @@
     "local:launcher:verify": "tsx scripts/verify-local-launcher.ts",
     "desktop:verify:beta": "tsx scripts/verify-desktop-beta.ts",
     "desktop:check:beta": "npm run desktop:verify:beta",
+    "desktop:verify:ux": "npm run ui:verify:virtual-office",
+    "desktop:verify:product-ux-scope": "tsx scripts/verify-desktop-product-ux-scope.ts",
     "tauri:verify:prototype": "tsx scripts/verify-tauri-prototype.ts",
     "agent:verify:workflow": "tsx scripts/verify-agent-workflow.ts",
     "safety:verify:permissions": "tsx scripts/verify-safety-permissions.ts",

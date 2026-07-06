@@ -11,7 +11,7 @@
 
 This document is a historical top-level roadmap. The active post-Phase-6 roadmap is maintained in `docs/phase-7-roadmap.md`.
 
-Current GM-approved status as of Phase 30:
+Current GM-approved status as of Phase 33A:
 
 ```txt
 Phase 14：Release Candidate QA / Documentation Hardening completed
@@ -33,8 +33,9 @@ Phase 29：Continue Real Private Beta Collection / External Tester Intake ready,
 Phase 30：Private Beta Ops Automation / Internal Execution Pack ready, awaiting external submissions
 Phase 31：Local Beta Feedback Intake / Ledger UI ready, awaiting real external records
 Phase 32：App-first Desktop Runtime Integration completed with status strategy, UI visibility, and verification
-Current status：APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS
-Next recommendation：Phase 33 - App Runtime Health / Failure Screen
+Phase 33A：Desktop Product UX Scope Lock completed as documentation and static verification only
+Current status：DESKTOP_PRODUCT_UX_SCOPE_LOCKED
+Next recommendation：Phase 33B - Desktop IA Redesign Plan
 ```
 
 The current product remains local-first. Production release, code signing, notarization, auto updater, cloud sync, team workspace, auth, payment, MCP, ChatGPT App, OpenAI API, and external service integrations are not active capabilities.
@@ -82,6 +83,7 @@ Phase 29：Continue Real Private Beta Collection / External Tester Intake
 Phase 30：Private Beta Ops Automation / Internal Execution Pack
 Phase 31：Local Beta Feedback Intake / Ledger UI
 Phase 32：App-first Desktop Runtime Integration
+Phase 33A：Desktop Product UX Scope Lock
 ```
 
 历史 PRD 1.0 首轮只执行：
@@ -93,10 +95,10 @@ Phase 1：视觉原型 / Mock Data Demo
 Current route position:
 
 ```txt
-Phase 32：App-first Desktop Runtime Integration
-当前状态：APP_FIRST_DESKTOP_RUNTIME_STRATEGY_CONFIGURED_WITH_NOTED_LIMITATIONS
-当前决策：APP_FIRST_DESKTOP_RUNTIME_DIRECTION_CONFIRMED
-下一阶段建议：Phase 33 - App Runtime Health / Failure Screen
+Phase 33A：Desktop Product UX Scope Lock
+当前状态：DESKTOP_PRODUCT_UX_SCOPE_LOCKED
+当前决策：MAIN_APP_SETTINGS_DIAGNOSTICS_ABOUT_BOUNDARIES_DEFINED
+下一阶段建议：Phase 33B - Desktop IA Redesign Plan
 ```
 
 ---

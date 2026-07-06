@@ -226,6 +226,32 @@ Recommended next step:
 Phase 33 - App Runtime Health / Failure Screen
 ```
 
+## Desktop Product UX Scope Status
+
+Phase 33A - Desktop Product UX Scope Lock.
+
+Phase 33A defines the desktop product information architecture boundary for a mature local-first open-source app. It separates the normal Main App surface from Settings, Developer Diagnostics, and About / Open Source surfaces. It does not implement UI redesign, AppShell changes, database changes, dependency changes, runtime changes, or Phase 33B/33C work.
+
+Phase 33A desktop UX scope status:
+
+```txt
+DESKTOP_PRODUCT_UX_SCOPE_LOCKED
+```
+
+Current decision:
+
+```txt
+MAIN_APP_SETTINGS_DIAGNOSTICS_ABOUT_BOUNDARIES_DEFINED
+```
+
+Recommended next step:
+
+```txt
+Phase 33B - Desktop IA Redesign Plan
+```
+
+Phase 33B and Phase 33C have not started.
+
 ## Real Private Beta Feedback Decision Status
 
 Phase 28 - Real Private Beta Feedback Review / Fix Batch Decision.
